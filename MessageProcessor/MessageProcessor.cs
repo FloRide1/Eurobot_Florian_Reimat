@@ -32,7 +32,7 @@ namespace MessageProcessorNS
         }
 
         //Input CallBack        
-        public void ProcessRobotDecodedMessage(object sender, MessageDecodedArgs e)
+        public void ProcessRobotDecodedMessage(object sender, MessageByteArgs e)
         {
             ProcessDecodedMessage((Int16)e.MsgFunction,(Int16) e.MsgPayloadLength, e.MsgPayload);
         }

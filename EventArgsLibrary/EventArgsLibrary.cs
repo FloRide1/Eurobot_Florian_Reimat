@@ -1,5 +1,4 @@
 ﻿using Constants;
-using Emgu.CV;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -56,22 +55,64 @@ namespace EventArgsLibrary
         public Bitmap ImageBmp { get; set; }
     }
 
-    public class OpenCvMatImageArgs : EventArgs
+    #region Florian
+    public class MessageByteArgs : EventArgs
     {
-        public Mat Mat { get; set; }
-        public string Descriptor { get; set; }
-        public void Dispose()
+        public byte SOF { get; set; }
+        public byte functionMsb { get; set; }
+        public byte functionLsb { get; set; }
+        public byte lenghtMsb { get; set; }
+        public byte lenghtLsb { get; set; }
+        public byte checksum { get; set; }
+        public ushort MsgFunction { get; set; }
+        public ushort MsgPayloadLength { get; set; }
+        public byte[] MsgPayload { get; set; }
+
+        public MessageByteArgs(byte SOF_a, byte functionMsb_a, byte functionLsb_a, byte lenghtMsb_a, byte lenghtLsb_a, byte[] msgPaylaod_a, byte checksum_a)
         {
-            Mat.Dispose();
+            SOF = SOF_a;
+            functionMsb = functionMsb_a;
+            functionLsb = functionLsb_a;
+            lenghtMsb = lenghtMsb_a;
+            lenghtLsb = lenghtLsb_a;
+            MsgPayload = msgPaylaod_a;
+            checksum = checksum_a;
+            ConvertByteToFunction();
+        }
+
+        public MessageByteArgs(ushort msgFunction_a, ushort msgPayloadLenght_a, byte[] msgPayload_a, byte checksum_a)
+        {
+            MsgFunction = msgFunction_a;
+            MsgPayloadLength = msgPayloadLenght_a;
+            MsgPayload = msgPayload_a;
+            checksum = checksum_a;
+            ConvertFunctionToByte();
+        }
+        private void ConvertByteToFunction()
+        {
+            MsgFunction = (ushort)(functionMsb << 8 + functionLsb << 0);
+            MsgPayloadLength = (ushort)(lenghtMsb << 8 + lenghtLsb << 0);
+        }
+
+        private void ConvertFunctionToByte()
+        {
+            functionLsb = (byte)(MsgFunction >> 0);
+            functionMsb = (byte)(MsgFunction >> 8);
+
+            lenghtLsb = (byte)(MsgPayloadLength >> 0);
+            lenghtMsb = (byte)(MsgPayloadLength >> 8);
         }
     }
-
-    public class MessageDecodedArgs : EventArgs
+    public class DecodePayloadArgs : EventArgs
     {
-        public int MsgFunction { get; set; }
-        public int MsgPayloadLength { get; set; }
-        public byte[] MsgPayload { get; set; }
+        public byte[] payload { get; set; }
+
+        public DecodePayloadArgs(byte[] payload_a)
+        {
+            payload = payload_a;
+        }
     }
+    #endregion
 
     public class MessageEncodedArgs : EventArgs
     {

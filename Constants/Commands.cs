@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Constants
 {
+
     public enum Commands
     {
         #region Commandes générales

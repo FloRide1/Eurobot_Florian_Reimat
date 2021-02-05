@@ -35,6 +35,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAsservissementDisplay", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfWorldMapDisplay", "..\WpfWorldMapDisplay\WpfWorldMapDisplay.csproj", "{89604641-927E-47FF-8DB6-91CF5C4976C1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol_Security", "..\Protocol_Security\Protocol_Security.csproj", "{EAC24896-338F-439A-922B-40B11C987A91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleFormat", "..\ConsoleFormat\ConsoleFormat.csproj", "{093EA813-8F12-44D5-8C22-3AE1FFF8A824}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -171,6 +175,22 @@ Global
 		{89604641-927E-47FF-8DB6-91CF5C4976C1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{89604641-927E-47FF-8DB6-91CF5C4976C1}.Release|x64.ActiveCfg = Release|x64
 		{89604641-927E-47FF-8DB6-91CF5C4976C1}.Release|x64.Build.0 = Release|x64
+		{EAC24896-338F-439A-922B-40B11C987A91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAC24896-338F-439A-922B-40B11C987A91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAC24896-338F-439A-922B-40B11C987A91}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EAC24896-338F-439A-922B-40B11C987A91}.Debug|x64.Build.0 = Debug|Any CPU
+		{EAC24896-338F-439A-922B-40B11C987A91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAC24896-338F-439A-922B-40B11C987A91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAC24896-338F-439A-922B-40B11C987A91}.Release|x64.ActiveCfg = Release|Any CPU
+		{EAC24896-338F-439A-922B-40B11C987A91}.Release|x64.Build.0 = Release|Any CPU
+		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Debug|x64.Build.0 = Debug|Any CPU
+		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Release|Any CPU.Build.0 = Release|Any CPU
+		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Release|x64.ActiveCfg = Release|Any CPU
+		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

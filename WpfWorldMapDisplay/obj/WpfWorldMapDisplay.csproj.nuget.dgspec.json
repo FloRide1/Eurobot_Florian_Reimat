@@ -1,91 +1,56 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Github\\ProjetRobotPhase3\\WpfWorldMapDisplay\\WpfWorldMapDisplay.csproj": {}
+    "C:\\Github\\Eurobot_Florian_Reimat\\WpfWorldMapDisplay\\WpfWorldMapDisplay.csproj": {}
   },
   "projects": {
-    "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj": {
-      "version": "1.0.0",
+    "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj": {
       "restore": {
-        "projectUniqueName": "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj",
+        "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj",
         "projectName": "Constants",
-        "projectPath": "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj"
+        "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj"
       },
       "frameworks": {
         "net48": {}
       }
     },
-    "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\EventArgsLibrary.csproj": {
-      "version": "1.0.0",
+    "C:\\Github\\Eurobot_Florian_Reimat\\EventArgsLibrary\\EventArgsLibrary.csproj": {
       "restore": {
-        "projectUniqueName": "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\EventArgsLibrary.csproj",
+        "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\EventArgsLibrary\\EventArgsLibrary.csproj",
         "projectName": "EventArgsLibrary",
-        "projectPath": "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\EventArgsLibrary.csproj",
-        "packagesPath": "C:\\Users\\GEII Robot\\.nuget\\packages\\",
-        "outputPath": "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\obj\\",
-        "projectStyle": "PackageReference",
-        "skipContentFileWrite": true,
-        "configFilePaths": [
-          "C:\\Users\\GEII Robot\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
-        ],
-        "originalTargetFrameworks": [
-          "net48"
-        ],
-        "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "https://api.nuget.org/v3/index.json": {}
-        },
+        "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\EventArgsLibrary\\EventArgsLibrary.csproj",
         "frameworks": {
           "net48": {
             "projectReferences": {
-              "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj"
               },
-              "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj"
               },
-              "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj"
               }
             }
           }
         }
       },
       "frameworks": {
-        "net48": {
-          "dependencies": {
-            "Emgu.CV": {
-              "target": "Package",
-              "version": "[4.4.0.4099, )"
-            }
-          }
-        }
-      },
-      "runtimes": {
-        "win": {
-          "#import": []
-        },
-        "win-x64": {
-          "#import": []
-        },
-        "win-x86": {
-          "#import": []
-        }
+        "net48": {}
       }
     },
-    "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj": {
+    "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj",
+        "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj",
         "projectName": "Utilities",
-        "projectPath": "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj",
-        "packagesPath": "C:\\Users\\GEII Robot\\.nuget\\packages\\",
-        "outputPath": "C:\\Github\\ProjetRobotPhase3\\Utilities\\obj\\",
+        "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj",
+        "packagesPath": "C:\\Users\\TABLE 6\\.nuget\\packages\\",
+        "outputPath": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
-          "C:\\Users\\GEII Robot\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\TABLE 6\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -131,20 +96,19 @@
         }
       }
     },
-    "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj": {
-      "version": "1.0.0",
+    "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj": {
       "restore": {
-        "projectUniqueName": "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj",
+        "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj",
         "projectName": "WorldMap",
-        "projectPath": "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj",
+        "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj",
         "frameworks": {
           "net48": {
             "projectReferences": {
-              "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj"
               },
-              "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj"
               }
             }
           }
@@ -154,18 +118,18 @@
         "net48": {}
       }
     },
-    "C:\\Github\\ProjetRobotPhase3\\WpfWorldMapDisplay\\WpfWorldMapDisplay.csproj": {
+    "C:\\Github\\Eurobot_Florian_Reimat\\WpfWorldMapDisplay\\WpfWorldMapDisplay.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Github\\ProjetRobotPhase3\\WpfWorldMapDisplay\\WpfWorldMapDisplay.csproj",
+        "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\WpfWorldMapDisplay\\WpfWorldMapDisplay.csproj",
         "projectName": "WpfWorldMapDisplay",
-        "projectPath": "C:\\Github\\ProjetRobotPhase3\\WpfWorldMapDisplay\\WpfWorldMapDisplay.csproj",
-        "packagesPath": "C:\\Users\\GEII Robot\\.nuget\\packages\\",
-        "outputPath": "C:\\Github\\ProjetRobotPhase3\\WpfWorldMapDisplay\\obj\\",
+        "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\WpfWorldMapDisplay\\WpfWorldMapDisplay.csproj",
+        "packagesPath": "C:\\Users\\TABLE 6\\.nuget\\packages\\",
+        "outputPath": "C:\\Github\\Eurobot_Florian_Reimat\\WpfWorldMapDisplay\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
-          "C:\\Users\\GEII Robot\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\TABLE 6\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -178,17 +142,17 @@
         "frameworks": {
           "net48": {
             "projectReferences": {
-              "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj"
               },
-              "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\EventArgsLibrary.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\EventArgsLibrary.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\EventArgsLibrary\\EventArgsLibrary.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\EventArgsLibrary\\EventArgsLibrary.csproj"
               },
-              "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj"
               },
-              "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj": {
-                "projectPath": "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj"
+              "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj"
               }
             }
           }
@@ -199,7 +163,7 @@
           "dependencies": {
             "SciChart": {
               "target": "Package",
-              "version": "[6.2.1.13304, )"
+              "version": "[6.3.0.13476, )"
             }
           }
         }

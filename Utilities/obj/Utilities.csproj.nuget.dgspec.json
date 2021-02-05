@@ -1,21 +1,21 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj": {}
+    "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj": {}
   },
   "projects": {
-    "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj": {
+    "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj",
+        "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj",
         "projectName": "Utilities",
-        "projectPath": "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj",
-        "packagesPath": "C:\\Users\\GEII Robot\\.nuget\\packages\\",
-        "outputPath": "C:\\Github\\ProjetRobotPhase3\\Utilities\\obj\\",
+        "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj",
+        "packagesPath": "C:\\Users\\TABLE 6\\.nuget\\packages\\",
+        "outputPath": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\obj\\",
         "projectStyle": "PackageReference",
         "skipContentFileWrite": true,
         "configFilePaths": [
-          "C:\\Users\\GEII Robot\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\TABLE 6\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [

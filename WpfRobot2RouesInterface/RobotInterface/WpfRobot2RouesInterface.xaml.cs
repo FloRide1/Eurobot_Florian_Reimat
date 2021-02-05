@@ -136,13 +136,13 @@ namespace RobotInterface
         int nbMsgSent = 0;
 
         int nbMsgReceived = 0;
-        public void DisplayMessageDecoded(object sender, MessageDecodedArgs e)
+        public void DisplayMessageDecoded(object sender, MessageByteArgs e)
         {
             nbMsgReceived += 1;
         }
         
         int nbMsgReceivedErrors = 0;
-        public void DisplayMessageDecodedError(object sender, MessageDecodedArgs e)
+        public void DisplayMessageDecodedError(object sender, MessageByteArgs e)
         {
             nbMsgReceivedErrors += 1;
         }

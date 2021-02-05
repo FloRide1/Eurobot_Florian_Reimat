@@ -38,6 +38,7 @@ using SciChart.Charting.Visuals.Axes.LogarithmicAxis;
 using SciChart.Charting.Visuals.PointMarkers;
 using SciChart.Charting.Visuals.RenderableSeries;
 using SciChart.Charting.Visuals.RenderableSeries.Animations;
+using SciChart.Charting.Visuals.RenderableSeries.DrawingProviders;
 using SciChart.Charting.Visuals.Shapes;
 using SciChart.Charting.Visuals.TradeChart;
 using SciChart.Charting.Visuals.TradeChart.MultiPane;

@@ -1,0 +1,9 @@
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\bin\Debug\netstandard2.0\Protocol_Security.deps.json
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\bin\Debug\netstandard2.0\Protocol_Security.dll
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\bin\Debug\netstandard2.0\Protocol_Security.pdb
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.csprojAssemblyReference.cache
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.AssemblyInfoInputs.cache
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.AssemblyInfo.cs
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.csproj.CoreCompileInputs.cache
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.dll
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.pdb

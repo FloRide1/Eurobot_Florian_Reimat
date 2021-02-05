@@ -65,6 +65,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands.cs" />
+    <Compile Include="ConstVar.cs" />
     <Compile Include="RoboCupDefs.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Id.cs" />

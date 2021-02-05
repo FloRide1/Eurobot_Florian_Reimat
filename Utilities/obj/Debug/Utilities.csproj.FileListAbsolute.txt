@@ -21,3 +21,15 @@ C:\Github\ProjetRobotPhase3\Utilities\obj\Debug\Utilities.csprojAssemblyReferenc
 C:\Github\ProjetRobotPhase3\Utilities\obj\Debug\Utilities.csproj.CopyComplete
 C:\Github\ProjetRobotPhase3\Utilities\obj\Debug\Utilities.dll
 C:\Github\ProjetRobotPhase3\Utilities\obj\Debug\Utilities.pdb
+C:\Github\Eurobot_Florian_Reimat\Utilities\bin\Debug\Utilities.dll
+C:\Github\Eurobot_Florian_Reimat\Utilities\bin\Debug\Utilities.pdb
+C:\Github\Eurobot_Florian_Reimat\Utilities\bin\Debug\Newtonsoft.Json.dll
+C:\Github\Eurobot_Florian_Reimat\Utilities\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Github\Eurobot_Florian_Reimat\Utilities\bin\Debug\ICSharpCode.SharpZipLib.pdb
+C:\Github\Eurobot_Florian_Reimat\Utilities\bin\Debug\ZeroFormatter.dll
+C:\Github\Eurobot_Florian_Reimat\Utilities\bin\Debug\ZeroFormatter.Interfaces.dll
+C:\Github\Eurobot_Florian_Reimat\Utilities\obj\Debug\Utilities.csproj.CoreCompileInputs.cache
+C:\Github\Eurobot_Florian_Reimat\Utilities\obj\Debug\Utilities.csproj.CopyComplete
+C:\Github\Eurobot_Florian_Reimat\Utilities\obj\Debug\Utilities.dll
+C:\Github\Eurobot_Florian_Reimat\Utilities\obj\Debug\Utilities.pdb
+C:\Github\Eurobot_Florian_Reimat\Utilities\obj\Debug\Utilities.csprojAssemblyReference.cache

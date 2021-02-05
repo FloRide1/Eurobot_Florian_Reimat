@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "H9nU0OhpMzodtY/Hyqvw1LHbFhsnN29LoKKQPM76DzNvFcY6+lc3dwbG9QgohVBnAbRtZTXvykm5hNDH/q64IA==",
+  "success": true,
+  "projectFilePath": "C:\\Github\\Eurobot_Florian_Reimat\\ConsoleFormat\\ConsoleFormat.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\TABLE 6\\.nuget\\packages\\microsoft.netcore.platforms\\1.1.0\\microsoft.netcore.platforms.1.1.0.nupkg.sha512",
+    "C:\\Users\\TABLE 6\\.nuget\\packages\\netstandard.library\\2.0.3\\netstandard.library.2.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

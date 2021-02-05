@@ -33,3 +33,17 @@ C:\Github\ProjetRobotPhase3\WorldMap\bin\Debug\ICSharpCode.SharpZipLib.pdb
 C:\Github\ProjetRobotPhase3\WorldMap\obj\Debug\WorldMap.csproj.CopyComplete
 C:\Github\ProjetRobotPhase3\WorldMap\obj\Debug\WorldMap.dll
 C:\Github\ProjetRobotPhase3\WorldMap\obj\Debug\WorldMap.pdb
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\WorldMap.dll
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\WorldMap.pdb
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\Constants.dll
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\Utilities.dll
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\Constants.pdb
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\Utilities.pdb
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\ICSharpCode.SharpZipLib.pdb
+C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.csprojAssemblyReference.cache
+C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.csproj.CoreCompileInputs.cache
+C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.csproj.CopyComplete
+C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.dll
+C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.pdb
+C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\Newtonsoft.Json.xml

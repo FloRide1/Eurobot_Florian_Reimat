@@ -9,3 +9,9 @@ C:\Github\ProjetRobotPhase3\Constants\bin\Debug\Constants.pdb
 C:\Github\ProjetRobotPhase3\Constants\obj\Debug\Constants.csprojAssemblyReference.cache
 C:\Github\ProjetRobotPhase3\Constants\obj\Debug\Constants.dll
 C:\Github\ProjetRobotPhase3\Constants\obj\Debug\Constants.pdb
+C:\Github\Eurobot_Florian_Reimat\Constants\bin\Debug\Constants.dll
+C:\Github\Eurobot_Florian_Reimat\Constants\bin\Debug\Constants.pdb
+C:\Github\Eurobot_Florian_Reimat\Constants\obj\Debug\Constants.csproj.CoreCompileInputs.cache
+C:\Github\Eurobot_Florian_Reimat\Constants\obj\Debug\Constants.dll
+C:\Github\Eurobot_Florian_Reimat\Constants\obj\Debug\Constants.pdb
+C:\Github\Eurobot_Florian_Reimat\Constants\obj\Debug\Constants.csprojAssemblyReference.cache

@@ -2,20 +2,6 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.8": {
-      "Emgu.CV/4.4.0.4099": {
-        "type": "package",
-        "dependencies": {
-          "System.Drawing.Primitives": "4.3.0",
-          "System.Runtime": "4.3.1",
-          "System.Runtime.InteropServices.RuntimeInformation": "4.3.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll": {}
-        }
-      },
       "Newtonsoft.Json/12.0.3": {
         "type": "package",
         "compile": {
@@ -32,53 +18,6 @@
         },
         "runtime": {
           "lib/net45/ICSharpCode.SharpZipLib.dll": {}
-        }
-      },
-      "System.Drawing.Primitives/4.3.0": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "System.Drawing",
-          "mscorlib"
-        ],
-        "compile": {
-          "ref/net45/System.Drawing.Primitives.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Drawing.Primitives.dll": {}
-        }
-      },
-      "System.Runtime/4.3.1": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "System",
-          "System.ComponentModel.Composition",
-          "System.Core",
-          "mscorlib"
-        ],
-        "compile": {
-          "ref/net462/System.Runtime.dll": {}
-        },
-        "runtime": {
-          "lib/net462/System.Runtime.dll": {}
-        }
-      },
-      "System.Runtime.InteropServices.RuntimeInformation/4.3.0": {
-        "type": "package",
-        "compile": {
-          "ref/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {}
-        },
-        "runtimeTargets": {
-          "runtimes/unix/lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll": {
-            "assetType": "runtime",
-            "rid": "unix"
-          },
-          "runtimes/win/lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {
-            "assetType": "runtime",
-            "rid": "win"
-          }
         }
       },
       "ZeroFormatter/1.6.4": {
@@ -148,20 +87,6 @@
       }
     },
     ".NETFramework,Version=v4.8/win": {
-      "Emgu.CV/4.4.0.4099": {
-        "type": "package",
-        "dependencies": {
-          "System.Drawing.Primitives": "4.3.0",
-          "System.Runtime": "4.3.1",
-          "System.Runtime.InteropServices.RuntimeInformation": "4.3.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll": {}
-        }
-      },
       "Newtonsoft.Json/12.0.3": {
         "type": "package",
         "compile": {
@@ -178,43 +103,6 @@
         },
         "runtime": {
           "lib/net45/ICSharpCode.SharpZipLib.dll": {}
-        }
-      },
-      "System.Drawing.Primitives/4.3.0": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "System.Drawing",
-          "mscorlib"
-        ],
-        "compile": {
-          "ref/net45/System.Drawing.Primitives.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Drawing.Primitives.dll": {}
-        }
-      },
-      "System.Runtime/4.3.1": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "System",
-          "System.ComponentModel.Composition",
-          "System.Core",
-          "mscorlib"
-        ],
-        "compile": {
-          "ref/net462/System.Runtime.dll": {}
-        },
-        "runtime": {
-          "lib/net462/System.Runtime.dll": {}
-        }
-      },
-      "System.Runtime.InteropServices.RuntimeInformation/4.3.0": {
-        "type": "package",
-        "compile": {
-          "ref/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll": {}
-        },
-        "runtime": {
-          "runtimes/win/lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {}
         }
       },
       "ZeroFormatter/1.6.4": {
@@ -284,20 +172,6 @@
       }
     },
     ".NETFramework,Version=v4.8/win-x64": {
-      "Emgu.CV/4.4.0.4099": {
-        "type": "package",
-        "dependencies": {
-          "System.Drawing.Primitives": "4.3.0",
-          "System.Runtime": "4.3.1",
-          "System.Runtime.InteropServices.RuntimeInformation": "4.3.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll": {}
-        }
-      },
       "Newtonsoft.Json/12.0.3": {
         "type": "package",
         "compile": {
@@ -314,43 +188,6 @@
         },
         "runtime": {
           "lib/net45/ICSharpCode.SharpZipLib.dll": {}
-        }
-      },
-      "System.Drawing.Primitives/4.3.0": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "System.Drawing",
-          "mscorlib"
-        ],
-        "compile": {
-          "ref/net45/System.Drawing.Primitives.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Drawing.Primitives.dll": {}
-        }
-      },
-      "System.Runtime/4.3.1": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "System",
-          "System.ComponentModel.Composition",
-          "System.Core",
-          "mscorlib"
-        ],
-        "compile": {
-          "ref/net462/System.Runtime.dll": {}
-        },
-        "runtime": {
-          "lib/net462/System.Runtime.dll": {}
-        }
-      },
-      "System.Runtime.InteropServices.RuntimeInformation/4.3.0": {
-        "type": "package",
-        "compile": {
-          "ref/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {}
         }
       },
       "ZeroFormatter/1.6.4": {
@@ -420,20 +257,6 @@
       }
     },
     ".NETFramework,Version=v4.8/win-x86": {
-      "Emgu.CV/4.4.0.4099": {
-        "type": "package",
-        "dependencies": {
-          "System.Drawing.Primitives": "4.3.0",
-          "System.Runtime": "4.3.1",
-          "System.Runtime.InteropServices.RuntimeInformation": "4.3.0"
-        },
-        "compile": {
-          "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll": {}
-        },
-        "runtime": {
-          "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll": {}
-        }
-      },
       "Newtonsoft.Json/12.0.3": {
         "type": "package",
         "compile": {
@@ -450,43 +273,6 @@
         },
         "runtime": {
           "lib/net45/ICSharpCode.SharpZipLib.dll": {}
-        }
-      },
-      "System.Drawing.Primitives/4.3.0": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "System.Drawing",
-          "mscorlib"
-        ],
-        "compile": {
-          "ref/net45/System.Drawing.Primitives.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Drawing.Primitives.dll": {}
-        }
-      },
-      "System.Runtime/4.3.1": {
-        "type": "package",
-        "frameworkAssemblies": [
-          "System",
-          "System.ComponentModel.Composition",
-          "System.Core",
-          "mscorlib"
-        ],
-        "compile": {
-          "ref/net462/System.Runtime.dll": {}
-        },
-        "runtime": {
-          "lib/net462/System.Runtime.dll": {}
-        }
-      },
-      "System.Runtime.InteropServices.RuntimeInformation/4.3.0": {
-        "type": "package",
-        "compile": {
-          "ref/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll": {}
-        },
-        "runtime": {
-          "lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll": {}
         }
       },
       "ZeroFormatter/1.6.4": {
@@ -557,23 +343,6 @@
     }
   },
   "libraries": {
-    "Emgu.CV/4.4.0.4099": {
-      "sha512": "aEZQiPobTIkd5oG2q+qgO/bAsocnplq8jU70e/PqlkBAMfshlwFk6c/IOkoEAtx4PANvdx72fOE0vhe+frLsnA==",
-      "type": "package",
-      "path": "emgu.cv/4.4.0.4099",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "LICENSE.txt",
-        "emgu.cv.4.4.0.4099.nupkg.sha512",
-        "emgu.cv.nuspec",
-        "icon.png",
-        "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.dll",
-        "lib/netstandard2.0/Emgu.CV.Platform.NetStandard.xml",
-        "lib/xamarinios10/Emgu.CV.Platform.NetStandard.dll",
-        "lib/xamarinios10/Emgu.CV.Platform.NetStandard.xml"
-      ]
-    },
     "Newtonsoft.Json/12.0.3": {
       "sha512": "6mgjfnRB4jKMlzHSl+VD+oUc1IebOZabkbyWj2RiTgWwYPPuaK1H97G1sHqGwPlS5npiF5Q0OrxN1wni2n5QWg==",
       "type": "package",
@@ -621,162 +390,6 @@
         "lib/netstandard2.0/ICSharpCode.SharpZipLib.xml",
         "sharpziplib.1.3.1.nupkg.sha512",
         "sharpziplib.nuspec"
-      ]
-    },
-    "System.Drawing.Primitives/4.3.0": {
-      "sha512": "1QU/c35gwdhvj77fkScXQQbjiVAqIL3fEYn/19NE0CV/ic5TN5PyWAft8HsrbRd4SBLEoErNCkWSzMDc0MmbRw==",
-      "type": "package",
-      "path": "system.drawing.primitives/4.3.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net45/System.Drawing.Primitives.dll",
-        "lib/netstandard1.1/System.Drawing.Primitives.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net45/System.Drawing.Primitives.dll",
-        "ref/netstandard1.1/System.Drawing.Primitives.dll",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "system.drawing.primitives.4.3.0.nupkg.sha512",
-        "system.drawing.primitives.nuspec"
-      ]
-    },
-    "System.Runtime/4.3.1": {
-      "sha512": "abhfv1dTK6NXOmu4bgHIONxHyEqFjW8HwXPmpY9gmll+ix9UNo4XDcmzJn6oLooftxNssVHdJC1pGT9jkSynQg==",
-      "type": "package",
-      "path": "system.runtime/4.3.1",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net45/_._",
-        "lib/net462/System.Runtime.dll",
-        "lib/portable-net45+win8+wp80+wpa81/_._",
-        "lib/win8/_._",
-        "lib/wp80/_._",
-        "lib/wpa81/_._",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/net45/_._",
-        "ref/net462/System.Runtime.dll",
-        "ref/netcore50/System.Runtime.dll",
-        "ref/netcore50/System.Runtime.xml",
-        "ref/netcore50/de/System.Runtime.xml",
-        "ref/netcore50/es/System.Runtime.xml",
-        "ref/netcore50/fr/System.Runtime.xml",
-        "ref/netcore50/it/System.Runtime.xml",
-        "ref/netcore50/ja/System.Runtime.xml",
-        "ref/netcore50/ko/System.Runtime.xml",
-        "ref/netcore50/ru/System.Runtime.xml",
-        "ref/netcore50/zh-hans/System.Runtime.xml",
-        "ref/netcore50/zh-hant/System.Runtime.xml",
-        "ref/netstandard1.0/System.Runtime.dll",
-        "ref/netstandard1.0/System.Runtime.xml",
-        "ref/netstandard1.0/de/System.Runtime.xml",
-        "ref/netstandard1.0/es/System.Runtime.xml",
-        "ref/netstandard1.0/fr/System.Runtime.xml",
-        "ref/netstandard1.0/it/System.Runtime.xml",
-        "ref/netstandard1.0/ja/System.Runtime.xml",
-        "ref/netstandard1.0/ko/System.Runtime.xml",
-        "ref/netstandard1.0/ru/System.Runtime.xml",
-        "ref/netstandard1.0/zh-hans/System.Runtime.xml",
-        "ref/netstandard1.0/zh-hant/System.Runtime.xml",
-        "ref/netstandard1.2/System.Runtime.dll",
-        "ref/netstandard1.2/System.Runtime.xml",
-        "ref/netstandard1.2/de/System.Runtime.xml",
-        "ref/netstandard1.2/es/System.Runtime.xml",
-        "ref/netstandard1.2/fr/System.Runtime.xml",
-        "ref/netstandard1.2/it/System.Runtime.xml",
-        "ref/netstandard1.2/ja/System.Runtime.xml",
-        "ref/netstandard1.2/ko/System.Runtime.xml",
-        "ref/netstandard1.2/ru/System.Runtime.xml",
-        "ref/netstandard1.2/zh-hans/System.Runtime.xml",
-        "ref/netstandard1.2/zh-hant/System.Runtime.xml",
-        "ref/netstandard1.3/System.Runtime.dll",
-        "ref/netstandard1.3/System.Runtime.xml",
-        "ref/netstandard1.3/de/System.Runtime.xml",
-        "ref/netstandard1.3/es/System.Runtime.xml",
-        "ref/netstandard1.3/fr/System.Runtime.xml",
-        "ref/netstandard1.3/it/System.Runtime.xml",
-        "ref/netstandard1.3/ja/System.Runtime.xml",
-        "ref/netstandard1.3/ko/System.Runtime.xml",
-        "ref/netstandard1.3/ru/System.Runtime.xml",
-        "ref/netstandard1.3/zh-hans/System.Runtime.xml",
-        "ref/netstandard1.3/zh-hant/System.Runtime.xml",
-        "ref/netstandard1.5/System.Runtime.dll",
-        "ref/netstandard1.5/System.Runtime.xml",
-        "ref/netstandard1.5/de/System.Runtime.xml",
-        "ref/netstandard1.5/es/System.Runtime.xml",
-        "ref/netstandard1.5/fr/System.Runtime.xml",
-        "ref/netstandard1.5/it/System.Runtime.xml",
-        "ref/netstandard1.5/ja/System.Runtime.xml",
-        "ref/netstandard1.5/ko/System.Runtime.xml",
-        "ref/netstandard1.5/ru/System.Runtime.xml",
-        "ref/netstandard1.5/zh-hans/System.Runtime.xml",
-        "ref/netstandard1.5/zh-hant/System.Runtime.xml",
-        "ref/portable-net45+win8+wp80+wpa81/_._",
-        "ref/win8/_._",
-        "ref/wp80/_._",
-        "ref/wpa81/_._",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "system.runtime.4.3.1.nupkg.sha512",
-        "system.runtime.nuspec"
-      ]
-    },
-    "System.Runtime.InteropServices.RuntimeInformation/4.3.0": {
-      "sha512": "cbz4YJMqRDR7oLeMRbdYv7mYzc++17lNhScCX0goO2XpGWdvAt60CGN+FHdePUEHCe/Jy9jUlvNAiNdM+7jsOw==",
-      "type": "package",
-      "path": "system.runtime.interopservices.runtimeinformation/4.3.0",
-      "files": [
-        ".nupkg.metadata",
-        ".signature.p7s",
-        "ThirdPartyNotices.txt",
-        "dotnet_library_license.txt",
-        "lib/MonoAndroid10/_._",
-        "lib/MonoTouch10/_._",
-        "lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "lib/win8/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "lib/wpa81/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "lib/xamarinios10/_._",
-        "lib/xamarinmac20/_._",
-        "lib/xamarintvos10/_._",
-        "lib/xamarinwatchos10/_._",
-        "ref/MonoAndroid10/_._",
-        "ref/MonoTouch10/_._",
-        "ref/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "ref/xamarinios10/_._",
-        "ref/xamarinmac20/_._",
-        "ref/xamarintvos10/_._",
-        "ref/xamarinwatchos10/_._",
-        "runtimes/aot/lib/netcore50/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "runtimes/unix/lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "runtimes/win/lib/net45/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "runtimes/win/lib/netcore50/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "runtimes/win/lib/netstandard1.1/System.Runtime.InteropServices.RuntimeInformation.dll",
-        "system.runtime.interopservices.runtimeinformation.4.3.0.nupkg.sha512",
-        "system.runtime.interopservices.runtimeinformation.nuspec"
       ]
     },
     "ZeroFormatter/1.6.4": {
@@ -829,26 +442,25 @@
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.8": [
       "Constants >= 1.0.0",
-      "Emgu.CV >= 4.4.0.4099",
       "Utilities >= 1.0.0",
       "WorldMap >= 1.0.0"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\GEII Robot\\.nuget\\packages\\": {}
+    "C:\\Users\\TABLE 6\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\EventArgsLibrary.csproj",
+      "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\EventArgsLibrary\\EventArgsLibrary.csproj",
       "projectName": "EventArgsLibrary",
-      "projectPath": "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\EventArgsLibrary.csproj",
-      "packagesPath": "C:\\Users\\GEII Robot\\.nuget\\packages\\",
-      "outputPath": "C:\\Github\\ProjetRobotPhase3\\EventArgsLibrary\\obj\\",
+      "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\EventArgsLibrary\\EventArgsLibrary.csproj",
+      "packagesPath": "C:\\Users\\TABLE 6\\.nuget\\packages\\",
+      "outputPath": "C:\\Github\\Eurobot_Florian_Reimat\\EventArgsLibrary\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [
-        "C:\\Users\\GEII Robot\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\TABLE 6\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -861,28 +473,21 @@
       "frameworks": {
         "net48": {
           "projectReferences": {
-            "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj": {
-              "projectPath": "C:\\Github\\ProjetRobotPhase3\\Constants\\Constants.csproj"
+            "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj": {
+              "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj"
             },
-            "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj": {
-              "projectPath": "C:\\Github\\ProjetRobotPhase3\\Utilities\\Utilities.csproj"
+            "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj": {
+              "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Utilities\\Utilities.csproj"
             },
-            "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj": {
-              "projectPath": "C:\\Github\\ProjetRobotPhase3\\WorldMap\\WorldMap.csproj"
+            "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj": {
+              "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\WorldMap\\WorldMap.csproj"
             }
           }
         }
       }
     },
     "frameworks": {
-      "net48": {
-        "dependencies": {
-          "Emgu.CV": {
-            "target": "Package",
-            "version": "[4.4.0.4099, )"
-          }
-        }
-      }
+      "net48": {}
     },
     "runtimes": {
       "win": {

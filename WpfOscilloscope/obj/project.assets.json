@@ -2,7 +2,7 @@
   "version": 3,
   "targets": {
     ".NETFramework,Version=v4.8": {
-      "SciChart/6.2.1.13304": {
+      "SciChart/6.3.0.13476": {
         "type": "package",
         "compile": {
           "lib/net452/SciChart.Charting.dll": {},
@@ -19,7 +19,7 @@
       }
     },
     ".NETFramework,Version=v4.8/win": {
-      "SciChart/6.2.1.13304": {
+      "SciChart/6.3.0.13476": {
         "type": "package",
         "compile": {
           "lib/net452/SciChart.Charting.dll": {},
@@ -36,7 +36,7 @@
       }
     },
     ".NETFramework,Version=v4.8/win-x64": {
-      "SciChart/6.2.1.13304": {
+      "SciChart/6.3.0.13476": {
         "type": "package",
         "compile": {
           "lib/net452/SciChart.Charting.dll": {},
@@ -53,7 +53,7 @@
       }
     },
     ".NETFramework,Version=v4.8/win-x86": {
-      "SciChart/6.2.1.13304": {
+      "SciChart/6.3.0.13476": {
         "type": "package",
         "compile": {
           "lib/net452/SciChart.Charting.dll": {},
@@ -71,10 +71,10 @@
     }
   },
   "libraries": {
-    "SciChart/6.2.1.13304": {
-      "sha512": "ucTTWyZfoWd3uc/ypb0WMCv/biqz4TuXQnaxdpfbT4qkCpZW1JJN9YbbA4gPHigiR8GC9tkX276UdKXU3lBrQg==",
+    "SciChart/6.3.0.13476": {
+      "sha512": "jRVfSTF9ZttN/wmikYElCKwzHDISvHuzwFV9xgUwtLrBEsizV7NSp/JFqJ1g1GF+9AC6t47r4OOWNywHYjtgbA==",
       "type": "package",
-      "path": "scichart/6.2.1.13304",
+      "path": "scichart/6.3.0.13476",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -88,39 +88,39 @@
         "lib/net452/SciChart.Data.xml",
         "lib/net452/SciChart.Drawing.dll",
         "lib/net452/SciChart.Drawing.xml",
-        "lib/netcoreapp3.0/SciChart.Charting.dll",
-        "lib/netcoreapp3.0/SciChart.Charting.xml",
-        "lib/netcoreapp3.0/SciChart.Core.dll",
-        "lib/netcoreapp3.0/SciChart.Core.xml",
-        "lib/netcoreapp3.0/SciChart.Data.dll",
-        "lib/netcoreapp3.0/SciChart.Data.xml",
-        "lib/netcoreapp3.0/SciChart.Drawing.dll",
-        "lib/netcoreapp3.0/SciChart.Drawing.xml",
-        "scichart.6.2.1.13304.nupkg.sha512",
+        "lib/netcoreapp3.1/SciChart.Charting.dll",
+        "lib/netcoreapp3.1/SciChart.Charting.xml",
+        "lib/netcoreapp3.1/SciChart.Core.dll",
+        "lib/netcoreapp3.1/SciChart.Core.xml",
+        "lib/netcoreapp3.1/SciChart.Data.dll",
+        "lib/netcoreapp3.1/SciChart.Data.xml",
+        "lib/netcoreapp3.1/SciChart.Drawing.dll",
+        "lib/netcoreapp3.1/SciChart.Drawing.xml",
+        "scichart.6.3.0.13476.nupkg.sha512",
         "scichart.nuspec"
       ]
     }
   },
   "projectFileDependencyGroups": {
     ".NETFramework,Version=v4.8": [
-      "SciChart >= 6.2.1.13304"
+      "SciChart >= 6.3.0.13476"
     ]
   },
   "packageFolders": {
-    "C:\\Users\\GEII Robot\\.nuget\\packages\\": {}
+    "C:\\Users\\TABLE 6\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Github\\ProjetRobotPhase3\\WpfOscilloscope\\WpfOscilloscopeControl.csproj",
+      "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\WpfOscilloscope\\WpfOscilloscopeControl.csproj",
       "projectName": "WpfOscilloscopeControl",
-      "projectPath": "C:\\Github\\ProjetRobotPhase3\\WpfOscilloscope\\WpfOscilloscopeControl.csproj",
-      "packagesPath": "C:\\Users\\GEII Robot\\.nuget\\packages\\",
-      "outputPath": "C:\\Github\\ProjetRobotPhase3\\WpfOscilloscope\\obj\\",
+      "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\WpfOscilloscope\\WpfOscilloscopeControl.csproj",
+      "packagesPath": "C:\\Users\\TABLE 6\\.nuget\\packages\\",
+      "outputPath": "C:\\Github\\Eurobot_Florian_Reimat\\WpfOscilloscope\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [
-        "C:\\Users\\GEII Robot\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\TABLE 6\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -141,7 +141,7 @@
         "dependencies": {
           "SciChart": {
             "target": "Package",
-            "version": "[6.2.1.13304, )"
+            "version": "[6.3.0.13476, )"
           }
         }
       }
