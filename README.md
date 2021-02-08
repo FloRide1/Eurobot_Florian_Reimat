@@ -20,6 +20,9 @@ of this project is  pretty similar to the source.
 	- [ ] Handle Multiple Waypoints 
 	- [ ] Preview Trajectory Planner before applying
 	- [ ] Improve Ghost Preview
+	- [ ] Add Rack State Wpf Controller
+	- [ ] Add Points Estimation Wpf Controller
+	- [ ] Make an only Match Wpf Controller
 - [ ] Make an Strategy Manager
 
 ## Explanation of Project
