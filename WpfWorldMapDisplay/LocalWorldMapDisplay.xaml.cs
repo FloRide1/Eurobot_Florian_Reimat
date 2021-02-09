@@ -174,7 +174,7 @@ namespace WpfWorldMapDisplay
 
             if (sciChartSurface.RenderSurface.GetType() == typeof(VisualXcceleratorRenderSurface))
             {
-                Console.WriteLine("Scichart LocalWorldMapDisplay : DirectX enabled");
+                // Console.WriteLine("Scichart LocalWorldMapDisplay : DirectX enabled");
             }
         }
 
@@ -493,7 +493,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateRobotLocation : Robot non trouvé");
+                // Console.WriteLine("UpdateRobotLocation : Robot non trouvé");
             }
         }
         private void UpdateRobotRole(int robotId, RoboCupRobotRole role)
@@ -504,7 +504,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateRobotRole : Robot non trouvé");
+                // Console.WriteLine("UpdateRobotRole : Robot non trouvé");
             }
         }
         private void UpdatePlayingSide(int robotId, PlayingSide playSide)
@@ -515,7 +515,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdatePlayingSide : Robot non trouvé");
+                // Console.WriteLine("UpdatePlayingSide : Robot non trouvé");
             }
         }
 
@@ -529,7 +529,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateRobotGhostLocation : Robot non trouvé");
+                // Console.WriteLine("UpdateRobotGhostLocation : Robot non trouvé");
             }
         }
 
@@ -638,7 +638,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateOpponentsLocation : Robot non trouvé");
+                // Console.WriteLine("UpdateOpponentsLocation : Robot non trouvé");
             }
         }
 
@@ -1010,7 +1010,7 @@ namespace WpfWorldMapDisplay
         {
             if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
             {
-                Console.WriteLine("CTRL+Click");
+                // Console.WriteLine("CTRL+Click");
                 // Perform the hit test relative to the GridLinesPanel
                 var hitTestPoint = e.GetPosition(sciChartSurface.GridLinesPanel as UIElement);
                 foreach (var serie in sciChartSurface.RenderableSeries)
@@ -1028,7 +1028,7 @@ namespace WpfWorldMapDisplay
                         var xHeatMap = xmin + (xmax - xmin) * hitTestPoint.X / width;
                         var yHeatMap = -(ymin + (ymax - ymin) * hitTestPoint.Y / height);
                         
-                        Console.WriteLine("Click on : x=" + xHeatMap + " - y=" + yHeatMap);
+                        // Console.WriteLine("Click on : x=" + xHeatMap + " - y=" + yHeatMap);
                         OnCtrlClickOnHeatMap(xHeatMap, yHeatMap);
                     }
                 }

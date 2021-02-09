@@ -1,7 +1,7 @@
 ﻿using System;
 using EventArgsLibrary;
 
-namespace ConsoleFormat
+namespace ConsoleFormatNS
 {
     public class ConsoleFormat
     {

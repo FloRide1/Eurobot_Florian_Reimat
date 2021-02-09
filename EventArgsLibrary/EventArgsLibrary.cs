@@ -67,6 +67,7 @@ namespace EventArgsLibrary
         public ushort MsgFunction { get; set; }
         public ushort MsgPayloadLength { get; set; }
         public byte[] MsgPayload { get; set; }
+        public byte[] MsgTotal { get; set; }
 
         public MessageByteArgs(byte SOF_a, byte functionMsb_a, byte functionLsb_a, byte lenghtMsb_a, byte lenghtLsb_a, byte[] msgPaylaod_a, byte checksum_a)
         {
@@ -78,6 +79,7 @@ namespace EventArgsLibrary
             MsgPayload = msgPaylaod_a;
             checksum = checksum_a;
             ConvertByteToFunction();
+            GetTotalMessage();
         }
 
         public MessageByteArgs(ushort msgFunction_a, ushort msgPayloadLenght_a, byte[] msgPayload_a, byte checksum_a)
@@ -87,6 +89,7 @@ namespace EventArgsLibrary
             MsgPayload = msgPayload_a;
             checksum = checksum_a;
             ConvertFunctionToByte();
+            GetTotalMessage();
         }
         private void ConvertByteToFunction()
         {
@@ -101,6 +104,16 @@ namespace EventArgsLibrary
 
             lenghtLsb = (byte)(MsgPayloadLength >> 0);
             lenghtMsb = (byte)(MsgPayloadLength >> 8);
+        }
+
+        private void GetTotalMessage()
+        {
+            MsgTotal = new byte[] { (byte)MsgFunction, (byte)MsgPayloadLength };
+            foreach (byte element in MsgPayload)
+            {
+                MsgTotal.Append(element);
+            }
+            MsgTotal.Append(checksum);
         }
     }
     public class DecodePayloadArgs : EventArgs

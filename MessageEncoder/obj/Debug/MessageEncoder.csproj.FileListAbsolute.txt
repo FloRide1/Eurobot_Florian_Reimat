@@ -60,3 +60,5 @@ C:\Github\Eurobot_Florian_Reimat\MessageEncoder\obj\Debug\MessageEncoder.csproj.
 C:\Github\Eurobot_Florian_Reimat\MessageEncoder\obj\Debug\MessageEncoder.dll
 C:\Github\Eurobot_Florian_Reimat\MessageEncoder\obj\Debug\MessageEncoder.pdb
 C:\Github\Eurobot_Florian_Reimat\MessageEncoder\obj\Debug\MessageEncoder.csprojAssemblyReference.cache
+C:\Github\Eurobot_Florian_Reimat\MessageEncoder\bin\Debug\Protocol_Security.dll
+C:\Github\Eurobot_Florian_Reimat\MessageEncoder\bin\Debug\Protocol_Security.pdb

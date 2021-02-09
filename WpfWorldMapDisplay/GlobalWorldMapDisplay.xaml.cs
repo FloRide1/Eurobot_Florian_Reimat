@@ -258,7 +258,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateRobotRole : Robot non trouvé");
+                // Console.WriteLine("UpdateRobotRole : Robot non trouvé");
             }
         }
         private void UpdateDisplayMessage(int robotId, string message)
@@ -269,7 +269,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateDisplayMessage : Robot non trouvé");
+                // Console.WriteLine("UpdateDisplayMessage : Robot non trouvé");
             }
         }
         private void UpdatePlayingSide(int robotId, PlayingSide playSide)
@@ -280,7 +280,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateRobotPlayingSide : Robot non trouvé");
+                // Console.WriteLine("UpdateRobotPlayingSide : Robot non trouvé");
             }
         }
         private void UpdateRobotLocation(int robotId, Location location)
@@ -293,7 +293,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateRobotLocation : Robot non trouvé");
+                // Console.WriteLine("UpdateRobotLocation : Robot non trouvé");
             }
         }
 
@@ -307,7 +307,7 @@ namespace WpfWorldMapDisplay
             }
             else
             {
-                Console.WriteLine("UpdateRobotGhostLocation : Robot non trouvé");
+                // Console.WriteLine("UpdateRobotGhostLocation : Robot non trouvé");
             }
         }
 

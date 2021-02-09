@@ -12,7 +12,7 @@ using XBoxControllerNS;
 using Constants;
 using StrategyManagerProjetEtudiantNS;
 using SciChart.Charting.Visuals;
-using ConsoleFormat;
+using ConsoleFormatNS;
 
 namespace RobotEurobot2Roues
 {
@@ -25,7 +25,7 @@ namespace RobotEurobot2Roues
         static MsgProcessor msgProcessor;
         static XBoxController xBoxManette;
         static StrategyGenerique strategyManager;
-        // static ConsoleFormat consoleFormat;
+        static ConsoleFormat consoleFormat;
 
         static WpfRobot2RouesInterface interfaceRobot;
         static GameMode competition = GameMode.Eurobot;
@@ -39,7 +39,7 @@ namespace RobotEurobot2Roues
 
 
             /// Enregistrement de la license SciChart en début de code
-            SciChartSurface.SetRuntimeLicenseKey("RJWA77RbaJDdCRJpg4Iunl5Or6/FPX1xT+Gzu495Eaa0ZahxWi3jkNFDjUb/w70cHXyv7viRTjiNRrYqnqGA+Dc/yzIIzTJlf1s4DJvmQc8TCSrH7MBeQ2ON5lMs/vO0p6rBlkaG+wwnJk7cp4PbOKCfEQ4NsMb8cT9nckfdcWmaKdOQNhHsrw+y1oMR7rIH+rGes0jGGttRDhTOBxwUJK2rBA9Z9PDz2pGOkPjy9fwQ4YY2V4WPeeqM+6eYxnDZ068mnSCPbEnBxpwAldwXTyeWdXv8sn3Dikkwt3yqphQxvs0h6a8Dd6K/9UYni3o8pRkTed6SWodQwICcewfHTyGKQowz3afARj07et2h+becxowq3cRHL+76RyukbIXMfAqLYoT2UzDJNsZqcPPq/kxeXujuhT4SrNF3444MU1GaZZ205KYEMFlz7x/aEnjM6p3BuM6ZuO3Fjf0A0Ki/NBfS6n20E07CTGRtI6AsM2m59orPpI8+24GFlJ9xGTjoRA==");
+            SciChartSurface.SetRuntimeLicenseKey(ConstVar.SCICHART_RUNTIME_KEY);
 
             /// Initialisation des modules utilisés dans le robot
             int robotId = 0;
@@ -54,17 +54,17 @@ namespace RobotEurobot2Roues
             strategyManager = new StrategyEurobot(robotId, teamId, "224.16.32.79");
 
             /// Création des liens entre module, sauf depuis et vers l'interface graphique           
-            usbDriver.OnUSBByteReceivedEvent += msgDecoder.ByteReceived;                                   // Transmission des messages reçus par l'USB au Message Decoder
-            msgDecoder.OnCorrectMessageReceivedEvent += msgProcessor.ProcessRobotDecodedMessage;                   // Transmission les messages décodés par le Message Decoder au Message Processor
+            usbDriver.OnUSBByteReceivedEvent += msgDecoder.ByteReceived;                                    // Transmission des messages reçus par l'USB au Message Decoder
+            msgDecoder.OnCorrectMessageReceivedEvent += msgProcessor.ProcessRobotDecodedMessage;            // Transmission les messages décodés par le Message Decoder au Message Processor
+
+            msgGenerator.OnMessageToRobotGeneratedEvent += msgEncoder.EncodeAndSendMessage;                 // Envoi des messages du générateur de message à l'encoder
+            msgEncoder.OnSendMessageEvent += usbDriver.SendUSBMessage;                                      // Envoi des messages en USB depuis le message encoder
 
             strategyManager.On2WheelsToPolarMatrixSetupEvent += msgGenerator.GenerateMessage2WheelsToPolarMatrixSet;   //Transmission des messages de set-up de la matrice de transformation moteurindepeandt -> polaire en embarqué
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
             strategyManager.OnOdometryPointToMeterSetupEvent += msgGenerator.GenerateMessageOdometryPointToMeter;      //Transmission des messages de set-up du coeff pointToMeter en embarqué
-
-            msgGenerator.OnMessageToRobotGeneratedEvent += msgEncoder.EncodeMessageToRobot;                // Envoi des messages du générateur de message à l'encoder
-            msgEncoder.OnMessageEncodedEvent += usbDriver.SendUSBMessage;                                       // Envoi des messages en USB depuis le message encoder
-
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
+
 
             StartRobotInterface();
 
@@ -180,12 +180,12 @@ namespace RobotEurobot2Roues
         //Gestion de la terminaison de l'application de manière propre
         private static bool Handler(CtrlType sig)
         {
-            Console.WriteLine("Existing on CTRL+C or process kill or shutdown...");
+            // Console.WriteLine("Existing on CTRL+C or process kill or shutdown...");
 
             //Nettoyage des process à faire ici
             //serialPort1.Close();
 
-            Console.WriteLine("Nettoyage effectué");
+            // Console.WriteLine("Nettoyage effectué");
             exitSystem = true;
 
             //Sortie

@@ -261,10 +261,10 @@ namespace MessageGeneratorNS
         //}
 
         //Output events
-        public event EventHandler<MessageToRobotArgs> OnMessageToRobotGeneratedEvent;
+        public event EventHandler<MessageByteArgs> OnMessageToRobotGeneratedEvent;
         public virtual void OnMessageToRobot(Int16 msgFunction, Int16 msgPayloadLength, byte[] msgPayload)
         {
-            OnMessageToRobotGeneratedEvent?.Invoke(this, new MessageToRobotArgs { MsgFunction = msgFunction, MsgPayloadLength = msgPayloadLength, MsgPayload = msgPayload });
+            OnMessageToRobotGeneratedEvent?.Invoke(this, new MessageByteArgs((ushort) msgFunction, (ushort) msgPayloadLength, msgPayload, 0x00));
         }
 
         public event EventHandler<PolarPIDSetupArgs> OnMessageToDisplaySpeedPolarPidSetupEvent;

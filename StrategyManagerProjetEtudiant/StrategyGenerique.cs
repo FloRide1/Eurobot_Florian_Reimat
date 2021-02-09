@@ -118,11 +118,7 @@ namespace StrategyManagerProjetEtudiantNS
         public EventHandler<EventArgs> OnUpdateWorldMapDisplayEvent;
         public virtual void OnUpdateWorldMapDisplay(int id)
         {
-            var handler = OnUpdateWorldMapDisplayEvent;
-            if (handler != null)
-            {
-                handler(this, new EventArgs());
-            }
+            OnUpdateWorldMapDisplayEvent?.Invoke(this, new EventArgs());
         }
 
         public event EventHandler<PolarPIDSetupArgs> OnPolarPIDSetupEvent;
@@ -244,11 +240,7 @@ namespace StrategyManagerProjetEtudiantNS
         public event EventHandler<StringEventArgs> OnTextMessageEvent;
         public virtual void OnTextMessage(string str)
         {
-            var handler = OnTextMessageEvent;
-            if (handler != null)
-            {
-                handler(this, new StringEventArgs { value = str });
-            }
+            OnTextMessageEvent?.Invoke(this, new StringEventArgs { value = str });
         }
     }    
 }

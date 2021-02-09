@@ -179,3 +179,5 @@ C:\Github\Eurobot_Florian_Reimat\RobotEurobot2Roues\obj\Debug\RobotEurobot2Roues
 C:\Github\Eurobot_Florian_Reimat\RobotEurobot2Roues\obj\Debug\RobotEurobot2Roues.pdb
 C:\Github\Eurobot_Florian_Reimat\RobotEurobot2Roues\bin\Debug\Protocol_Security.dll
 C:\Github\Eurobot_Florian_Reimat\RobotEurobot2Roues\bin\Debug\Protocol_Security.pdb
+C:\Github\Eurobot_Florian_Reimat\RobotEurobot2Roues\bin\Debug\ConsoleFormat.dll
+C:\Github\Eurobot_Florian_Reimat\RobotEurobot2Roues\bin\Debug\ConsoleFormat.pdb

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Protocol_Security
+namespace Protocol
 {
     public static class Protocol_Security
     {

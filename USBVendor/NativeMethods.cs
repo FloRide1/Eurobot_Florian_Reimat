@@ -78,7 +78,7 @@ namespace USBVendorNS
                             string busReportedDeviceDesc = System.Text.UnicodeEncoding.Unicode.GetString(buffer, 0, (int)requiredSize - utf16terminatorSize_bytes);
                             value = busReportedDeviceDesc;
 
-                            Console.WriteLine(busReportedDeviceDesc);
+                            // Console.WriteLine(busReportedDeviceDesc);
                         }
                         else
                         {

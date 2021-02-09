@@ -11,7 +11,7 @@ of this project is  pretty similar to the source.
 ## Advancement
 - [ ] Edit all Class for adding Console Colors
 	- [x] MsgDecoder
-	- [ ] MsgEncoder
+	- [x] MsgEncoder
 	- [ ] MsgGenerator
 	- [ ] MsgProcessor
 	- [ ] UsbVendor

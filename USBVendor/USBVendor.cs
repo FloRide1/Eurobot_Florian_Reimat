@@ -184,20 +184,20 @@ namespace USBVendorNS
         }
 
         //Input events
-        public void SendUSBMessage(object sender, EventArgsLibrary.MessageEncodedArgs e)
+        public void SendUSBMessage(object sender, MessageByteArgs e)
         {
             if (_deviceDetected && _deviceReady)
             {
                 UInt32 LengthTransferred = 0;
                 Boolean success = false;
-                if (e.Msg.Length <= 128 && cmv8DeviceListeFound.Count > 0)
-                    RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.Msg.Length, e.Msg, ref LengthTransferred, ref success);
+                if (e.MsgTotal.Length <= 128 && cmv8DeviceListeFound.Count > 0)
+                    RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.MsgTotal.Length, e.MsgTotal, ref LengthTransferred, ref success);
                 else
                 {
-                    Int32 bytesToSend = e.Msg.Length;
+                    Int32 bytesToSend = e.MsgTotal.Length;
                     while (bytesToSend > 0)
                     {
-                        RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.Msg.Length, e.Msg, ref LengthTransferred, ref success);
+                        RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.MsgTotal.Length, e.MsgTotal, ref LengthTransferred, ref success);
                         bytesToSend -= (Int32)LengthTransferred;
                     }
                 }
@@ -272,7 +272,7 @@ namespace USBVendorNS
                 else
                 {
                     //LstResults.Items.Add("The device has been detected.");
-                    Console.WriteLine("The device has been detected.");
+                    // Console.WriteLine("The device has been detected.");
                     DisplayDeviceSpeed(null);
                 }
 
@@ -476,7 +476,7 @@ namespace USBVendorNS
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                // Console.WriteLine(e.Message);
                 if (_deviceArrivedWatcher != null)
                     _deviceArrivedWatcher.Stop();
             }
@@ -490,7 +490,7 @@ namespace USBVendorNS
         {
             try
             {
-                Console.WriteLine("A USB device has been inserted");
+                // Console.WriteLine("A USB device has been inserted");
 
                 FindMyDevice();
                 //_deviceDetected = FindDeviceUsingWmi();
@@ -511,7 +511,7 @@ namespace USBVendorNS
         {
             try
             {
-                Console.WriteLine("A USB device has been removed");
+                // Console.WriteLine("A USB device has been removed");
 
                 _deviceDetected = FindDeviceUsingWmi();
                 cmv8DeviceListeFound.Clear();
@@ -545,7 +545,7 @@ namespace USBVendorNS
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                // Console.WriteLine(e.Message);
                 if (_deviceRemovedWatcher != null)
                     _deviceRemovedWatcher.Stop();
             }
