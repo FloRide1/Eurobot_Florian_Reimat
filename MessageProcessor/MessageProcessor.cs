@@ -12,7 +12,7 @@ namespace MessageProcessorNS
         GameMode competition;
         Timer tmrComptageMessage;
         int robotID;
-        
+
         public MsgProcessor(int robotId, GameMode compet)
         {
             robotID = robotId;
@@ -34,302 +34,103 @@ namespace MessageProcessorNS
         //Input CallBack        
         public void ProcessRobotDecodedMessage(object sender, MessageByteArgs e)
         {
-            ProcessDecodedMessage((Int16)e.MsgFunction,(Int16) e.MsgPayloadLength, e.MsgPayload);
+            ProcessDecodedMessage((Int16)e.MsgFunction, (Int16)e.MsgPayloadLength, e.MsgPayload);
         }
-         
+
         //Processeur de message en provenance du robot...
         //Une fois processé, le message sera transformé en event sortant
         public void ProcessDecodedMessage(Int16 command, Int16 payloadLength, byte[] payload)
         {
-            byte[] tab;
-            uint timeStamp;
             switch (command)
             {
                 case (short)Commands.R2PC_WelcomeMessage:
                     OnWelcomeMessageFromRobot();
                     break;
 
-                case (short) Commands.R2PC_SpeedPolarAndIndependantOdometry:
-                    {
-                        nbMessageSpeedReceived++;
-                        timeStamp = (uint) (payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                        float vX = BitConverter.ToSingle(payload, 4);
-                        float vY = BitConverter.ToSingle(payload, 8);
-                        float vTheta = BitConverter.ToSingle(payload, 12);
-                        float vM1 = BitConverter.ToSingle(payload, 16);
-                        float vM2 = BitConverter.ToSingle(payload, 20);
-                        float vM3 = BitConverter.ToSingle(payload, 24);
-                        float vM4 = BitConverter.ToSingle(payload, 28);
-                        OnPolarOdometrySpeedFromRobot(payload);
-                        // OnIndependantOdometrySpeedFromRobot(timeStamp, vM1, vM2, vM3, vM4);
-                    }
+                case (short)Commands.R2PC_SpeedPolarAndIndependantOdometry:
+                    OnPolarAndIndependantOdometrySpeedFromRobot(payload);
                     break;
-                                    
+
                 case (short)Commands.R2PC_IMUData:
-                    {
-                        float accelX=0, accelY=0, accelZ=0, gyroX=0, gyroY=0, gyroZ=0;
-                        timeStamp = 0;
-                        switch (competition)
-                        {
-                            case GameMode.RoboCup:
-                                nbMessageIMUReceived++;
-                                timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                                accelX = BitConverter.ToSingle(payload, 04);
-                                accelY = BitConverter.ToSingle(payload, 08);
-                                accelZ = BitConverter.ToSingle(payload, 12);
-                                gyroX  = BitConverter.ToSingle(payload, 16);
-                                gyroY  = BitConverter.ToSingle(payload, 20);
-                                gyroZ  = BitConverter.ToSingle(payload, 24);
-                                break;
-
-                            case GameMode.Eurobot: //La carte de mesure est placée verticalement
-                                nbMessageIMUReceived++;
-                                timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                                accelY = - BitConverter.ToSingle(payload, 4);
-                                accelZ =   BitConverter.ToSingle(payload, 8);
-                                accelX = - BitConverter.ToSingle(payload, 12);
-                                gyroY  = - BitConverter.ToSingle(payload, 16);
-                                gyroZ  =   BitConverter.ToSingle(payload, 20);
-                                gyroX  = - BitConverter.ToSingle(payload, 24);
-                                break;
-                        }
-
-                    Point3D accelXYZ = new Point3D(accelX, accelY, accelZ);
-                        Point3D gyroXYZ = new Point3D(gyroX, gyroY, gyroZ);
-
-                        //On envois l'event aux abonnés
-                        OnIMUDataFromRobot(timeStamp, accelXYZ, gyroXYZ);
-                    }
+                    OnIMUDataFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_MotorCurrentsMonitoring:
-                    {
-                        uint time2 = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                        byte[] tab2 = payload.GetRange(4, 4);
-                        float motor1Current = tab2.GetFloat();
-                        tab2 = payload.GetRange(8, 4);
-                        float motor2Current = tab2.GetFloat();
-                        tab2 = payload.GetRange(12, 4);
-                        float motor3Current = tab2.GetFloat();
-                        tab2 = payload.GetRange(16, 4);
-                        float motor4Current = tab2.GetFloat();
-                        tab2 = payload.GetRange(20, 4);
-                        float motor5Current = tab2.GetFloat();
-                        tab2 = payload.GetRange(24, 4);
-                        float motor6Current = tab2.GetFloat();
-                        tab2 = payload.GetRange(28, 4);
-                        float motor7Current = tab2.GetFloat();
-                        //On envois l'event aux abonnés
-                        OnMotorsCurrentsFromRobot(time2, motor1Current, motor2Current, motor3Current, motor4Current, motor5Current, motor6Current, motor7Current);
-                    }
+                    OnMotorsCurrentsFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_SpeedAuxiliaryOdometry:
-                    uint time = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    tab = payload.GetRange(4, 4);
-                    float vitesseMotor5 = tab.GetFloat();
-                    tab = payload.GetRange(8, 4);
-                    float vitesseMotor6 = tab.GetFloat();
-                    tab = payload.GetRange(12, 4);
-                    float vitesseMotor7 = tab.GetFloat();
-                    //On envois l'event aux abonnés
-                    
-                    OnAuxiliaryOdometrySpeedFromRobot(time, vitesseMotor5, vitesseMotor6, vitesseMotor7);
+                    OnAuxiliaryOdometrySpeedFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_SpeedAuxiliaryMotorsConsignes:
-                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    tab = payload.GetRange(4, 4);
-                    float consigneMotor5 = tab.GetFloat();
-                    tab = payload.GetRange(8, 4);
-                    float consigneMotor6 = tab.GetFloat();
-                    tab = payload.GetRange(12, 4);
-                    float consigneMotor7 = tab.GetFloat();
-                    //On envois l'event aux abonnés
-                    OnAuxiliarySpeedConsigneDataFromRobot(timeStamp, consigneMotor5, consigneMotor6, consigneMotor7);
+                    OnAuxiliarySpeedConsigneDataFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_EncoderRawData:
-                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    int enc1RawVal = (int)(payload[7] | payload[6] << 8 | payload[5] << 16 | payload[4] << 24);
-                    int enc2RawVal = (int)(payload[11] | payload[10] << 8 | payload[9] << 16 | payload[8] << 24);
-                    int enc3RawVal = (int)(payload[15] | payload[14] << 8 | payload[13] << 16 | payload[12] << 24);
-                    int enc4RawVal = (int)(payload[19] | payload[18] << 8 | payload[17] << 16 | payload[16] << 24);
-                    int enc5RawVal = (int)(payload[23] | payload[22] << 8 | payload[21] << 16 | payload[20] << 24);
-                    int enc6RawVal = (int)(payload[27] | payload[26] << 8 | payload[25] << 16 | payload[24] << 24);
-                    int enc7RawVal = (int)(payload[31] | payload[30] << 8 | payload[29] << 16 | payload[28] << 24);
-
-                    //On envois l'event aux abonnés
-                    OnEncoderRawDataFromRobot(timeStamp, enc1RawVal, enc2RawVal, enc3RawVal, enc4RawVal, enc5RawVal, enc6RawVal, enc7RawVal);
+                    OnEncoderRawDataFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_IOMonitoring:
-                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    byte ioValue = payload[4];
-                    OnIOValuesFromRobot(timeStamp, ioValue);
+                    OnIOValuesFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_PowerMonitoring:
-                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    tab = payload.GetRange(4, 4);
-                    float battCMDVoltage = tab.GetFloat();
-                    tab = payload.GetRange(8, 4);
-                    float battCMDCurrent = tab.GetFloat();
-                    tab = payload.GetRange(12, 4);
-                    float battPWRVoltage = tab.GetFloat();
-                    tab = payload.GetRange(16, 4);
-                    float battPWRCurrent = tab.GetFloat();
-                    OnPowerMonitoringValuesFromRobot(timeStamp, battCMDVoltage, battCMDCurrent, battPWRVoltage, battPWRCurrent);
+                    OnPowerMonitoringValuesFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_SpeedPolarPidDebugErrorCorrectionConsigne:
-                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    tab = payload.GetRange(4, 4);
-                    float xError = tab.GetFloat();
-                    tab = payload.GetRange(8, 4);
-                    float yError = tab.GetFloat();
-                    tab = payload.GetRange(12, 4);
-                    float thetaError = tab.GetFloat();
-                    tab = payload.GetRange(16, 4);
-                    float xCorrection = tab.GetFloat();
-                    tab = payload.GetRange(20, 4);
-                    float yCorrection = tab.GetFloat();
-                    tab = payload.GetRange(24, 4);
-                    float thetaCorrection = tab.GetFloat();
-
-                    tab = payload.GetRange(28, 4);
-                    float xconsigne = tab.GetFloat();
-                    tab = payload.GetRange(32, 4);
-                    float yConsigne = tab.GetFloat();
-                    tab = payload.GetRange(36, 4);
-                    float thetaConsigne = tab.GetFloat();
-                    //On envois l'event aux abonnés
-                    OnPolarPidErrorCorrectionConsigneDataFromRobot(timeStamp, xError, yError, thetaError, xCorrection, yCorrection, thetaCorrection, xconsigne,yConsigne,thetaConsigne);
+                    OnPolarPidErrorCorrectionConsigneDataFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_SpeedIndependantPidDebugErrorCorrectionConsigne:
-                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    tab = payload.GetRange(4, 4);
-                    float M1Error = tab.GetFloat();
-                    tab = payload.GetRange(8, 4);
-                    float M2Error = tab.GetFloat();
-                    tab = payload.GetRange(12, 4);
-                    float M3Error = tab.GetFloat();
-                    tab = payload.GetRange(16, 4);
-                    float M4Error = tab.GetFloat();
-                    tab = payload.GetRange(20, 4);
-                    float M1Correction = tab.GetFloat();
-                    tab = payload.GetRange(24, 4);
-                    float M2Correction = tab.GetFloat();
-
-                    tab = payload.GetRange(28, 4);
-                    float M3Correction = tab.GetFloat();
-                    tab = payload.GetRange(32, 4);
-                    float M4Correction = tab.GetFloat();
-                    tab = payload.GetRange(36, 4);
-                    float M1Consigne = tab.GetFloat();
-                    tab = payload.GetRange(40, 4);
-                    float M2Consigne = tab.GetFloat();
-                    tab = payload.GetRange(44, 4);
-                    float M3Consigne = tab.GetFloat();
-                    tab = payload.GetRange(48, 4);
-                    float M4Consigne = tab.GetFloat();
-                    //On envois l'event aux abonnés
-                    OnSpeedIndependantPidDebugDataFromRobot(timeStamp, 
-                        M1Error, M2Error, M3Error, M4Error, 
-                        M1Correction, M2Correction, M3Correction, M4Correction, 
-                        M1Consigne, M2Consigne, M3Consigne, M4Consigne);
+                    OnSpeedIndependantPidDebugDataFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_SpeedPolarPidDebugInternal:
-                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    tab = payload.GetRange(4, 4);
-                    float CorrPx = tab.GetFloat();
-                    tab = payload.GetRange(8, 4);
-                    float CorrIx = tab.GetFloat();
-                    tab = payload.GetRange(12, 4);
-                    float CorrDx = tab.GetFloat();
-                    tab = payload.GetRange(16, 4);
-                    float CorrPy = tab.GetFloat();
-                    tab = payload.GetRange(20, 4);
-                    float CorrIy = tab.GetFloat();
-                    tab = payload.GetRange(24, 4);
-                    float CorrDy = tab.GetFloat();
-                    tab = payload.GetRange(28, 4);
-                    float CorrPTheta = tab.GetFloat();
-                    tab = payload.GetRange(32, 4);
-                    float CorrITheta = tab.GetFloat();
-                    tab = payload.GetRange(36, 4);
-                    float CorrDTheta = tab.GetFloat();
-                    //On envois l'event aux abonnés
-                    OnSpeedPolarPidCorrectionDataFromRobot(CorrPx, CorrIx, CorrDx, CorrPy, CorrIy, CorrDy, CorrPTheta, CorrITheta, CorrDTheta);
+                    OnSpeedPolarPidCorrectionDataFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_SpeedIndependantPidDebugInternal:
-                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-                    tab = payload.GetRange(4, 4);
-                    float CorrPM1 = tab.GetFloat();
-                    tab = payload.GetRange(8, 4);
-                    float CorrIM1 = tab.GetFloat();
-                    tab = payload.GetRange(12, 4);
-                    float CorrDM1 = tab.GetFloat();
-                    tab = payload.GetRange(16, 4);
-                    float CorrPM2 = tab.GetFloat();
-                    tab = payload.GetRange(20, 4);
-                    float CorrIM2 = tab.GetFloat();
-                    tab = payload.GetRange(24, 4);
-                    float CorrDM2 = tab.GetFloat();
-                    tab = payload.GetRange(28, 4);
-                    float CorrPM3 = tab.GetFloat();
-                    tab = payload.GetRange(32, 4);
-                    float CorrIM3 = tab.GetFloat();
-                    tab = payload.GetRange(36, 4);
-                    float CorrDM3 = tab.GetFloat();
-                    tab = payload.GetRange(40, 4);
-                    float CorrPM4 = tab.GetFloat();
-                    tab = payload.GetRange(44, 4);
-                    float CorrIM4 = tab.GetFloat();
-                    tab = payload.GetRange(48, 4);
-                    float CorrDM4 = tab.GetFloat();
-                    //On envois l'event aux abonnés
-                    OnSpeedIndependantPidCorrectionDataFromRobot(CorrPM1, CorrIM1, CorrDM1, CorrPM2, CorrIM2, CorrDM2, CorrPM3, CorrIM3, CorrDM3, CorrPM4, CorrIM4, CorrDM4);
+                    OnSpeedIndependantPidCorrectionDataFromRobot(payload);
                     break;
 
                 case (short)Commands.R2PC_MotorsEnableDisableStatus:
-                    bool value = Convert.ToBoolean(payload[0]);
-                    OnEnableDisableMotorsACKFromRobot(value);
+                    OnEnableDisableMotorsACKFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_TirEnableDisableStatus:
-                    value = Convert.ToBoolean(payload[0]);
-                    OnEnableDisableTirACKFromRobot(value);
+                    OnEnableDisableTirACKFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_AsservissementModeStatus:
-                    AsservissementMode asservMode = (AsservissementMode)payload[0];
-                    OnAsservissementModeStatusFromRobot(asservMode);
+                    OnAsservissementModeStatusFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_SpeedPIDEnableDebugInternalStatus:
-                    value = Convert.ToBoolean(payload[0]);
-                    OnEnableAsservissementDebugDataACKFromRobot(value);
+                    OnEnableAsservissementDebugDataACKFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_MotorCurrentMonitoringEnableStatus:
-                    value = Convert.ToBoolean(payload[0]);
-                    OnEnableMotorCurrentACKFromRobot(value);
+                    OnEnableMotorCurrentACKFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_EncoderRawMonitoringEnableStatus:
-                    value = Convert.ToBoolean(payload[0]);
-                    OnEnableEncoderRawDataACKFromRobot(value);
+                    OnEnableEncoderRawDataACKFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_SpeedConsigneMonitoringEnableStatus:
-                    value = Convert.ToBoolean(payload[0]);
-                    OnEnableMotorSpeedConsigneDataACKFromRobot(value);
+                    OnEnableMotorSpeedConsigneDataACKFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_PowerMonitoringEnableStatus:
-                    value = Convert.ToBoolean(payload[0]);
-                    OnEnablePowerMonitoringDataACKFromRobot(value);
+                    OnEnablePowerMonitoringDataACKFromRobot(payload);
                     break;
+
                 case (short)Commands.R2PC_ErrorMessage:
-                    string errorMsg = Encoding.UTF8.GetString(payload);
-                    OnErrorTextFromRobot(errorMsg);
+                    OnErrorTextFromRobot(payload);
                     break;
+
                 default: break;
             }
         }
@@ -363,75 +164,116 @@ namespace MessageProcessorNS
         {
             OnWelcomeMessageFromRobotGeneratedEvent?.Invoke(this, new EventArgs());
         }
-        
+
         //Output events
-        
-        public virtual void OnIMUDataFromRobot(uint timeStamp, Point3D accelxyz, Point3D gyroxyz)
+
+        public virtual void OnIMUDataFromRobot(byte[] payload)
         {
-            OnIMURawDataFromRobotGeneratedEvent?.Invoke(this, new IMUDataEventArgs { EmbeddedTimeStampInMs = timeStamp, accelX = accelxyz.X, accelY = accelxyz.Y, accelZ = accelxyz.Z, gyroX = gyroxyz.X, gyroY = gyroxyz.Y, gyroZ = gyroxyz.Z });
+            float accelX = 0, accelY = 0, accelZ = 0, gyroX = 0, gyroY = 0, gyroZ = 0;
+            uint timeStamp = 0;
+            switch (competition)
+            {
+                case GameMode.RoboCup:
+                    nbMessageIMUReceived++;
+                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
+                    accelX = BitConverter.ToSingle(payload, 04);
+                    accelY = BitConverter.ToSingle(payload, 08);
+                    accelZ = BitConverter.ToSingle(payload, 12);
+                    gyroX = BitConverter.ToSingle(payload, 16);
+                    gyroY = BitConverter.ToSingle(payload, 20);
+                    gyroZ = BitConverter.ToSingle(payload, 24);
+                    break;
+
+                case GameMode.Eurobot: //La carte de mesure est placée verticalement
+                    nbMessageIMUReceived++;
+                    timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
+                    accelY = -BitConverter.ToSingle(payload, 4);
+                    accelZ = BitConverter.ToSingle(payload, 8);
+                    accelX = -BitConverter.ToSingle(payload, 12);
+                    gyroY = -BitConverter.ToSingle(payload, 16);
+                    gyroZ = BitConverter.ToSingle(payload, 20);
+                    gyroX = -BitConverter.ToSingle(payload, 24);
+                    break;
+            }
+
+
+            OnIMURawDataFromRobotGeneratedEvent?.Invoke(this, new IMUDataEventArgs
+            {
+                EmbeddedTimeStampInMs = timeStamp,
+                accelX = accelX,
+                accelY = accelY,
+                accelZ = accelZ,
+                gyroX = gyroX,
+                gyroY = gyroY,
+                gyroZ = gyroZ
+            });
         }
 
-        
-        public virtual void OnEnableDisableMotorsACKFromRobot(bool isEnabled)
+
+        public virtual void OnEnableDisableMotorsACKFromRobot(byte[] payload)
         {
-            OnEnableDisableMotorsACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = isEnabled });
+            OnEnableDisableMotorsACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = Convert.ToBoolean(payload[0]) });
         }
 
-        
-        public virtual void OnEnableDisableTirACKFromRobot(bool isEnabled)
+
+        public virtual void OnEnableDisableTirACKFromRobot(byte[] payload)
         {
-            OnEnableDisableTirACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = isEnabled });
+            OnEnableDisableTirACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = Convert.ToBoolean(payload[0]) });
         }
 
-        
-        public virtual void OnAsservissementModeStatusFromRobot(AsservissementMode asservMode)
+
+        public virtual void OnAsservissementModeStatusFromRobot(byte[] payload)
         {
-            OnAsservissementModeStatusFromRobotGeneratedEvent?.Invoke(this, new AsservissementModeEventArgs { mode = asservMode });
+            OnAsservissementModeStatusFromRobotGeneratedEvent?.Invoke(this, new AsservissementModeEventArgs { mode = (AsservissementMode) payload[0] });
         }
 
-        
-        public virtual void OnEnableAsservissementDebugDataACKFromRobot(bool isEnabled)
+
+        public virtual void OnEnableAsservissementDebugDataACKFromRobot(byte[] payload)
         {
-            OnEnableAsservissementDebugDataACKFromRobotEvent?.Invoke(this, new BoolEventArgs { value = isEnabled });
+            OnEnableAsservissementDebugDataACKFromRobotEvent?.Invoke(this, new BoolEventArgs { value = Convert.ToBoolean(payload[0]) });
         }
 
-        
-        public virtual void OnEnableMotorCurrentACKFromRobot(bool isEnabled)
+
+        public virtual void OnEnableMotorCurrentACKFromRobot(byte[] payload)
         {
-            OnEnableMotorCurrentACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = isEnabled });
+            OnEnableMotorCurrentACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = Convert.ToBoolean(payload[0]) });
         }
 
-        
-        public virtual void OnEnableEncoderRawDataACKFromRobot(bool isEnabled)
+
+        public virtual void OnEnableEncoderRawDataACKFromRobot(byte[] payload)
         {
-            OnEnableEncoderRawDataACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = isEnabled });
+            OnEnableEncoderRawDataACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = Convert.ToBoolean(payload[0]) });
         }
 
-        
-        public virtual void OnEnableMotorSpeedConsigneDataACKFromRobot(bool isEnabled)
+
+        public virtual void OnEnableMotorSpeedConsigneDataACKFromRobot(byte[] payload)
         {
-            OnEnableMotorSpeedConsigneDataACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = isEnabled });
+            OnEnableMotorSpeedConsigneDataACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = Convert.ToBoolean(payload[0]) });
         }
 
-        
-        public virtual void OnEnablePowerMonitoringDataACKFromRobot(bool isEnabled)
+
+        public virtual void OnEnablePowerMonitoringDataACKFromRobot(byte[] payload)
         {
-            OnEnablePowerMonitoringDataACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = isEnabled });
-        }
-        
-        public virtual void OnErrorTextFromRobot(string str)
-        {
-            OnErrorTextFromRobotGeneratedEvent?.Invoke(this, new StringEventArgs { value = str });
+            OnEnablePowerMonitoringDataACKFromRobotGeneratedEvent?.Invoke(this, new BoolEventArgs { value = Convert.ToBoolean(payload[0]) });
         }
 
-        
-        public virtual void OnPolarOdometrySpeedFromRobot(byte[] payload)
+        public virtual void OnErrorTextFromRobot(byte[] payload)
+        {
+            OnErrorTextFromRobotGeneratedEvent?.Invoke(this, new StringEventArgs { value = Encoding.UTF8.GetString(payload) });
+        }
+
+
+        public virtual void OnPolarAndIndependantOdometrySpeedFromRobot(byte[] payload)
         {
             nbMessageSpeedReceived++;
             uint timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
             float vX = BitConverter.ToSingle(payload, 4);
             float vY = BitConverter.ToSingle(payload, 8);
             float vTheta = BitConverter.ToSingle(payload, 12);
+            float vM1 = BitConverter.ToSingle(payload, 16);
+            float vM2 = BitConverter.ToSingle(payload, 20);
+            float vM3 = BitConverter.ToSingle(payload, 24);
+            float vM4 = BitConverter.ToSingle(payload, 28);
             OnSpeedPolarOdometryFromRobotEvent?.Invoke(this, new PolarSpeedEventArgs
             {
                 RobotId = robotID,
@@ -440,200 +282,184 @@ namespace MessageProcessorNS
                 Vy = (float)vY,
                 Vtheta = (float)vTheta
             });
-        }
-        public virtual void OnPolarOdometrySpeedFromRobot(PolarSpeedEventArgs e)
-        {
-            OnSpeedPolarOdometryFromRobotEvent?.Invoke(this, e);
-        }
-
-        
-        public virtual void OnIndependantOdometrySpeedFromRobot(byte[] payload)
-        {
-            nbMessageSpeedReceived++;
-            uint timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
-            float vM1 = BitConverter.ToSingle(payload, 16);
-            float vM2 = BitConverter.ToSingle(payload, 20);
-            float vM3 = BitConverter.ToSingle(payload, 24);
-            float vM4 = BitConverter.ToSingle(payload, 28);
             OnIndependantOdometrySpeedFromRobotEvent?.Invoke(this, new IndependantSpeedEventArgs
             {
                 timeStampMs = timeStamp,
-                VitesseMoteur1 = (float) vM1,
-                VitesseMoteur2 = (float) vM2,
-                VitesseMoteur3 = (float) vM3,
-                VitesseMoteur4 = (float) vM4
+                VitesseMoteur1 = (float)vM1,
+                VitesseMoteur2 = (float)vM2,
+                VitesseMoteur3 = (float)vM3,
+                VitesseMoteur4 = (float)vM4
             });
         }
 
-        
 
-        public virtual void OnMotorsCurrentsFromRobot(uint timeStamp, double m1A, double m2A, double m3A,
-                                                                        double m4A, double m5A, double m6A, double m7A)
+
+
+
+        public virtual void OnMotorsCurrentsFromRobot(byte[] payload)
         {
             OnMotorsCurrentsFromRobotGeneratedEvent?.Invoke(this, new MotorsCurrentsEventArgs
             {
-                timeStampMS = timeStamp,
-                motor1 = m1A,
-                motor2 = m2A,
-                motor3 = m3A,
-                motor4 = m4A,
-                motor5 = m5A,
-                motor6 = m6A,
-                motor7 = m7A
+                timeStampMS = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24),
+                motor1 = BitConverter.ToSingle(payload, 4 * 1),
+                motor2 = BitConverter.ToSingle(payload, 4 * 2),
+                motor3 = BitConverter.ToSingle(payload, 4 * 3),
+                motor4 = BitConverter.ToSingle(payload, 4 * 4),
+                motor5 = BitConverter.ToSingle(payload, 4 * 5),
+                motor6 = BitConverter.ToSingle(payload, 4 * 6),
+                motor7 = BitConverter.ToSingle(payload, 4 * 7)
             });
         }
 
-        
-        public virtual void OnAuxiliaryOdometrySpeedFromRobot(uint timeStamp, double m5, double m6, double m7)
+
+        public virtual void OnAuxiliaryOdometrySpeedFromRobot(byte[] payload)
         {
             OnAuxiliaryOdometrySpeedGeneratedEvent?.Invoke(this, new AuxiliarySpeedEventArgs
             {
-                timeStampMs = timeStamp,
-                VitesseMoteur5 = m5,
-                VitesseMoteur6 = m6,
-                VitesseMoteur7 = m7
-            });
+                timeStampMs = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24),
+                VitesseMoteur5 = BitConverter.ToSingle(payload, 4 * 1),
+                VitesseMoteur6 = BitConverter.ToSingle(payload, 4 * 2),
+                VitesseMoteur7 = BitConverter.ToSingle(payload, 4 * 3)
+        });
         }
 
-        
 
-        public virtual void OnEncoderRawDataFromRobot(uint timeStamp, int m1, int m2, int m3,
-                                                                        int m4, int m5, int m6, int m7)
+
+        public virtual void OnEncoderRawDataFromRobot(byte[] payload)
         {
             OnEncoderRawDataFromRobotGeneratedEvent?.Invoke(this, new EncodersRawDataEventArgs
             {
-                timeStampMS = timeStamp,
-                motor1 = m1,
-                motor2 = m2,
-                motor3 = m3,
-                motor4 = m4,
-                motor5 = m5,
-                motor6 = m6,
-                motor7 = m7
+                timeStampMS = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24),
+                motor1 = (int)(payload[7] | payload[6] << 8 | payload[5] << 16 | payload[4] << 24),
+                motor2 = (int)(payload[11] | payload[10] << 8 | payload[9] << 16 | payload[8] << 24),
+                motor3 = (int)(payload[15] | payload[14] << 8 | payload[13] << 16 | payload[12] << 24),
+                motor4 = (int)(payload[19] | payload[18] << 8 | payload[17] << 16 | payload[16] << 24),
+                motor5 = (int)(payload[23] | payload[22] << 8 | payload[21] << 16 | payload[20] << 24),
+                motor6 = (int)(payload[27] | payload[26] << 8 | payload[25] << 16 | payload[24] << 24),
+                motor7 = (int)(payload[31] | payload[30] << 8 | payload[29] << 16 | payload[28] << 24)
             });
         }
 
-        
-        public virtual void OnIOValuesFromRobot(uint timeStamp, byte ioValues)
+
+        public virtual void OnIOValuesFromRobot(byte[] payload)
         {
             OnIOValuesFromRobotGeneratedEvent?.Invoke(this, new IOValuesEventArgs
             {
-                timeStampMS = timeStamp,
-                ioValues = ioValues
-            });
+                timeStampMS = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24),
+                ioValues = payload[4]
+        });
         }
 
-        
-        public virtual void OnPowerMonitoringValuesFromRobot(uint timeStamp, double battCMDVoltage, double battCMDCurrent, double battPWRVoltage, double battPWRCurrent)
+
+        public virtual void OnPowerMonitoringValuesFromRobot(byte[] payload)
         {
             OnPowerMonitoringValuesFromRobotGeneratedEvent?.Invoke(this, new PowerMonitoringValuesEventArgs
             {
-                timeStampMS = timeStamp,
-                battCMDVoltage = battCMDVoltage,
-                battCMDCurrent = battCMDCurrent,
-                battPWRVoltage = battPWRVoltage,
-                battPWRCurrent = battPWRCurrent
+                timeStampMS = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24),
+                battCMDVoltage = BitConverter.ToSingle(payload, 4 * 1),
+                battCMDCurrent = BitConverter.ToSingle(payload, 4 * 2),
+                battPWRVoltage = BitConverter.ToSingle(payload, 4 * 3),
+                battPWRCurrent = BitConverter.ToSingle(payload, 4 * 4)
             });
         }
 
-        
-        public virtual void OnAuxiliarySpeedConsigneDataFromRobot(uint timeStamp, double m5, double m6, double m7)
+
+        public virtual void OnAuxiliarySpeedConsigneDataFromRobot(byte[] payload)
         {
             OnAuxiliarySpeedConsigneDataFromRobotGeneratedEvent?.Invoke(this, new AuxiliaryMotorsVitesseDataEventArgs
             {
-                timeStampMS = timeStamp,
-                vitesseMotor5 = m5,
-                vitesseMotor6 = m6,
-                vitesseMotor7 = m7
+                timeStampMS = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24),
+                vitesseMotor5 = BitConverter.ToSingle(payload, 4 * 1),
+                vitesseMotor6 = BitConverter.ToSingle(payload, 4 * 2),
+                vitesseMotor7 = BitConverter.ToSingle(payload, 4 * 3)
             });
         }
 
-        
-        public virtual void OnPolarPidErrorCorrectionConsigneDataFromRobot(uint timeStamp, double xError, double yError, double thetaError,
-                                                                        double xCorrection, double yCorrection, double thetaCorrection, double xConsigneRobot, double yConsigneRobot, double thetaConsigneRobot)
+
+        public virtual void OnPolarPidErrorCorrectionConsigneDataFromRobot(byte[] payload)
         {
             OnSpeedPolarPidErrorCorrectionConsigneDataFromRobotGeneratedEvent?.Invoke(this, new PolarPidErrorCorrectionConsigneDataArgs
             {
-                timeStampMS = timeStamp,
-                xErreur = xError,
-                yErreur = yError,
-                thetaErreur = thetaError,
-                xCorrection = xCorrection,
-                yCorrection = yCorrection,
-                thetaCorrection = thetaCorrection,
-                xConsigneFromRobot = xConsigneRobot,
-                yConsigneFromRobot = yConsigneRobot,
-                thetaConsigneFromRobot = thetaConsigneRobot
+                timeStampMS = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24),
+                xErreur                 = BitConverter.ToSingle(payload, 4 * 1),
+                yErreur                 = BitConverter.ToSingle(payload, 4 * 2),
+                thetaErreur             = BitConverter.ToSingle(payload, 4 * 3),
+                xCorrection             = BitConverter.ToSingle(payload, 4 * 4),
+                yCorrection             = BitConverter.ToSingle(payload, 4 * 5),
+                thetaCorrection         = BitConverter.ToSingle(payload, 4 * 6),
+                xConsigneFromRobot      = BitConverter.ToSingle(payload, 4 * 7),
+                yConsigneFromRobot      = BitConverter.ToSingle(payload, 4 * 8),
+                thetaConsigneFromRobot  = BitConverter.ToSingle(payload, 4 * 9)
             });
         }
 
-        
-        public virtual void OnSpeedIndependantPidDebugDataFromRobot(uint timeStamp, double M1Error, double M2Error, double M3Error, double M4Error,
-                                                                        double M1Correction, double M2Correction, double M3Correction, double M4Correction,
-                                                                        double M1ConsigneRobot, double M2ConsigneRobot, double M3ConsigneRobot, double M4ConsigneRobot)
+
+        public virtual void OnSpeedIndependantPidDebugDataFromRobot(byte[] payload)
         {
             OnSpeedIndependantPidErrorCorrectionConsigneDataFromRobotGeneratedEvent?.Invoke(this, new IndependantPidErrorCorrectionConsigneDataArgs
             {
-                timeStampMS = timeStamp,
-                M1Erreur = M1Error,
-                M2Erreur = M2Error,
-                M3Erreur = M3Error,
-                M4Erreur = M4Error,
-                M1Correction = M1Correction,
-                M2Correction = M2Correction,
-                M3Correction = M3Correction,
-                M4Correction = M4Correction,
-                M1ConsigneFromRobot = M1ConsigneRobot,
-                M2ConsigneFromRobot = M2ConsigneRobot,
-                M3ConsigneFromRobot = M3ConsigneRobot,
-                M4ConsigneFromRobot = M4ConsigneRobot
+                timeStampMS = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24),
+                M1Erreur            = BitConverter.ToSingle(payload, 4 * 01),
+                M2Erreur            = BitConverter.ToSingle(payload, 4 * 02),
+                M3Erreur            = BitConverter.ToSingle(payload, 4 * 03),
+                M4Erreur            = BitConverter.ToSingle(payload, 4 * 04),
+                M1Correction        = BitConverter.ToSingle(payload, 4 * 05),
+                M2Correction        = BitConverter.ToSingle(payload, 4 * 06),
+                M3Correction        = BitConverter.ToSingle(payload, 4 * 07),
+                M4Correction        = BitConverter.ToSingle(payload, 4 * 08),
+                M1ConsigneFromRobot = BitConverter.ToSingle(payload, 4 * 09),
+                M2ConsigneFromRobot = BitConverter.ToSingle(payload, 4 * 10),
+                M3ConsigneFromRobot = BitConverter.ToSingle(payload, 4 * 11),
+                M4ConsigneFromRobot = BitConverter.ToSingle(payload, 4 * 12)
             });
         }
 
 
-        
 
-        public virtual void OnSpeedPolarPidCorrectionDataFromRobot(double corrPx, double corrIx, double corrDx, double corrPy, double corrIy, double corrDy, double corrPTheta, double corrITheta, double corrDTheta)
+
+        public virtual void OnSpeedPolarPidCorrectionDataFromRobot(byte[] payload)
         {
+            uint timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
             OnSpeedPolarPidCorrectionDataFromRobotEvent?.Invoke(this, new PolarPidCorrectionArgs
             {
-                CorrPx = corrPx,
-                CorrIx = corrIx,
-                CorrDx = corrDx,
-                CorrPy = corrPy,
-                CorrIy = corrIy,
-                CorrDy = corrDy,
-                CorrPTheta = corrPTheta,
-                CorrITheta = corrITheta,
-                CorrDTheta = corrDTheta
+                CorrPx      = BitConverter.ToSingle(payload, 4 * 1),
+                CorrIx      = BitConverter.ToSingle(payload, 4 * 2),
+                CorrDx      = BitConverter.ToSingle(payload, 4 * 3),
+                CorrPy      = BitConverter.ToSingle(payload, 4 * 4),
+                CorrIy      = BitConverter.ToSingle(payload, 4 * 5),
+                CorrDy      = BitConverter.ToSingle(payload, 4 * 6),
+                CorrPTheta  = BitConverter.ToSingle(payload, 4 * 7),
+                CorrITheta  = BitConverter.ToSingle(payload, 4 * 8),
+                CorrDTheta  = BitConverter.ToSingle(payload, 4 * 9)
             });
         }
 
-        
-        public virtual void OnSpeedIndependantPidCorrectionDataFromRobot(double corrPM1, double corrIM1, double corrDM1, double corrPM2, double corrIM2, double corrDM2, double corrPM3, double corrIM3, double corrDM3, double corrPM4, double corrIM4, double corrDM4)
+
+        public virtual void OnSpeedIndependantPidCorrectionDataFromRobot(byte[] payload)
         {
+            uint timeStamp = (uint)(payload[3] | payload[2] << 8 | payload[1] << 16 | payload[0] << 24);
             OnSpeedIndependantPidCorrectionDataFromRobotEvent?.Invoke(this, new IndependantPidCorrectionArgs
             {
-                CorrPM1 = corrPM1,
-                CorrIM1 = corrIM1,
-                CorrDM1 = corrDM1,
-                CorrPM2 = corrPM2,
-                CorrIM2 = corrIM2,
-                CorrDM2 = corrDM2,
-                CorrPM3 = corrPM3,
-                CorrIM3 = corrIM3,
-                CorrDM3 = corrDM3,
-                CorrPM4 = corrPM4,
-                CorrIM4 = corrIM4,
-                CorrDM4 = corrDM4
+                CorrPM1 = BitConverter.ToSingle(payload, 4 * 01),
+                CorrIM1 = BitConverter.ToSingle(payload, 4 * 02),
+                CorrDM1 = BitConverter.ToSingle(payload, 4 * 03),
+                CorrPM2 = BitConverter.ToSingle(payload, 4 * 04),
+                CorrIM2 = BitConverter.ToSingle(payload, 4 * 05),
+                CorrDM2 = BitConverter.ToSingle(payload, 4 * 06),
+                CorrPM3 = BitConverter.ToSingle(payload, 4 * 07),
+                CorrIM3 = BitConverter.ToSingle(payload, 4 * 08),
+                CorrDM3 = BitConverter.ToSingle(payload, 4 * 09),
+                CorrPM4 = BitConverter.ToSingle(payload, 4 * 10),
+                CorrIM4 = BitConverter.ToSingle(payload, 4 * 11),
+                CorrDM4 = BitConverter.ToSingle(payload, 4 * 12)
             });
         }
 
-        
+
         public virtual void OnMessageCounter(int nbMessageFromImu, int nbMessageFromOdometry)
         {
             OnMessageCounterEvent?.Invoke(this, new MsgCounterArgs { nbMessageIMU = nbMessageFromImu, nbMessageOdometry = nbMessageFromOdometry });
         }
-        
+
     }
 }

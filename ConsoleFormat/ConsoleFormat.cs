@@ -8,6 +8,47 @@ namespace ConsoleFormatNS
         private static long hex_received_index = 0;
         private static long hex_sender_index = 0;
 
+        #region Setup in Main
+        public static void InitMainConsole()
+        {
+            ConsoleInformationFormat("MAIN", "Begin Booting Sequence", true);
+        }
+
+        public static void SetupScichartLicenceKey()
+        {
+            ConsoleInformationFormat("SCICHART", "Setup Scichart RunTime Key", true);
+        }
+
+        public static void StartRobotInterface()
+        {
+            ConsoleInformationFormat("GUI", "Start Robot Interface", true);
+        }
+
+        public static void SetupAllCommunication()
+        {
+            ConsoleInformationFormat("USB", "USB Vendor is launched", true);
+            ConsoleInformationFormat("DECODER", "Message Decoder is launched", true);
+            ConsoleInformationFormat("ENCODER", "Message Encoder is launched", true);
+            ConsoleInformationFormat("GENERATOR", "Message Generator is launched", true);
+            ConsoleInformationFormat("PROCESSOR", "Message PROCESSOR is launched", true);
+        }
+
+        public static void SetupXboxController()
+        {
+            ConsoleInformationFormat("XBOX", "Setup XBOX Controller", true);
+        }
+
+        public static void PrintStrategyBoot()
+        {
+            ConsoleInformationFormat("STRATEGY", "Strategy is launched", true);
+        }
+
+        public static void EndMainBootSequence()
+        {
+            ConsoleInformationFormat("MAIN", "End Booting Sequence", true);
+        }
+        #endregion
+
         #region General Method
         static public void ConsoleTitleFormat(string title, bool isCorrect)
         {
@@ -40,28 +81,22 @@ namespace ConsoleFormatNS
             Console.WriteLine("    - " + content);
         }
         #endregion
-        #region Serial Init
-        static public void PrintMessageDecoderCreated(object sender, EventArgs e)
+        #region Usb Vendor
+        static public void PrintNewDeviceAdded(object sender, EventArgs e)
         {
-            ConsoleInformationFormat("DECODER", "Message Decoder is launched", true);
+            ConsoleInformationFormat("USB", "New deviced has been added", true);
         }
 
-        static public void PrintMessageEncoderCreated(object sender, EventArgs e)
+        static public void PrintDeviceRemoved(object sender, EventArgs e)
         {
-            ConsoleInformationFormat("ENCODER", "Message Encoder is launched", true);
+            ConsoleInformationFormat("USB", "A device had been removed", false);
         }
 
-        static public void PrintMessageProcessorCreated(object sender, EventArgs e)
+        static public void PrintUsbErrorExeption(object sender, string msg)
         {
-            ConsoleInformationFormat("PROCESSOR", "Message Processor is launched", true);
-        }
-
-        static public void PrintMessageGeneratorCreated(object sender, EventArgs e)
-        {
-            ConsoleInformationFormat("GENERATOR", "Message Generator is launched", true);
+            ConsoleInformationFormat("USB", msg, false);
         }
         #endregion
-
 
         #region Hex Decoder
         static public void PrintUnknowByte(object sender, byte e)
@@ -79,7 +114,7 @@ namespace ConsoleFormatNS
             Console.ResetColor();
             Console.Write(hex_received_index++ + ": ");
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write("0x" + e.ToString("X") + " ");
+            Console.Write("0x" + e.ToString("X2") + " ");
             Console.ResetColor();
         }
         static public void PrintFunctionMSB(object sender, byte e)

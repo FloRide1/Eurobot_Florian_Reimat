@@ -25,6 +25,15 @@
         "build": {
           "build/netstandard2.0/NETStandard.Library.targets": {}
         }
+      },
+      "Constants/1.0.0": {
+        "type": "project",
+        "compile": {
+          "bin/placeholder/Constants.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Constants.dll": {}
+        }
       }
     }
   },
@@ -172,10 +181,16 @@
         "netstandard.library.2.0.3.nupkg.sha512",
         "netstandard.library.nuspec"
       ]
+    },
+    "Constants/1.0.0": {
+      "type": "project",
+      "path": "../Constants/Constants.csproj",
+      "msbuildProject": "../Constants/Constants.csproj"
     }
   },
   "projectFileDependencyGroups": {
     ".NETStandard,Version=v2.0": [
+      "Constants >= 1.0.0",
       "NETStandard.Library >= 2.0.3"
     ]
   },
@@ -204,7 +219,11 @@
       },
       "frameworks": {
         "netstandard2.0": {
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj": {
+              "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

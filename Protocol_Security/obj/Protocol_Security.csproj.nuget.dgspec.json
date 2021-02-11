@@ -4,6 +4,16 @@
     "C:\\Github\\Eurobot_Florian_Reimat\\Protocol_Security\\Protocol_Security.csproj": {}
   },
   "projects": {
+    "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj": {
+      "restore": {
+        "projectUniqueName": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj",
+        "projectName": "Constants",
+        "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj"
+      },
+      "frameworks": {
+        "net48": {}
+      }
+    },
     "C:\\Github\\Eurobot_Florian_Reimat\\Protocol_Security\\Protocol_Security.csproj": {
       "version": "1.0.0",
       "restore": {
@@ -26,7 +36,11 @@
         },
         "frameworks": {
           "netstandard2.0": {
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj": {
+                "projectPath": "C:\\Github\\Eurobot_Florian_Reimat\\Constants\\Constants.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

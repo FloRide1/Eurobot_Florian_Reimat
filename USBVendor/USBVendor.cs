@@ -102,18 +102,24 @@ namespace USBVendorNS
                 throw;
             }
         }
-        internal static void DisplayException(String name, Exception e)
+
+        //public event EventHandler<>;
+        public event EventHandler<byte> OnUSBByteReceivedEvent;
+        public event EventHandler<string> OnUsbVendorExeptionEvent;
+        public event EventHandler<EventArgs> OnDeviceAddedEvent;
+        public event EventHandler<EventArgs> OnDeviceRemovedEvent;
+
+
+
+
+
+        private void DisplayException(string name, Exception e)
         {
             try
             {
-                //  Create an error message.
-
-                String message = "Exception: " + e.Message + Environment.NewLine + "Module: " + name + Environment.NewLine + "Method: " + e.TargetSite.Name;
-
-                const string caption = "Unexpected Exception";
-
-                //MessageBox.Show(message, caption, MessageBoxButtons.OK);
-                Console.Write(message);
+                //  Create an Error message.
+                string message = "Exception: " + e.Message + Environment.NewLine + "Module: " + name + Environment.NewLine + "Method: " + e.TargetSite.Name;
+                OnUsbVendorExeptionEvent?.Invoke(this, message);
             }
             catch (Exception ex)
             {
@@ -122,14 +128,12 @@ namespace USBVendorNS
             }
         }
 
-        UInt32 bytesToRead = Convert.ToUInt32(256);//204810
-        Byte[] dataBuffer = new Byte[256]; //new Byte[2048];
+        UInt32 bytesToRead = Convert.ToUInt32(256); //204810
+        Byte[] dataBuffer = new Byte[256];  //new Byte[2048];
         UInt32 bytesRead = 0;
         bool readSuccess = true;
-        bool success = false;
         bool continueTasks = true;
         bool deviceResetted = false;
-        float powerLevel;
         void usbReadTask()
         {
             try
@@ -204,7 +208,7 @@ namespace USBVendorNS
             }
         }
         //public delegate void DataReceivedEventHandler(object sender, DataReceivedArgs e);
-        public event EventHandler<byte> OnUSBByteReceivedEvent;
+        
 
         public virtual void OnUSBByteReceived(byte data)
         {
@@ -224,24 +228,18 @@ namespace USBVendorNS
             try
             {
                 const uint pipeTimeout = 20;
-
                 if (!(_deviceReady))
                 {
                     // Convert the device interface GUID String to a GUID object: 
-
                     var winUsbDemoGuid = new Guid(DeviceInterfaceGuid);
 
                     // Fill an array with the device path names of all attached devices with matching GUIDs.
-
-                    //var deviceFound = _myDeviceManagement.FindDeviceFromGuid(winUsbDemoGuid, ref devicePathName);//Modif VB
-
                     var deviceFound = _myDeviceManagement.FindDeviceListeFromGuid(winUsbDemoGuid, ref deviceListeFound);
 
                     if (deviceFound)
                     {
-                        foreach (Device _device in deviceListeFound)//MODIF VB le foreach n'existait pas avant
+                        foreach (Device _device in deviceListeFound)
                         {
-                            //_deviceHandle = _myWinUsbCommunications.GetDeviceHandle(devicePathName);
                             _device._deviceHandle = _myWinUsbCommunications.GetDeviceHandle(_device._devicePathName);
 
                             if (!_device._deviceHandle.IsInvalid)
@@ -255,33 +253,20 @@ namespace USBVendorNS
                             else
                             {
                                 // There was a problem in retrieving the information.
-
                                 _device._deviceReady = false;
                                 _myWinUsbCommunications.CloseDeviceHandle(_device._deviceHandle, _device._winUsbHandle);
-                                //LstResults.Items.Add("Device not found.");
-                                //MyMarshalToForm(FormActions.AddItemToListBox.ToString(), "Device not found.");
                             }
                         }
-                    }
-                    else
-                    {
-                        //CmdSendandReceiveViaBulkTransfers.Enabled = true;
-                        //CmdSendAndReceiveViaInterruptTransfers.Enabled = true;
                     }
                 }
                 else
                 {
-                    //LstResults.Items.Add("The device has been detected.");
-                    // Console.WriteLine("The device has been detected.");
                     DisplayDeviceSpeed(null);
                 }
 
                 // Display device information.
-
                 FindDeviceUsingWmi();
                 MatchFoundDeviceUsingVidPid();
-                //ScrollToBottomOfListBox();
-                //MyMarshalToForm(FormActions.ScrollToBottomOfListBox.ToString(), "");
             }
             catch (Exception ex)
             {
@@ -409,8 +394,6 @@ namespace USBVendorNS
                 if (!_deviceDetected)
                 {
                     _deviceReady = false;
-                    //MyMarshalToForm(FormActions.AddItemToListBox.ToString(), "My device not found (WMI)");
-                    //MyMarshalToForm(FormActions.ScrollToBottomOfListBox.ToString(), "");
                 }
                 return _deviceDetected;
             }
@@ -430,17 +413,7 @@ namespace USBVendorNS
         {
             String completeWindowsVersion = Convert.ToString(Environment.OSVersion.Version);
             var windowsVersion = Convert.ToDouble(completeWindowsVersion.Substring(0, 3).Replace('.', ','));
-
-            if (windowsVersion >= (double)6.3)
-            {
-                _windows81 = true;
-                //LstResults.Items.Add("Windows version is 8.1 or later; WinUSB isochronous transfers supported.");
-            }
-            else
-            {
-                _windows81 = false;
-                //LstResults.Items.Add("Windows version is not 8.1 or later; WinUSB isochronous transfers not supported.");
-            }
+            _windows81 = windowsVersion >= 6.3d;
         }
 
         ///  <summary>
@@ -476,7 +449,6 @@ namespace USBVendorNS
             }
             catch (Exception e)
             {
-                // Console.WriteLine(e.Message);
                 if (_deviceArrivedWatcher != null)
                     _deviceArrivedWatcher.Stop();
             }
@@ -490,10 +462,8 @@ namespace USBVendorNS
         {
             try
             {
-                // Console.WriteLine("A USB device has been inserted");
-
+                OnDeviceAddedEvent?.Invoke(this, new EventArgs());
                 FindMyDevice();
-                //_deviceDetected = FindDeviceUsingWmi();
             }
             catch (Exception ex)
             {
@@ -511,8 +481,7 @@ namespace USBVendorNS
         {
             try
             {
-                // Console.WriteLine("A USB device has been removed");
-
+                OnDeviceRemovedEvent?.Invoke(this, new EventArgs());
                 _deviceDetected = FindDeviceUsingWmi();
                 cmv8DeviceListeFound.Clear();
             }

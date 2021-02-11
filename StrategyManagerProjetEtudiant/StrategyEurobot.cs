@@ -10,6 +10,7 @@ using System.Timers;
 using Utilities;
 using WorldMap;
 
+
 namespace StrategyManagerProjetEtudiantNS
 {
     public class StrategyEurobot : StrategyGenerique
@@ -32,11 +33,10 @@ namespace StrategyManagerProjetEtudiantNS
 
         public override void InitStrategy()
         {
-            //Obtenus directement à partir du script Matlab
-            OnOdometryPointToMeter(1.178449e-06);
-            On2WheelsAngleSetup(-1.570796e+00, 1.570796e+00);
-            On2WheelsToPolarMatrixSetup(5.000000e-01, -5.000000e-01,
-                                4.166667e+00, 4.166667e+00);
+            // Obtenus directement à partir du script Matlab
+            OnOdometryPointToMeter(ConstVar.EUROBOT_ODOMETRY_POINT_TO_METER);
+            On2WheelsAngleSetup(- ConstVar.EUROBOT_WHEELS_ANGLE, ConstVar.EUROBOT_WHEELS_ANGLE);
+            On2WheelsToPolarMatrixSetup(ConstVar.EUROBOT_MATRIX_X_COEFF, - ConstVar.EUROBOT_MATRIX_X_COEFF, ConstVar.EUROBOT_MATRIX_THETA_COEFF, ConstVar.EUROBOT_MATRIX_THETA_COEFF);
         }
                 
 

@@ -3,14 +3,14 @@
 This is an explanation of all implemented protocol in Commands.cs 
 - Name : The Command Name
 - Code : The Function of the Message
-- PC → 2R : Function who can be send from PC to low-level
-- 2R → PC : Function who can be send from low-level to PC
+- PC → R : Function who can be send from PC to low-level
+- R → PC : Function who can be send from low-level to PC
 - Payload : The size of the payload (...) 
 - Timestamp : If the timestamp is present in the payload
 - Need to Edit : This is just if needed to convert function from Holonomic Robot to 2 Wheels Robot
 
 
-| Name                                    | Code   | PC → 2R | 2R → PC | Payload Size | Timestamp | Need to Edit |
+| Name                                    | Code   | PC → R  |  R → PC | Payload Size | Timestamp | Need to Edit |
 |-----------------------------------------|--------|---------|---------|--------------|-----------|--------------| 
 | Welcome Message                         | 0x0100 |    ❌   |    ✔    |       0      |     ❌    |              |
 | Error Message                           | 0x0101 |    ❌   |    ✔    |   Variable   |     ❌    |              |
@@ -44,7 +44,7 @@ This is an explanation of all implemented protocol in Commands.cs
 | Odometry Point To Meter                 | 0x0241 |    ✔    |    ❌   |       4      |     ❌    |              |
 | 4 Wheels Angle Set                      | 0x0242 |    ✔    |    ❌   |      16      |     ❌    | Useless      |
 | 4 Wheels  To Polar Matrix Set           | 0x0243 |    ✔    |    ❌   |      48      |     ❌    | Useless      |
-| 2 Wheels Angle Set                      | 0x0244 |    ✔    |    ❌   |       2      |     ❌    |              |
+| 2 Wheels Angle Set                      | 0x0244 |    ✔    |    ❌   |       8      |     ❌    |              |
 | 2 Wheels To Polar Matrix Set            | 0x0245 |    ✔    |    ❌   |      16      |     ❌    |              |
 | Set Asservissement Mode                 | 0x0250 |    ✔    |    ❌   |       1      |     ❌    |              |
 | Speed PID Enable Debug Error Corr       | 0x0251 |    ✔    |    ❌   |       1      |     ❌    |              |

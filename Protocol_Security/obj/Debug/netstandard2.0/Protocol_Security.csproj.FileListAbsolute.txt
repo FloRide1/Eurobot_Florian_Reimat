@@ -7,3 +7,6 @@ C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Prot
 C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.csproj.CoreCompileInputs.cache
 C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.dll
 C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.pdb
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\bin\Debug\netstandard2.0\Constants.dll
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\bin\Debug\netstandard2.0\Constants.pdb
+C:\Github\Eurobot_Florian_Reimat\Protocol_Security\obj\Debug\netstandard2.0\Protocol_Security.csproj.CopyComplete

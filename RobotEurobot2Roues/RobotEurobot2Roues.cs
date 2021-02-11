@@ -25,7 +25,6 @@ namespace RobotEurobot2Roues
         static MsgProcessor msgProcessor;
         static XBoxController xBoxManette;
         static StrategyGenerique strategyManager;
-        static ConsoleFormat consoleFormat;
 
         static WpfRobot2RouesInterface interfaceRobot;
         static GameMode competition = GameMode.Eurobot;
@@ -36,10 +35,13 @@ namespace RobotEurobot2Roues
 
         static void Main(string[] args)
         {
+            ConsoleFormat.InitMainConsole();
 
 
             /// Enregistrement de la license SciChart en début de code
+            
             SciChartSurface.SetRuntimeLicenseKey(ConstVar.SCICHART_RUNTIME_KEY);
+            ConsoleFormat.SetupScichartLicenceKey();
 
             /// Initialisation des modules utilisés dans le robot
             int robotId = 0;
@@ -50,25 +52,66 @@ namespace RobotEurobot2Roues
             msgEncoder = new MsgEncoder();
             msgGenerator = new MsgGenerator();
             msgProcessor = new MsgProcessor(robotId, competition);
+            ConsoleFormat.SetupAllCommunication();
+
             xBoxManette = new XBoxController(robotId);
+            ConsoleFormat.SetupXboxController();
+
             strategyManager = new StrategyEurobot(robotId, teamId, "224.16.32.79");
+
 
             /// Création des liens entre module, sauf depuis et vers l'interface graphique           
             usbDriver.OnUSBByteReceivedEvent += msgDecoder.ByteReceived;                                    // Transmission des messages reçus par l'USB au Message Decoder
             msgDecoder.OnCorrectMessageReceivedEvent += msgProcessor.ProcessRobotDecodedMessage;            // Transmission les messages décodés par le Message Decoder au Message Processor
-
             msgGenerator.OnMessageToRobotGeneratedEvent += msgEncoder.EncodeAndSendMessage;                 // Envoi des messages du générateur de message à l'encoder
             msgEncoder.OnSendMessageEvent += usbDriver.SendUSBMessage;                                      // Envoi des messages en USB depuis le message encoder
+
+            #region Console
+            #region USB Vendor
+            usbDriver.OnDeviceAddedEvent += ConsoleFormat.PrintNewDeviceAdded;
+            usbDriver.OnDeviceRemovedEvent += ConsoleFormat.PrintDeviceRemoved;
+            usbDriver.OnUsbVendorExeptionEvent += ConsoleFormat.PrintUsbErrorExeption;
+            #endregion
+
+            #region Hex Viewer
+            msgDecoder.OnUnknowByteEvent += ConsoleFormat.PrintUnknowByte;
+            msgDecoder.OnSOFByteReceivedEvent += ConsoleFormat.PrintSOF;
+            msgDecoder.OnFunctionMSBByteReceivedEvent += ConsoleFormat.PrintFunctionMSB;
+            msgDecoder.OnFunctionLSBByteReceivedEvent += ConsoleFormat.PrintFunctionLSB;
+            msgDecoder.OnPayloadLenghtMSBByteReceivedEvent += ConsoleFormat.PrintLenghtMSB;
+            msgDecoder.OnPayloadLenghtLSBByteReceivedEvent += ConsoleFormat.PrintLenghtLSB;
+            msgDecoder.OnPayloadByteReceivedEvent += ConsoleFormat.PrintPayloadByte;
+            msgDecoder.OnCorrectMessageReceivedEvent += ConsoleFormat.PrintCorrectChecksum;
+            msgDecoder.OnErrorMessageReceivedEvent += ConsoleFormat.PrintWrongChecksum;
+            #endregion
+
+            #region Hex Viewer Error
+            msgDecoder.OnOverLenghtMessageEvent += ConsoleFormat.PrintOverLenghtWarning;
+            msgDecoder.OnUnknowFunctionEvent += ConsoleFormat.PrintUnknowFunctionReceived;
+            msgDecoder.OnWrongLenghtFunctionEvent += ConsoleFormat.PrintWrongFonctionLenghtReceived;
+            #endregion
+
+            #region Hex Sender
+            msgEncoder.OnSendMessageEvent += ConsoleFormat.PrintSendMsg;
+            #endregion
+
+            #region Hex Sender Error
+            msgEncoder.OnSerialDisconnectedEvent += ConsoleFormat.PrintOnSerialDisconnectedError;
+            msgEncoder.OnUnknownFunctionSentEvent += ConsoleFormat.PrintUnknowFunctionSent;
+            msgEncoder.OnWrongPayloadSentEvent += ConsoleFormat.PrintWrongFunctionLenghtSent;
+            #endregion
+            #endregion
 
             strategyManager.On2WheelsToPolarMatrixSetupEvent += msgGenerator.GenerateMessage2WheelsToPolarMatrixSet;   //Transmission des messages de set-up de la matrice de transformation moteurindepeandt -> polaire en embarqué
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
             strategyManager.OnOdometryPointToMeterSetupEvent += msgGenerator.GenerateMessageOdometryPointToMeter;      //Transmission des messages de set-up du coeff pointToMeter en embarqué
+            ConsoleFormat.PrintStrategyBoot();
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
-
+            
 
             StartRobotInterface();
 
-
+            ConsoleFormat.EndMainBootSequence();
             while (!exitSystem)
             {
                 Thread.Sleep(500);
@@ -78,6 +121,7 @@ namespace RobotEurobot2Roues
         static Thread t1;
         static void StartRobotInterface()
         {
+            ConsoleFormat.StartRobotInterface();
             t1 = new Thread(() =>
             {
                 //Attention, il est nécessaire d'ajouter PresentationFramework, PresentationCore, WindowBase and your wpf window application aux ressources.

@@ -84,6 +84,7 @@ namespace EventArgsLibrary
 
         public MessageByteArgs(ushort msgFunction_a, ushort msgPayloadLenght_a, byte[] msgPayload_a, byte checksum_a)
         {
+            SOF = ConstVar.START_OF_FRAME;
             MsgFunction = msgFunction_a;
             MsgPayloadLength = msgPayloadLenght_a;
             MsgPayload = msgPayload_a;

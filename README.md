@@ -9,12 +9,12 @@ of this project is  pretty similar to the source.
 
 
 ## Advancement
-- [ ] Edit all Class for adding Console Colors
+- [x] Edit all Class for adding Console Colors
 	- [x] MsgDecoder
 	- [x] MsgEncoder
-	- [ ] MsgGenerator
-	- [ ] MsgProcessor
-	- [ ] UsbVendor
+	- [x] MsgGenerator
+	- [x] MsgProcessor
+	- [x] UsbVendor
 - [ ] Add an Trajectory Planner (Basic)
 - [ ] Improve WPF interface 
 	- [ ] Handle Multiple Waypoints 
@@ -24,6 +24,8 @@ of this project is  pretty similar to the source.
 	- [ ] Add Points Estimation Wpf Controller
 	- [ ] Make an only Match Wpf Controller
 - [ ] Make an Strategy Manager
+- [x] Others
+	- [x] Implementing Protocol Security
 
 ## Explanation of Project
 - RobotEurobot2Roues:
