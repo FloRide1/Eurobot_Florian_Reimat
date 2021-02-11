@@ -319,11 +319,11 @@ namespace WpfWorldMapDisplay
         public void UpdateLocalWorldMap(LocalWorldMap localWorldMap)
         {
             int robotId = localWorldMap.RobotId;
-            UpdateRobotLocation(robotId, localWorldMap.robotLocation);
+            UpdateRobotLocation(robotId, localWorldMap.RobotLocation);
             UpdateRobotRole(robotId, localWorldMap.robotRole);
             UpdatePlayingSide(robotId, localWorldMap.playingSide);
-            UpdateRobotGhostLocation(robotId, localWorldMap.robotGhostLocation);
-            UpdateRobotDestination(robotId, localWorldMap.destinationLocation);
+            UpdateRobotGhostLocation(robotId, localWorldMap.RobotGhostLocation);
+            UpdateRobotDestination(robotId, localWorldMap.DestinationLocation);
             UpdateRobotWaypoint(robotId, localWorldMap.waypointLocation);
             if (lwmdType == LocalWorldMapDisplayType.StrategyMap)
             {
@@ -343,7 +343,7 @@ namespace WpfWorldMapDisplay
             }
             UpdateLidarObjects(robotId, localWorldMap.lidarObjectList);
             UpdateObstacleList(localWorldMap.obstaclesLocationList);
-            UpdateBallLocationList(localWorldMap.ballLocationList);
+            UpdateBallLocationList(localWorldMap.BallLocationList);
 
             /// Demande d'affichage de la World Map reçue
             UpdateWorldMapDisplay();

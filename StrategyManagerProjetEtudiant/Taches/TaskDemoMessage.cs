@@ -75,7 +75,6 @@ namespace StrategyManagerProjetEtudiantNS
                     case TaskDemoMessageState.Etat1:
                         sw.Restart();
                         parent.OnTextMessage("TaskDemoMessage : Etat 1");
-                        Console.WriteLine("TaskDemoMessage : Etat 1");
                         state = TaskDemoMessageState.Etat1EnCours;
                         break;
                     case TaskDemoMessageState.Etat1EnCours:
@@ -88,7 +87,6 @@ namespace StrategyManagerProjetEtudiantNS
                         sw.Restart();
                         state = TaskDemoMessageState.Etat2EnCours;
                         parent.OnTextMessage("TaskDemoMessage : Etat 2");
-                        Console.WriteLine("TaskDemoMessage : Etat 2");
                         break;
                     case TaskDemoMessageState.Etat2EnCours:
                         if (sw.ElapsedMilliseconds>2000)
@@ -100,7 +98,6 @@ namespace StrategyManagerProjetEtudiantNS
                         sw.Restart();
                         state = TaskDemoMessageState.Etat3EnCours;
                         parent.OnTextMessage("TaskDemoMessage : Etat 3");
-                        Console.WriteLine("TaskDemoMessage : Etat 3");
                         break;
                     case TaskDemoMessageState.Etat3EnCours:
                         if (sw.ElapsedMilliseconds > 500)
