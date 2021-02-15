@@ -338,7 +338,7 @@ namespace WpfWorldMapDisplay
 
         public void UpdateLocalWorldMap(LocalWorldMap localWorldMap)
         {
-            int robotId = localWorldMap.RobotId;
+            int robotId = localWorldMap.RobotId + localWorldMap.TeamId;
             UpdateRobotLocation(robotId, localWorldMap.RobotLocation);
             //UpdateRobotRole(robotId, localWorldMap.robotRole);
             UpdatePlayingSide(robotId, localWorldMap.playingSide);
@@ -449,13 +449,16 @@ namespace WpfWorldMapDisplay
 
             foreach (var r in TeamMatesDisplayDictionary)
             {
+
+                //On trace le robot en dernier pour l'avoir en couche de dessus
+                PolygonSeries.AddOrUpdatePolygonExtended(r.Key, TeamMatesDisplayDictionary[r.Key].GetRobotPolygon());
+
                 //Affichage des robots
-                PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Ghost, TeamMatesDisplayDictionary[r.Key].GetRobotGhostPolygon());
+                // PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Ghost, TeamMatesDisplayDictionary[r.Key].GetRobotGhostPolygon());
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Speed, TeamMatesDisplayDictionary[r.Key].GetRobotSpeedArrow());
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Destination, TeamMatesDisplayDictionary[r.Key].GetRobotDestinationArrow());
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.WayPoint, TeamMatesDisplayDictionary[r.Key].GetRobotWaypointArrow());
-                //On trace le robot en dernier pour l'avoir en couche de dessus
-                PolygonSeries.AddOrUpdatePolygonExtended(r.Key, TeamMatesDisplayDictionary[r.Key].GetRobotPolygon());
+                
 
                 //Rendering des points Lidar
                 lidarPts.AcceptsUnsortedData = true;
@@ -631,13 +634,13 @@ namespace WpfWorldMapDisplay
             }
         }
 
-        public void UpdateRobotWaypoint(int robotId, List<Location> waypointsLocation)
+        public void UpdateRobotWaypoint(int robotId, List<PointD> waypointsLocation)
         {
             if (waypointsLocation == null)
                 return;
             if (TeamMatesDisplayDictionary.ContainsKey(robotId))
             {
-                // TeamMatesDisplayDictionary[robotId].SetWayPoint(waypointLocation.X, waypointLocation.Y, waypointLocation.Theta);
+                TeamMatesDisplayDictionary[robotId].SetWayPoint(waypointsLocation);
             }
         }
 

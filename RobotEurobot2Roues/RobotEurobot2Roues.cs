@@ -48,8 +48,8 @@ namespace RobotEurobot2Roues
             ConsoleFormat.SetupScichartLicenceKey();
 
             /// Initialisation des modules utilisés dans le robot
-            int robotId = 0;
-            int teamId = 0;
+            int robotId = (int)RobotId.Robot1;
+            int teamId = (int)TeamId.Team1;
 
             usbDriver = new USBVendor();
             msgDecoder = new MsgDecoder();
@@ -107,6 +107,11 @@ namespace RobotEurobot2Roues
             #endregion
             #endregion
 
+            #region Local World Map
+            localWorldMap = new LocalWorldMap();
+            localWorldMap.Init(robotId, teamId);
+            #endregion
+
             #region Strategy /!\ Need to be Last /!\
             strategyManager.On2WheelsToPolarMatrixSetupEvent += msgGenerator.GenerateMessage2WheelsToPolarMatrixSet;   //Transmission des messages de set-up de la matrice de transformation moteurindepeandt -> polaire en embarqué
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
@@ -114,19 +119,22 @@ namespace RobotEurobot2Roues
             ConsoleFormat.PrintStrategyBoot();
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
             #endregion
+            localWorldMap.AddNewWaypoints(new PointD(1.5d, 1d));
+            localWorldMap.AddNewWaypoints(new PointD(-1.5d, 1d));
+            localWorldMap.AddNewWaypoints(new PointD(-1.5d, -1d));
+            localWorldMap.AddNewWaypoints(new PointD(1.5d, -1d));
+            localWorldMap.AddNewWaypoints(new PointD(0.5d, 0.5d));
 
-            #region Local World Map
-            localWorldMap = new LocalWorldMap();
-            localWorldMap.Init(robotId, teamId);
 
-            
-            #endregion 
 
 
             StartRobotInterface();            
             ConsoleFormat.EndMainBootSequence();
 
-            localWorldMap.OnUpdateRobotLocation(new Location(10, 10, 10, 10, 10, 10));
+            
+
+
+
 
             while (!exitSystem)
             {
@@ -144,9 +152,13 @@ namespace RobotEurobot2Roues
                 interfaceRobot = new WpfRobot2RouesInterface(competition);
                 interfaceRobot.Loaded += RegisterRobotInterfaceEvents;
                 interfaceRobot.ShowDialog();
+
+
             });
             t1.SetApartmentState(ApartmentState.STA);
             t1.Start();
+
+            
         }
 
         static void RegisterRobotInterfaceEvents(object sender, EventArgs e)
@@ -206,6 +218,8 @@ namespace RobotEurobot2Roues
 
             localWorldMap.OnLocalWorldMapEvent += interfaceRobot.OnLocalWorldMapStrategyEvent;
             localWorldMap.OnLocalWorldMapEvent += interfaceRobot.OnLocalWorldMapWayPointEvent;
+
+            interfaceRobot.OnGameStateEditionEvent += localWorldMap.OnGameStateChange;
 
 
         }

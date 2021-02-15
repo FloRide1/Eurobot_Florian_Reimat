@@ -592,163 +592,106 @@ namespace RobotInterface
         #region OUTPUT EVENT
         //OUTPUT EVENT
         public delegate void EnableDisableMotorsEventHandler(object sender, BoolEventArgs e);
+
         public event EnableDisableMotorsEventHandler OnEnableDisableMotorsFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableTirFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableServosFromInterfaceGeneratedEvent;
+        public event EventHandler<ByteEventArgs> OnSetAsservissementModeFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableControlManetteFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableLoggingEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableLogReplayEvent;
+        public event EventHandler<BoolEventArgs> OnEnableMotorCurrentDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableEncodersDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableEncodersRawDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableMotorsSpeedConsigneDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent;
+        public event EventHandler<PolarPIDSetupArgs> OnSetRobotPIDFromInterfaceGeneratedEvent;
+        public event EventHandler<EventArgs> OnCalibrateGyroFromInterfaceGeneratedEvent;
+        public event EventHandler<GameState> OnGameStateEditionEvent;
+
         public virtual void OnEnableDisableMotorsFromInterface(bool val)
         {
-            var handler = OnEnableDisableMotorsFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val } );
-            }
+            OnEnableDisableMotorsFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
-
-        //public delegate void EnableDisableTirEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableDisableTirFromInterfaceGeneratedEvent;
+        
         public virtual void OnEnableDisableTirFromInterface(bool val)
         {
-            var handler = OnEnableDisableTirFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableDisableTirFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
-
-        //public delegate void EnableDisableTirEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableDisableServosFromInterfaceGeneratedEvent;
+        
         public virtual void OnEnableDisableServosFromInterface(bool val)
         {
-            var handler = OnEnableDisableServosFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableDisableServosFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
-        //public delegate void EnableDisableTirEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<ByteEventArgs> OnSetAsservissementModeFromInterfaceGeneratedEvent;
+        
         public virtual void OnSetAsservissementModeFromInterface(byte val)
         {
-            var handler = OnSetAsservissementModeFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new ByteEventArgs { Value = val });
-            }
+            OnSetAsservissementModeFromInterfaceGeneratedEvent?.Invoke(this, new ByteEventArgs { Value = val });
         }
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableDisableControlManetteFromInterfaceGeneratedEvent;
+
+        
         public virtual void OnEnableDisableControlManetteFromInterface(bool val)
         {
-            var handler = OnEnableDisableControlManetteFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableDisableControlManetteFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
 
-        public event EventHandler<BoolEventArgs> OnEnableDisableLoggingEvent;
+        
         public virtual void OnEnableDisableLogging(bool val)
         {
-            var handler = OnEnableDisableLoggingEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableDisableLoggingEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
 
-        public event EventHandler<BoolEventArgs> OnEnableDisableLogReplayEvent;
         public virtual void OnEnableDisableLogReplay(bool val)
         {
-            var handler = OnEnableDisableLogReplayEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableDisableLogReplayEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
-
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableMotorCurrentDataFromInterfaceGeneratedEvent;
+        
         public virtual void OnEnableMotorCurrentDataFromInterface(bool val)
         {
-            var handler = OnEnableMotorCurrentDataFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableMotorCurrentDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
 
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableEncodersDataFromInterfaceGeneratedEvent;
         public virtual void OnEnableEncodersDataFromInterface(bool val)
         {
-            var handler = OnEnableEncodersDataFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableEncodersDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
 
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableEncodersRawDataFromInterfaceGeneratedEvent;
         public virtual void OnEnableEncodersRawDataFromInterface(bool val)
         {
-            var handler = OnEnableEncodersRawDataFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableEncodersRawDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
 
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableMotorsSpeedConsigneDataFromInterfaceGeneratedEvent;
+        
         public virtual void OnEnableMotorSpeedConsigneDataFromInterface(bool val)
         {
-            var handler = OnEnableMotorsSpeedConsigneDataFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new BoolEventArgs { value = val });
-            }
+            OnEnableMotorsSpeedConsigneDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
-
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent;
+        
         public virtual void OnEnableSpeedPIDEnableDebugInternalFromInterface(bool val)
         {
             OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
 
-        public event EventHandler<BoolEventArgs> OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent;
         public virtual void OnEnablePowerMonitoringDataFromInterface(bool val)
         {
             OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
-
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<BoolEventArgs> OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent;
+        
         public virtual void OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterface(bool val)
         {
             OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent?.Invoke(this, new BoolEventArgs { value = val });
         }
-
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<PolarPIDSetupArgs> OnSetRobotPIDFromInterfaceGeneratedEvent;
+        
         public virtual void OnSetRobotPIDFromInterface(double px, double ix, double dx, double py, double iy, double dy, double ptheta, double itheta, double dtheta)
         {
-            var handler = OnSetRobotPIDFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new PolarPIDSetupArgs { P_x = px, I_x=ix, D_x=dx, P_y=py, I_y=iy, D_y=dy, P_theta=ptheta, I_theta=itheta, D_theta=dtheta });
-            }
+            OnSetRobotPIDFromInterfaceGeneratedEvent?.Invoke(this, new PolarPIDSetupArgs { P_x = px, I_x = ix, D_x = dx, P_y = py, I_y = iy, D_y = dy, P_theta = ptheta, I_theta = itheta, D_theta = dtheta });
         }
 
-
-        //public delegate void EnableDisableControlManetteEventHandler(object sender, BoolEventArgs e);
-        public event EventHandler<EventArgs> OnCalibrateGyroFromInterfaceGeneratedEvent;
         public virtual void OnCalibrateGyroFromInterface()
         {
-            var handler = OnCalibrateGyroFromInterfaceGeneratedEvent;
-            if (handler != null)
-            {
-                handler(this, new EventArgs());
-            }
+            OnCalibrateGyroFromInterfaceGeneratedEvent?.Invoke(this, new EventArgs());
         }
         #endregion
 
@@ -786,16 +729,26 @@ namespace RobotInterface
         bool currentXBoxActivation = false;
         private void ButtonXBoxController_Click(object sender, RoutedEventArgs e)
         {
+
             currentXBoxActivation = !currentXBoxActivation;
             if (currentXBoxActivation)
             {
                 OnEnableDisableControlManetteFromInterface(true);
                 LabelXBoxControllerMode.Content = "XBox Pad : Enabled";
+
+                //// TEMPO
+                OnGameStateEditionEvent?.Invoke(this, GameState.STOPPED);
+                ////
             }
             else
             {
                 OnEnableDisableControlManetteFromInterface(false);
                 LabelXBoxControllerMode.Content = "XBox Pad : Disabled";
+
+
+                //// TEMPO
+                OnGameStateEditionEvent?.Invoke(this, GameState.PLAYING);
+                ////
             }
         }              
 

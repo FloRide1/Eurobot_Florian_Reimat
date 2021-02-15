@@ -17,7 +17,7 @@ namespace WorldMap
         public virtual PlayingSide playingSide { get; set; }
         public virtual Location RobotGhostLocation { get; set; }
         public virtual Location DestinationLocation { get; set; }
-        public virtual List<Location> WaypointLocations { get; set; }
+        public virtual List<PointD> WaypointLocations { get; set; }
         public virtual List<Location> RobotHistorical { get; set; }
         public virtual List<Location> BallLocationList { get; set; }
         public virtual List<LocationExtended> ObstaclesLocationList { get; set; }
@@ -29,18 +29,19 @@ namespace WorldMap
         // public virtual Heatmap heatMapStrategy { get; set; }
         // public virtual Heatmap heatMapWaypoint { get; set; }
 
+
         public LocalWorldMap()
         {
-            //Type = "LocalWorldMap";
+
         }
 
         public void Init(int robotId, int teamId)
         {
-            RobotId = RobotId;
+            RobotId = robotId;
             TeamId = teamId;
             RobotLocation = new Location(0, 0, 0, 0, 0, 0);
             RobotGhostLocation = new Location(0, 0, 0, 0, 0, 0);
-            WaypointLocations = new List<Location> { RobotLocation };
+            WaypointLocations = new List<PointD> { };
             RobotHistorical = new List<Location> { RobotLocation };
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
@@ -73,6 +74,18 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
+        public void AddNewWaypoints(PointD location)
+        {
+            WaypointLocations.Add(location);
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void ResetWaypoints()
+        {
+            WaypointLocations = new List<PointD> { };
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
         public void SetRobotLocation(Location location)
         {
             RobotLocation = location;
@@ -94,13 +107,13 @@ namespace WorldMap
         {
             RobotLocation = location;
             RobotGhostLocation = location;
-            WaypointLocations = new List<Location> { RobotLocation };
+            WaypointLocations = new List<PointD> { };
             RobotHistorical = new List<Location> { RobotLocation };
             OnResetRobotEvent?.Invoke(this, location);
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
-
+        
 
         #region Events
         public event EventHandler<Location> OnUpdateRobotLocationEvent;
@@ -112,6 +125,12 @@ namespace WorldMap
         public event EventHandler<Location> OnResetRobotEvent;
         public event EventHandler<LocalWorldMap> OnLocalWorldMapEvent;
         #endregion
+
+
+        public void OnGameStateChange(object sender, GameState gameState_a)
+        {
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
 
     }
 
