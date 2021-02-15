@@ -80,7 +80,7 @@
       <Name>Utilities</Name>
     </ProjectReference>
     <ProjectReference Include="..\WorldMap\WorldMap.csproj">
-      <Project>{B2D0126F-8C82-4EAA-87E5-67415F589098}</Project>
+      <Project>{b2d0126f-8c82-4eaa-87e5-67415f589098}</Project>
       <Name>WorldMap</Name>
     </ProjectReference>
   </ItemGroup>

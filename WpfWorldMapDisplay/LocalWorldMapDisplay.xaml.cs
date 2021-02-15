@@ -19,6 +19,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Utilities;
 using WorldMap;
@@ -115,12 +116,31 @@ namespace WpfWorldMapDisplay
         /// <param name="imagePath">Chemin de l'image</param>
         public void SetFieldImageBackGround(string imagePath)
         {
-            imageBinding.ImagePath = imagePath;
-            imageBinding.X1 = -LengthGameArea / 2;
-            imageBinding.X2 = +LengthGameArea / 2;
-            imageBinding.Y1 = -WidthGameArea / 2;
-            imageBinding.Y2 = +WidthGameArea / 2;
+
+            var box = new BoxAnnotation()
+            {
+                BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x27, 0x9B, 0x27)),
+                Background = new ImageBrush(new BitmapImage(new Uri(imagePath))),
+                AnnotationCanvas = AnnotationCanvas.BelowChart,
+                BorderThickness = new Thickness(1),
+                CornerRadius = new CornerRadius(1),
+                X1 = -LengthGameArea / 2,
+                X2 = +LengthGameArea / 2,
+                Y1 = -WidthGameArea / 2,
+                Y2 = +WidthGameArea / 2,
+                IsEditable = false
+            };
+
+            sciChartSurface.XAxis.AxisBandsFill = Colors.Transparent;
+            sciChartSurface.YAxis.AxisBandsFill = Colors.Transparent;
+
+            //SetterBase item = new Setter(VisibilityProperty, Visibility.Hidden);
+            //sciChart.XAxis.MajorGridLineStyle.Setters.Add(item);
+
+            sciChartSurface.Annotations.Add(box);
+
         }
+
 
         /// <summary>
         /// Initialise la Local World Map
@@ -320,11 +340,15 @@ namespace WpfWorldMapDisplay
         {
             int robotId = localWorldMap.RobotId;
             UpdateRobotLocation(robotId, localWorldMap.RobotLocation);
-            UpdateRobotRole(robotId, localWorldMap.robotRole);
+            //UpdateRobotRole(robotId, localWorldMap.robotRole);
             UpdatePlayingSide(robotId, localWorldMap.playingSide);
             UpdateRobotGhostLocation(robotId, localWorldMap.RobotGhostLocation);
             UpdateRobotDestination(robotId, localWorldMap.DestinationLocation);
-            UpdateRobotWaypoint(robotId, localWorldMap.waypointLocation);
+
+
+            UpdateRobotWaypoint(robotId, localWorldMap.WaypointLocations);
+
+
             if (lwmdType == LocalWorldMapDisplayType.StrategyMap)
             {
                 //if (localWorldMap.heatMapStrategy != null)
@@ -335,14 +359,15 @@ namespace WpfWorldMapDisplay
                 //if (localWorldMap.heatMapWaypoint != null)
                 //    UpdateHeatMap(robotId, localWorldMap.heatMapWaypoint.BaseHeatMapData);
             }
+
             //Affichage du lidar uniquement dans la strategy map
             if (lwmdType == LocalWorldMapDisplayType.StrategyMap)
             {
-                UpdateLidarMap(robotId, localWorldMap.lidarMap);
-                UpdateLidarProcessedMap(robotId, localWorldMap.lidarMapProcessed);
+                //UpdateLidarMap(robotId, localWorldMap.lidarMap);
+                //UpdateLidarProcessedMap(robotId, localWorldMap.lidarMapProcessed);
             }
-            UpdateLidarObjects(robotId, localWorldMap.lidarObjectList);
-            UpdateObstacleList(localWorldMap.obstaclesLocationList);
+            UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
+            UpdateObstacleList(localWorldMap.ObstaclesLocationList);
             UpdateBallLocationList(localWorldMap.BallLocationList);
 
             /// Demande d'affichage de la World Map reçue
@@ -483,7 +508,7 @@ namespace WpfWorldMapDisplay
             }
         }
 
-        private void UpdateRobotLocation(int robotId, Location location)
+        public void UpdateRobotLocation(int robotId, Location location)
         {
             if (location == null)
                 return;
@@ -606,13 +631,13 @@ namespace WpfWorldMapDisplay
             }
         }
 
-        public void UpdateRobotWaypoint(int robotId, Location waypointLocation)
+        public void UpdateRobotWaypoint(int robotId, List<Location> waypointsLocation)
         {
-            if (waypointLocation == null)
+            if (waypointsLocation == null)
                 return;
             if (TeamMatesDisplayDictionary.ContainsKey(robotId))
             {
-                TeamMatesDisplayDictionary[robotId].SetWayPoint(waypointLocation.X, waypointLocation.Y, waypointLocation.Theta);
+                // TeamMatesDisplayDictionary[robotId].SetWayPoint(waypointLocation.X, waypointLocation.Y, waypointLocation.Theta);
             }
         }
 

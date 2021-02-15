@@ -46,4 +46,3 @@ C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.csproj.CoreCompileI
 C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.csproj.CopyComplete
 C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.dll
 C:\Github\Eurobot_Florian_Reimat\WorldMap\obj\Debug\WorldMap.pdb
-C:\Github\Eurobot_Florian_Reimat\WorldMap\bin\Debug\Newtonsoft.Json.xml

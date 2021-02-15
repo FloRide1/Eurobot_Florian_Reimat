@@ -13,6 +13,8 @@ using Constants;
 using StrategyManagerProjetEtudiantNS;
 using SciChart.Charting.Visuals;
 using ConsoleFormatNS;
+using WorldMap;
+using Utilities;
 
 namespace RobotEurobot2Roues
 {
@@ -25,6 +27,8 @@ namespace RobotEurobot2Roues
         static MsgProcessor msgProcessor;
         static XBoxController xBoxManette;
         static StrategyGenerique strategyManager;
+
+        static LocalWorldMap localWorldMap;
 
         static WpfRobot2RouesInterface interfaceRobot;
         static GameMode competition = GameMode.Eurobot;
@@ -59,12 +63,13 @@ namespace RobotEurobot2Roues
 
             strategyManager = new StrategyEurobot(robotId, teamId, "224.16.32.79");
 
-
+            #region Communication to Low Lvl
             /// Création des liens entre module, sauf depuis et vers l'interface graphique           
             usbDriver.OnUSBByteReceivedEvent += msgDecoder.ByteReceived;                                    // Transmission des messages reçus par l'USB au Message Decoder
             msgDecoder.OnCorrectMessageReceivedEvent += msgProcessor.ProcessRobotDecodedMessage;            // Transmission les messages décodés par le Message Decoder au Message Processor
             msgGenerator.OnMessageToRobotGeneratedEvent += msgEncoder.EncodeAndSendMessage;                 // Envoi des messages du générateur de message à l'encoder
             msgEncoder.OnSendMessageEvent += usbDriver.SendUSBMessage;                                      // Envoi des messages en USB depuis le message encoder
+            #endregion
 
             #region Console
             #region USB Vendor
@@ -102,16 +107,27 @@ namespace RobotEurobot2Roues
             #endregion
             #endregion
 
+            #region Strategy /!\ Need to be Last /!\
             strategyManager.On2WheelsToPolarMatrixSetupEvent += msgGenerator.GenerateMessage2WheelsToPolarMatrixSet;   //Transmission des messages de set-up de la matrice de transformation moteurindepeandt -> polaire en embarqué
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
             strategyManager.OnOdometryPointToMeterSetupEvent += msgGenerator.GenerateMessageOdometryPointToMeter;      //Transmission des messages de set-up du coeff pointToMeter en embarqué
             ConsoleFormat.PrintStrategyBoot();
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
+            #endregion
+
+            #region Local World Map
+            localWorldMap = new LocalWorldMap();
+            localWorldMap.Init(robotId, teamId);
+
             
+            #endregion 
 
-            StartRobotInterface();
 
+            StartRobotInterface();            
             ConsoleFormat.EndMainBootSequence();
+
+            localWorldMap.OnUpdateRobotLocation(new Location(10, 10, 10, 10, 10, 10));
+
             while (!exitSystem)
             {
                 Thread.Sleep(500);
@@ -139,6 +155,7 @@ namespace RobotEurobot2Roues
             /// Sur evenement xx        -->>        Action a effectuer
             /// 
 
+            #region From uC
             /// Affichage des évènements en provenance du uC
             msgGenerator.OnMessageToDisplaySpeedPolarPidSetupEvent += interfaceRobot.OnMessageToDisplayPolarSpeedPidSetupReceived;
             msgGenerator.OnMessageToDisplaySpeedIndependantPidSetupEvent += interfaceRobot.OnMessageToDisplayIndependantSpeedPidSetupReceived;
@@ -165,7 +182,8 @@ namespace RobotEurobot2Roues
 
             msgProcessor.OnMessageCounterEvent += interfaceRobot.MessageCounterReceived;
             msgGenerator.OnSetSpeedConsigneToRobotReceivedEvent += interfaceRobot.UpdatePolarSpeedConsigneOnGraph; //Valable quelque soit la source des consignes vitesse
-
+            #endregion
+            #region Order From GUI
             /// Envoi des ordres en provenance de l'interface graphique
             interfaceRobot.OnEnableDisableMotorsFromInterfaceGeneratedEvent += msgGenerator.GenerateMessageEnableDisableMotors;
             interfaceRobot.OnEnableDisableControlManetteFromInterfaceGeneratedEvent += ChangeUseOfXBoxController;
@@ -177,13 +195,17 @@ namespace RobotEurobot2Roues
             interfaceRobot.OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent += msgGenerator.GenerateMessageSpeedPIDEnableDebugInternal;
             interfaceRobot.OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent += msgGenerator.GenerateMessageSpeedPIDEnableDebugErrorCorrectionConsigne;
             interfaceRobot.OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent += msgGenerator.GenerateMessageEnablePowerMonitoring;
-
+            #endregion
+            #region Msg
             /// Affichage des infos en provenance du décodeur de message
             msgDecoder.OnCorrectMessageReceivedEvent += interfaceRobot.DisplayMessageDecoded;
             msgDecoder.OnErrorMessageReceivedEvent += interfaceRobot.DisplayMessageDecodedError;
-
+            #endregion
             /// Affichage des infos en provenance du strategyManager
             strategyManager.OnTextMessageEvent += interfaceRobot.AppendConsole;
+
+            localWorldMap.OnLocalWorldMapEvent += interfaceRobot.OnLocalWorldMapStrategyEvent;
+            localWorldMap.OnLocalWorldMapEvent += interfaceRobot.OnLocalWorldMapWayPointEvent;
 
 
         }

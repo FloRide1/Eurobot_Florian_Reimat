@@ -20,36 +20,69 @@ namespace WorldMap
         public virtual List<Location> WaypointLocations { get; set; }
         public virtual List<Location> RobotHistorical { get; set; }
         public virtual List<Location> BallLocationList { get; set; }
-        public virtual List<LocationExtended> obstaclesLocationList { get; set; }
-        public virtual List<PolarPointListExtended> lidarObjectList { get; set; }
+        public virtual List<LocationExtended> ObstaclesLocationList { get; set; }
+        public virtual List<PolarPointListExtended> LidarObjectList { get; set; }
 
 
-        public virtual List<PointD> lidarMap { get; set; }
-        public virtual List<PointD> lidarMapProcessed { get; set; }
-        //public virtual Heatmap heatMapStrategy { get; set; }
-        //public virtual Heatmap heatMapWaypoint { get; set; }
+        // public virtual List<PointD> lidarMap { get; set; }
+        // public virtual List<PointD> lidarMapProcessed { get; set; }
+        // public virtual Heatmap heatMapStrategy { get; set; }
+        // public virtual Heatmap heatMapWaypoint { get; set; }
 
         public LocalWorldMap()
         {
             //Type = "LocalWorldMap";
         }
 
-        public void Init()
+        public void Init(int robotId, int teamId)
         {
+            RobotId = RobotId;
+            TeamId = teamId;
             RobotLocation = new Location(0, 0, 0, 0, 0, 0);
             RobotGhostLocation = new Location(0, 0, 0, 0, 0, 0);
             WaypointLocations = new List<Location> { RobotLocation };
             RobotHistorical = new List<Location> { RobotLocation };
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void OnUpdateRobotLocation(Location location)
+        {
+            RobotLocation = location;
+            OnUpdateHistoricalLocation(location);
+            OnUpdateRobotLocationEvent?.Invoke(this, location);
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void OnUpdateHistoricalLocation(Location location)
+        {
+            if (RobotHistorical.Count != 0)
+            {
+                Location lastHistorical = RobotHistorical[RobotHistorical.Count - 1];
+
+                PointD p1 = new PointD(location.X, location.Y);
+                PointD p2 = new PointD(lastHistorical.X, lastHistorical.Y);
+
+                double distance = Toolbox.Distance(p1, p2);
+                if (distance >= MINIMAL_WORLD_HISTORICAL_DIST)
+                {
+                    RobotHistorical.Add(location);
+                    OnNewHistoricalPositionEvent?.Invoke(this, location);
+                }
+
+            }
+            OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
         public void SetRobotLocation(Location location)
         {
             RobotLocation = location;
+            OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
         public void SetGhostRobotLocation(Location location)
         {
             RobotGhostLocation = location;
+            OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
         public void ResetRobot()
@@ -63,34 +96,22 @@ namespace WorldMap
             RobotGhostLocation = location;
             WaypointLocations = new List<Location> { RobotLocation };
             RobotHistorical = new List<Location> { RobotLocation };
+            OnResetRobotEvent?.Invoke(this, location);
+            OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
+
+
         #region Events
-        public event EventHandler<Location> OnNewRobotLocationEvent;
-        public event EventHandler<Location> OnNewGhostRobotLocationEvent;
+        public event EventHandler<Location> OnUpdateRobotLocationEvent;
+        public event EventHandler<Location> OnUpdateGhostRobotLocation;
+        public event EventHandler<Location> OnSetRobotLocationEvent;
+        public event EventHandler<Location> OnSetGhostRobotLocationEvent;
         public event EventHandler<Location> OnNewHistoricalPositionEvent;
         public event EventHandler<Location> OnNewWaypointLocationEvent;
         public event EventHandler<Location> OnResetRobotEvent;
+        public event EventHandler<LocalWorldMap> OnLocalWorldMapEvent;
         #endregion
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     }
 

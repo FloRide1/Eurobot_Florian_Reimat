@@ -17,7 +17,7 @@ namespace WpfWorldMapDisplay
         private Location robotLocation;
         private Location ghostLocation;
         private Location destinationLocation;
-        private Location waypointLocation;
+        private List<Location> waypointLocation;
         public string robotName = "";
         public RoboCupRobotRole robotRole = RoboCupRobotRole.Stopped;
         public string DisplayMessage = "";
@@ -34,7 +34,7 @@ namespace WpfWorldMapDisplay
         {
             robotLocation = new Location(0, 0, 0, 0, 0, 0);
             destinationLocation = new Location(0, 0, 0, 0, 0, 0);
-            waypointLocation = new Location(0, 0, 0, 0, 0, 0);
+            waypointLocation = new List<Location> { robotLocation };
             ghostLocation = new Location(0, 0, 0, 0, 0, 0);
 
             robotShape = rbtShape;
@@ -75,11 +75,20 @@ namespace WpfWorldMapDisplay
             destinationLocation.Y = y;
             destinationLocation.Theta = theta;
         }
-        public void SetWayPoint(double x, double y, double theta)
+
+        public void SetWayPoint(List<Location> lloca)
         {
-            waypointLocation.X = x;
-            waypointLocation.Y = y;
-            waypointLocation.Theta = theta;
+            waypointLocation = lloca;
+        }
+
+        public void AddNewWayPoint(Location location)
+        {
+            waypointLocation.Add(location);
+        }
+
+        public void ResetWayPoints()
+        {
+            waypointLocation = new List<Location> { };
         }
 
         public void SetHeatMapStrategy(double[,] heatMap)
@@ -172,6 +181,8 @@ namespace WpfWorldMapDisplay
             polygonToDisplay.backgroundColor = System.Drawing.Color.FromArgb(0x00, 0x00, 0x00, 0x00);
             return polygonToDisplay;
         }
+
+
         public PolygonExtended GetRobotDestinationArrow()
         {
             PolygonExtended polygonToDisplay = new PolygonExtended();
@@ -194,21 +205,51 @@ namespace WpfWorldMapDisplay
             polygonToDisplay.backgroundColor = System.Drawing.Color.FromArgb(0x00, 0x00, 0x00, 0x00);
             return polygonToDisplay;
         }
+
         public PolygonExtended GetRobotWaypointArrow()
         {
             PolygonExtended polygonToDisplay = new PolygonExtended();
             double angleTeteFleche = Math.PI / 6;
-            double longueurTeteFleche = 0.30;
-            double headingAngle = Math.Atan2(waypointLocation.Y - robotLocation.Y, waypointLocation.X - robotLocation.X);
+            double longueurTeteFleche = 0.10;
+            polygonToDisplay.borderWidth = 5;
+            polygonToDisplay.borderColor = System.Drawing.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
+            polygonToDisplay.borderDashPattern = new double[] { 5, 5 };
+            polygonToDisplay.borderOpacity = 0.4;
+            polygonToDisplay.backgroundColor = System.Drawing.Color.FromArgb(0x00, 0x00, 0x00, 0x00);
+
+            if (waypointLocation.Count == 0)
+            {
+                return polygonToDisplay;
+            }
+
+            Location lastLocation = waypointLocation[0];
+            Location bfLastLocation = robotLocation;
 
             polygonToDisplay.polygon.Points.Add(new Point(robotLocation.X, robotLocation.Y));
-            polygonToDisplay.polygon.Points.Add(new Point(waypointLocation.X, waypointLocation.Y));
+            polygonToDisplay.polygon.Points.Add(new Point(waypointLocation[0].X, waypointLocation[0].Y));
+
+            if (waypointLocation.Count > 1)
+            {
+                lastLocation = waypointLocation[waypointLocation.Count - 1];
+                bfLastLocation = waypointLocation[waypointLocation.Count - 2];
+
+
+                int i;
+                for (i = 1; i < waypointLocation.Count; i++)
+                {
+                    polygonToDisplay.polygon.Points.Add(new Point(waypointLocation[i].X, waypointLocation[i].Y));
+                }
+            }
+
+
+
+            double headingAngle = Math.Atan2(lastLocation.Y - bfLastLocation.Y, lastLocation.X - bfLastLocation.X);
             double angleTeteFleche1 = headingAngle + angleTeteFleche;
             double angleTeteFleche2 = headingAngle - angleTeteFleche;
-            polygonToDisplay.polygon.Points.Add(new Point(waypointLocation.X - longueurTeteFleche * Math.Cos(angleTeteFleche1), waypointLocation.Y - longueurTeteFleche * Math.Sin(angleTeteFleche1)));
-            polygonToDisplay.polygon.Points.Add(new Point(waypointLocation.X, waypointLocation.Y));
-            polygonToDisplay.polygon.Points.Add(new Point(waypointLocation.X - longueurTeteFleche * Math.Cos(angleTeteFleche2), waypointLocation.Y - longueurTeteFleche * Math.Sin(angleTeteFleche2)));
-            polygonToDisplay.polygon.Points.Add(new Point(waypointLocation.X, waypointLocation.Y));
+            polygonToDisplay.polygon.Points.Add(new Point(lastLocation.X - longueurTeteFleche * Math.Cos(angleTeteFleche1), lastLocation.Y - longueurTeteFleche * Math.Sin(angleTeteFleche1)));
+            polygonToDisplay.polygon.Points.Add(new Point(lastLocation.X, lastLocation.Y));
+            polygonToDisplay.polygon.Points.Add(new Point(lastLocation.X - longueurTeteFleche * Math.Cos(angleTeteFleche2), lastLocation.Y - longueurTeteFleche * Math.Sin(angleTeteFleche2)));
+            polygonToDisplay.polygon.Points.Add(new Point(lastLocation.X, lastLocation.Y));
 
             return polygonToDisplay;
         }

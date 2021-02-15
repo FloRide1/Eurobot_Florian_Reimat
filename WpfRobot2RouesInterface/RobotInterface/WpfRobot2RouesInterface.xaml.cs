@@ -15,6 +15,8 @@ using System.IO;
 using Constants;
 using WpfWorldMapDisplay;
 using WpfOscilloscopeControl;
+using Utilities;
+using WorldMap;
 
 namespace RobotInterface
 {
@@ -62,9 +64,9 @@ namespace RobotInterface
             if (gameMode == GameMode.Eurobot)
             {
                 worldMapDisplayStrategy.Init(gameMode, LocalWorldMapDisplayType.StrategyMap);
-                worldMapDisplayStrategy.SetFieldImageBackGround(imagePath + "Eurobot2020.png");
+                worldMapDisplayStrategy.SetFieldImageBackGround(imagePath + "Eurobot_Background.png");
                 worldMapDisplayWaypoint.Init(gameMode, LocalWorldMapDisplayType.WayPointMap);
-                worldMapDisplayWaypoint.SetFieldImageBackGround(imagePath + "Eurobot2020.png");
+                worldMapDisplayWaypoint.SetFieldImageBackGround(imagePath + "Eurobot_Background.png");
             }
 
             worldMapDisplayStrategy.InitTeamMate((int)TeamId.Team1 + (int)RobotId.Robot1, GameMode.Eurobot,  "Wally");
@@ -144,29 +146,38 @@ namespace RobotInterface
 
         double currentTime = 0;
         private void TimerAffichage_Tick(object sender, EventArgs e)
-        {           
+        {
+            worldMapDisplayStrategy.UpdateWorldMapDisplay();
+            worldMapDisplayWaypoint.UpdateWorldMapDisplay();
         }
 
-        public void OnLocalWorldMapStrategyEvent(object sender, EventArgsLibrary.LocalWorldMapArgs e)
+        public void OnLocalWorldMapRobotUpdate(object sender, LocationArgs location)
+        {
+            worldMapDisplayWaypoint.UpdateRobotLocation(location.RobotId, location.Location);
+            worldMapDisplayStrategy.UpdateRobotLocation(location.RobotId, location.Location);
+        }
+
+
+        public void OnLocalWorldMapStrategyEvent(object sender, LocalWorldMap e)
         {
             //throw new NotImplementedException();
-            worldMapDisplayStrategy.UpdateLocalWorldMap(e.LocalWorldMap);
+            worldMapDisplayStrategy.UpdateLocalWorldMap(e);
             //Dispatcher.BeginInvoke(new Action(delegate ()
             //{
             //    worldMapDisplayStrategy.UpdateWorldMapDisplay();
             //}));
         }
-        public void OnLocalWorldMapWayPointEvent(object sender, EventArgsLibrary.LocalWorldMapArgs e)
+        public void OnLocalWorldMapWayPointEvent(object sender, LocalWorldMap e)
         {
             //throw new NotImplementedException();
-            worldMapDisplayWaypoint.UpdateLocalWorldMap(e.LocalWorldMap);
+            worldMapDisplayWaypoint.UpdateLocalWorldMap(e);
             //Dispatcher.BeginInvoke(new Action(delegate ()
             //{
             //    worldMapDisplayWaypoint.UpdateWorldMapDisplay();
             //}));
         }
 
-        public void OnRawLidarDataReceived(object sender, EventArgsLibrary.RawLidarArgs e)
+        public void OnRawLidarDataReceived(object sender, RawLidarArgs e)
         {
             List<Point> ptList = new List<Point>();
             ptList = e.PtList.Select(p => new Point(p.Angle, p.Rssi)).ToList();
@@ -176,7 +187,7 @@ namespace RobotInterface
             oscilloLidar.UpdatePointListOfLine(1, ptList2);
         }
 
-        public void OnRawLidarBalisePointsReceived(object sender, EventArgsLibrary.RawLidarArgs e)
+        public void OnRawLidarBalisePointsReceived(object sender, RawLidarArgs e)
         {
             List<Point> ptListBalises = new List<Point>();
             ptListBalises = e.PtList.Select(p => new Point(p.Angle, p.Distance)).ToList();
