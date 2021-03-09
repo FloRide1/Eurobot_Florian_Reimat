@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Utilities;
+using System.Windows;
 
 namespace WorldMap
 {
@@ -80,9 +81,37 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
+        public void AddNewWaypointsEvent(object sender, PointD point)
+        {
+            AddNewWaypoints(point);
+        }
+
+        public void SetDestinationLocation(Location location)
+        {
+            DestinationLocation = location;
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void SetDestinationLocationEvent(object sender, PointD point)
+        {
+            SetDestinationLocation(new Location(point.X, point.Y,0,0,0,0));
+        }
+
+        public void ResetWaypointDestinationEvent(object sender, PointD point)
+        {
+            ResetWaypoints();
+            ResetDestination();
+        }
+
         public void ResetWaypoints()
         {
             WaypointLocations = new List<PointD> { };
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void ResetDestination()
+        {
+            DestinationLocation = new Location();
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 

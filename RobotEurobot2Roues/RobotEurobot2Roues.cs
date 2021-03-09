@@ -207,6 +207,10 @@ namespace RobotEurobot2Roues
             interfaceRobot.OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent += msgGenerator.GenerateMessageSpeedPIDEnableDebugInternal;
             interfaceRobot.OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent += msgGenerator.GenerateMessageSpeedPIDEnableDebugErrorCorrectionConsigne;
             interfaceRobot.OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent += msgGenerator.GenerateMessageEnablePowerMonitoring;
+
+            interfaceRobot.OnWaypointLeftDoubleClick += localWorldMap.AddNewWaypointsEvent;
+            interfaceRobot.OnWaypointRightClick += localWorldMap.SetDestinationLocationEvent;
+            interfaceRobot.OnWaypointWheelClick += localWorldMap.ResetWaypointDestinationEvent;
             #endregion
             #region Msg
             /// Affichage des infos en provenance du décodeur de message
@@ -216,7 +220,7 @@ namespace RobotEurobot2Roues
             /// Affichage des infos en provenance du strategyManager
             strategyManager.OnTextMessageEvent += interfaceRobot.AppendConsole;
 
-            localWorldMap.OnLocalWorldMapEvent += interfaceRobot.OnLocalWorldMapStrategyEvent;
+            
             localWorldMap.OnLocalWorldMapEvent += interfaceRobot.OnLocalWorldMapWayPointEvent;
 
             interfaceRobot.OnGameStateEditionEvent += localWorldMap.OnGameStateChange;

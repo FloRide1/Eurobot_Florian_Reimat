@@ -110,6 +110,17 @@ namespace WpfWorldMapDisplay
 
         }
 
+        public Point GetRelativeCoords(Point mousePoint)
+        {
+            var xCalc = sciChartSurface.XAxis.GetCurrentCoordinateCalculator();
+            var yCalc = sciChartSurface.YAxis.GetCurrentCoordinateCalculator();
+
+            double xDataValue = xCalc.GetDataValue(mousePoint.X);
+            double yDataValue = yCalc.GetDataValue(mousePoint.Y);
+
+            return new Point(xDataValue, yDataValue);
+        }
+
         /// <summary>
         /// Définit l'image en fond de carte
         /// </summary>

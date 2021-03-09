@@ -610,6 +610,12 @@ namespace RobotInterface
         public event EventHandler<PolarPIDSetupArgs> OnSetRobotPIDFromInterfaceGeneratedEvent;
         public event EventHandler<EventArgs> OnCalibrateGyroFromInterfaceGeneratedEvent;
         public event EventHandler<GameState> OnGameStateEditionEvent;
+        public event EventHandler<PointD> OnWaypointLeftDoubleClick;
+        public event EventHandler<PointD> OnStrategyLeftDoubleClick;
+        public event EventHandler<PointD> OnWaypointRightClick;
+        public event EventHandler<PointD> OnStrategyRightClick;
+        public event EventHandler<PointD> OnWaypointWheelClick;
+        public event EventHandler<PointD> OnStrategyWheelClick;
 
         public virtual void OnEnableDisableMotorsFromInterface(bool val)
         {
@@ -736,9 +742,7 @@ namespace RobotInterface
                 OnEnableDisableControlManetteFromInterface(true);
                 LabelXBoxControllerMode.Content = "XBox Pad : Enabled";
 
-                //// TEMPO
-                OnGameStateEditionEvent?.Invoke(this, GameState.STOPPED);
-                ////
+                
             }
             else
             {
@@ -746,15 +750,61 @@ namespace RobotInterface
                 LabelXBoxControllerMode.Content = "XBox Pad : Disabled";
 
 
-                //// TEMPO
-                OnGameStateEditionEvent?.Invoke(this, GameState.PLAYING);
-                ////
+               
             }
         }              
 
         private void worldMapDisplayStrategy_Loaded(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void OnWaypointMapDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                Point point = worldMapDisplayWaypoint.GetRelativeCoords(e.GetPosition(worldMapDisplayWaypoint));
+                OnWaypointLeftDoubleClick?.Invoke(this, new PointD(point.X, point.Y));
+            }
+        }
+
+        private void OnStrategyMapDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                Point point = worldMapDisplayStrategy.GetRelativeCoords(e.GetPosition(worldMapDisplayStrategy));
+                OnStrategyLeftDoubleClick?.Invoke(this, new PointD(point.X, point.Y));
+            } 
+        }
+
+        private void OnWaypointRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point point = worldMapDisplayWaypoint.GetRelativeCoords(e.GetPosition(worldMapDisplayWaypoint));
+            OnWaypointRightClick?.Invoke(this, new PointD(point.X, point.Y));
+        }
+
+        private void OnStrategyRightButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Point point = worldMapDisplayStrategy.GetRelativeCoords(e.GetPosition(worldMapDisplayStrategy));
+            OnStrategyRightClick?.Invoke(this, new PointD(point.X, point.Y));
+        }
+
+        private void OnWaypointMouseWheelClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
+            {
+                Point point = worldMapDisplayWaypoint.GetRelativeCoords(e.GetPosition(worldMapDisplayWaypoint));
+                OnWaypointWheelClick?.Invoke(this, new PointD(point.X, point.Y));
+            }
+        }
+
+        private void OnStrategyMouseWheelClick(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Middle && e.ButtonState == MouseButtonState.Pressed)
+            {
+                Point point = worldMapDisplayStrategy.GetRelativeCoords(e.GetPosition(worldMapDisplayStrategy));
+                OnStrategyWheelClick?.Invoke(this, new PointD(point.X, point.Y));
+            }
         }
 
         //private void CheckBoxEnablePowerMonitoringData_Checked(object sender, RoutedEventArgs e)
