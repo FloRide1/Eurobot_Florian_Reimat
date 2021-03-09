@@ -119,11 +119,7 @@ namespace RobotEurobot2Roues
             ConsoleFormat.PrintStrategyBoot();
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
             #endregion
-            localWorldMap.AddNewWaypoints(new PointD(1.5d, 1d));
-            localWorldMap.AddNewWaypoints(new PointD(-1.5d, 1d));
-            localWorldMap.AddNewWaypoints(new PointD(-1.5d, -1d));
-            localWorldMap.AddNewWaypoints(new PointD(1.5d, -1d));
-            localWorldMap.AddNewWaypoints(new PointD(0.5d, 0.5d));
+            
 
 
 
