@@ -116,9 +116,11 @@ namespace RobotEurobot2Roues
             strategyManager.On2WheelsToPolarMatrixSetupEvent += msgGenerator.GenerateMessage2WheelsToPolarMatrixSet;   //Transmission des messages de set-up de la matrice de transformation moteurindepeandt -> polaire en embarqué
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
             strategyManager.OnOdometryPointToMeterSetupEvent += msgGenerator.GenerateMessageOdometryPointToMeter;      //Transmission des messages de set-up du coeff pointToMeter en embarqué
+            
             ConsoleFormat.PrintStrategyBoot();
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
             #endregion
+                 
             
 
 
@@ -208,6 +210,7 @@ namespace RobotEurobot2Roues
             interfaceRobot.OnWaypointRightClick += localWorldMap.SetDestinationLocationEvent;
             interfaceRobot.OnWaypointWheelClick += localWorldMap.ResetWaypointDestinationEvent;
             #endregion
+
             #region Msg
             /// Affichage des infos en provenance du décodeur de message
             msgDecoder.OnCorrectMessageReceivedEvent += interfaceRobot.DisplayMessageDecoded;

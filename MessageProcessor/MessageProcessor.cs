@@ -135,29 +135,29 @@ namespace MessageProcessorNS
             }
         }
 
-        public event EventHandler<EventArgs> OnWelcomeMessageFromRobotGeneratedEvent;
-        public event EventHandler<IMUDataEventArgs> OnIMURawDataFromRobotGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableDisableMotorsACKFromRobotGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableDisableTirACKFromRobotGeneratedEvent;
-        public event EventHandler<AsservissementModeEventArgs> OnAsservissementModeStatusFromRobotGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableAsservissementDebugDataACKFromRobotEvent;
-        public event EventHandler<BoolEventArgs> OnEnableMotorCurrentACKFromRobotGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableEncoderRawDataACKFromRobotGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableMotorSpeedConsigneDataACKFromRobotGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnablePowerMonitoringDataACKFromRobotGeneratedEvent;
-        public event EventHandler<StringEventArgs> OnErrorTextFromRobotGeneratedEvent;
-        public event EventHandler<PolarSpeedEventArgs> OnSpeedPolarOdometryFromRobotEvent;
-        public event EventHandler<IndependantSpeedEventArgs> OnIndependantOdometrySpeedFromRobotEvent;
-        public event EventHandler<MotorsCurrentsEventArgs> OnMotorsCurrentsFromRobotGeneratedEvent;
-        public event EventHandler<AuxiliarySpeedArgs> OnAuxiliaryOdometrySpeedGeneratedEvent;
-        public event EventHandler<EncodersRawDataEventArgs> OnEncoderRawDataFromRobotGeneratedEvent;
-        public event EventHandler<IOValuesEventArgs> OnIOValuesFromRobotGeneratedEvent;
-        public event EventHandler<PowerMonitoringValuesEventArgs> OnPowerMonitoringValuesFromRobotGeneratedEvent;
-        public event EventHandler<AuxiliaryMotorsVitesseDataEventArgs> OnAuxiliarySpeedConsigneDataFromRobotGeneratedEvent;
-        public event EventHandler<PolarPidErrorCorrectionConsigneDataArgs> OnSpeedPolarPidErrorCorrectionConsigneDataFromRobotGeneratedEvent;
-        public event EventHandler<IndependantPidErrorCorrectionConsigneDataArgs> OnSpeedIndependantPidErrorCorrectionConsigneDataFromRobotGeneratedEvent;
-        public event EventHandler<PolarPidCorrectionArgs> OnSpeedPolarPidCorrectionDataFromRobotEvent;
-        public event EventHandler<IndependantPidCorrectionArgs> OnSpeedIndependantPidCorrectionDataFromRobotEvent;
+        public event EventHandler<EventArgs>                                        OnWelcomeMessageFromRobotGeneratedEvent;
+        public event EventHandler<IMUDataEventArgs>                                 OnIMURawDataFromRobotGeneratedEvent;
+        public event EventHandler<BoolEventArgs>                                    OnEnableDisableMotorsACKFromRobotGeneratedEvent;
+        public event EventHandler<BoolEventArgs>                                    OnEnableDisableTirACKFromRobotGeneratedEvent;
+        public event EventHandler<AsservissementModeEventArgs>                      OnAsservissementModeStatusFromRobotGeneratedEvent;
+        public event EventHandler<BoolEventArgs>                                    OnEnableAsservissementDebugDataACKFromRobotEvent;
+        public event EventHandler<BoolEventArgs>                                    OnEnableMotorCurrentACKFromRobotGeneratedEvent;
+        public event EventHandler<BoolEventArgs>                                    OnEnableEncoderRawDataACKFromRobotGeneratedEvent;
+        public event EventHandler<BoolEventArgs>                                    OnEnableMotorSpeedConsigneDataACKFromRobotGeneratedEvent;
+        public event EventHandler<BoolEventArgs>                                    OnEnablePowerMonitoringDataACKFromRobotGeneratedEvent;
+        public event EventHandler<StringEventArgs>                                  OnErrorTextFromRobotGeneratedEvent;
+        public event EventHandler<PolarSpeedEventArgs>                              OnSpeedPolarOdometryFromRobotEvent;
+        public event EventHandler<IndependantSpeedEventArgs>                        OnIndependantOdometrySpeedFromRobotEvent;
+        public event EventHandler<MotorsCurrentsEventArgs>                          OnMotorsCurrentsFromRobotGeneratedEvent;
+        public event EventHandler<AuxiliarySpeedArgs>                               OnAuxiliaryOdometrySpeedGeneratedEvent;
+        public event EventHandler<EncodersRawDataEventArgs>                         OnEncoderRawDataFromRobotGeneratedEvent;
+        public event EventHandler<IOValuesEventArgs>                                OnIOValuesFromRobotGeneratedEvent;
+        public event EventHandler<PowerMonitoringValuesEventArgs>                   OnPowerMonitoringValuesFromRobotGeneratedEvent;
+        public event EventHandler<AuxiliaryMotorsVitesseDataEventArgs>              OnAuxiliarySpeedConsigneDataFromRobotGeneratedEvent;
+        public event EventHandler<PolarPidErrorCorrectionConsigneDataArgs>          OnSpeedPolarPidErrorCorrectionConsigneDataFromRobotGeneratedEvent;
+        public event EventHandler<IndependantPidErrorCorrectionConsigneDataArgs>    OnSpeedIndependantPidErrorCorrectionConsigneDataFromRobotGeneratedEvent;
+        public event EventHandler<PolarPidCorrectionArgs>                           OnSpeedPolarPidCorrectionDataFromRobotEvent;
+        public event EventHandler<IndependantPidCorrectionArgs>                     OnSpeedIndependantPidCorrectionDataFromRobotEvent;
         public event EventHandler<MsgCounterArgs> OnMessageCounterEvent;
 
         public virtual void OnWelcomeMessageFromRobot()
