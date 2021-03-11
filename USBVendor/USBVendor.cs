@@ -352,7 +352,7 @@ namespace USBVendorNS
                         foreach (WmiDeviceProperties wmiDeviceProperty in Enum.GetValues(typeof(WmiDeviceProperties)))
                         {
                             //MyMarshalToForm(FormActions.AddItemToListBox.ToString(), (wmiDeviceProperty.ToString() + ": " + queryObj[wmiDeviceProperty.ToString()]));
-                            Console.WriteLine(wmiDeviceProperty.ToString() + ": {0}", queryObj[wmiDeviceProperty.ToString()]);
+                            // Console.WriteLine(wmiDeviceProperty.ToString() + ": {0}", queryObj[wmiDeviceProperty.ToString()]);
                         }
                         //MyMarshalToForm(FormActions.AddItemToListBox.ToString(), "--------");
                         //MyMarshalToForm(FormActions.ScrollToBottomOfListBox.ToString(), "");

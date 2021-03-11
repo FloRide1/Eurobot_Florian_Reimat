@@ -80,6 +80,14 @@
       <Project>{9C46A7C0-4675-41BE-B282-E6F0825AD73E}</Project>
       <Name>EventArgsLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LidarProcess\LidarProcess.csproj">
+      <Project>{c3c168d3-37fc-4bb3-ab65-4701c7f2e7a5}</Project>
+      <Name>LidarProcess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LidarTIM561\LidarTIM561.csproj">
+      <Project>{84e83c7b-c4bf-4547-835f-06743f1d1dfa}</Project>
+      <Name>LidarTIM561</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MessageDecoder\MessageDecoder.csproj">
       <Project>{4603885F-CC5E-43E5-A4AF-063030CB0A32}</Project>
       <Name>MessageDecoder</Name>

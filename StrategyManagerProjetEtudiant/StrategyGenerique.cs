@@ -77,12 +77,12 @@ namespace StrategyManagerProjetEtudiantNS
         //public abstract void OnRefBoxMsgReceived(object sender, WorldMap.RefBoxMessageArgs e);
 
         /// Evènement envoyé par le module de gestion de la LocalWorldMap
-        public void OnGlobalWorldMapReceived(object sender, GlobalWorldMapArgs e)
+        public void OnGlobalWorldMapReceived(object sender, GlobalWorldMap e)
         {
             //On récupère la nouvelle worldMap
             lock (globalWorldMap)
             {
-                globalWorldMap = e.GlobalWorldMap;
+                globalWorldMap = e;
             }
         }
 

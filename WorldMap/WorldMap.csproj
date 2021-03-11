@@ -78,6 +78,18 @@
       <Project>{0540b497-b2ce-40a1-84b5-3109ce2f3146}</Project>
       <Name>Constants</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EventArgsLibrary\EventArgsLibrary.csproj">
+      <Project>{9c46a7c0-4675-41be-b282-e6f0825ad73e}</Project>
+      <Name>EventArgsLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LidarProcess\LidarProcess.csproj">
+      <Project>{c3c168d3-37fc-4bb3-ab65-4701c7f2e7a5}</Project>
+      <Name>LidarProcess</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LidarTIM561\LidarTIM561.csproj">
+      <Project>{84e83c7b-c4bf-4547-835f-06743f1d1dfa}</Project>
+      <Name>LidarTIM561</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Utilities\Utilities.csproj">
       <Project>{8E7D0DA4-9A13-4B18-A90E-0243BBCCE40A}</Project>
       <Name>Utilities</Name>

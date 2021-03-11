@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
-using WorldMap;
 
 namespace EventArgsLibrary
 {
@@ -475,18 +474,19 @@ namespace EventArgsLibrary
         public List<LocationExtended> LocationExtendedList { get; set; }
     }
    
-    public class LocalWorldMapArgs : EventArgs
-    {
-        //public int RobotId { get; set; }
-        //public int TeamId { get; set; }
-        public LocalWorldMap LocalWorldMap { get; set; }
-    }
+    //public class LocalWorldMapArgs : EventArgs
+    //{
+    //    //public int RobotId { get; set; }
+    //    //public int TeamId { get; set; }
+    //    public LocalWorldMap LocalWorldMap { get; set; }
+    //}
 
-    public class GlobalWorldMapArgs : EventArgs
-    {
-        public int SentByRobotId { get; set; }
-        public GlobalWorldMap GlobalWorldMap { get; set; }
-    }
+    //public class GlobalWorldMapArgs : EventArgs
+    //{
+    //    public int SentByRobotId { get; set; }
+    //    public GlobalWorldMap GlobalWorldMap { get; set; }
+    //}
+
     public class RawLidarArgs : EventArgs
     {
         public int RobotId { get; set; }
@@ -510,9 +510,9 @@ namespace EventArgsLibrary
         public int nbMessageIMU { get; set; }
         public int nbMessageOdometry { get; set; }
     }
-    public class GameStateArgs : EventArgs
-    {
-        public int RobotId { get; set; }
-        public GameState gameState { get; set; }
-    }
+    //public class GameStateArgs : EventArgs
+    //{
+    //    public int RobotId { get; set; }
+    //    public GameState gameState { get; set; }
+    //}
 }

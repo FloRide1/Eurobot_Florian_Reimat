@@ -15,6 +15,8 @@ using SciChart.Charting.Visuals;
 using ConsoleFormatNS;
 using WorldMap;
 using Utilities;
+using Lidar;
+using LidarProcessNS;
 
 namespace RobotEurobot2Roues
 {
@@ -27,7 +29,8 @@ namespace RobotEurobot2Roues
         static MsgProcessor msgProcessor;
         static XBoxController xBoxManette;
         static StrategyGenerique strategyManager;
-
+        static LidarDevice lidar;
+        static LidarProcess lidarProcess;
         static LocalWorldMap localWorldMap;
 
         static WpfRobot2RouesInterface interfaceRobot;
@@ -107,11 +110,25 @@ namespace RobotEurobot2Roues
             #endregion
             #endregion
 
-            #region Local World Map
-            localWorldMap = new LocalWorldMap();
-            localWorldMap.Init(robotId, teamId);
+            #region Lidar
+            lidar = new SickLidar(18110177);
+            lidarProcess = new LidarProcess(robotId, teamId);
+
+            lidar.OnLidarDeviceConnectedEvent += lidarProcess.OnNewLidarConnected;
+            lidar.OnLidarDeviceConnectedEvent += ConsoleFormat.NewLidarDeviceConnected;
+            lidar.PointsAvailable += lidarProcess.OnRawPointAvailable;
+            
+            lidar.Start();
             #endregion
 
+            #region Local World Map
+            localWorldMap = new LocalWorldMap(robotId, teamId);
+            lidarProcess.OnProcessLidarDataEvent += localWorldMap.OnLidarRawPointReceived;
+            // lidarProcess.OnProcessLidarDataEvent += 
+            localWorldMap.Init();
+            #endregion
+
+           
             #region Strategy /!\ Need to be Last /!\
             strategyManager.On2WheelsToPolarMatrixSetupEvent += msgGenerator.GenerateMessage2WheelsToPolarMatrixSet;   //Transmission des messages de set-up de la matrice de transformation moteurindepeandt -> polaire en embarqué
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
@@ -138,6 +155,11 @@ namespace RobotEurobot2Roues
             {
                 Thread.Sleep(500);
             }
+        }
+
+        private static void Lidar_PointsAvailable(object sender, LidarPointsReadyEventArgs e)
+        {
+            throw new NotImplementedException();
         }
 
         static Thread t1;
@@ -221,6 +243,7 @@ namespace RobotEurobot2Roues
 
             
             localWorldMap.OnLocalWorldMapEvent += interfaceRobot.OnLocalWorldMapWayPointEvent;
+            localWorldMap.OnLocalWorldMapEvent += interfaceRobot.OnLocalWorldMapStrategyEvent;
 
             interfaceRobot.OnGameStateEditionEvent += localWorldMap.OnGameStateChange;
 

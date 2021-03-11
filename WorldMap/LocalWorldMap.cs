@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using Utilities;
+using EventArgsLibrary;
 using System.Windows;
+using Lidar;
 
 namespace WorldMap
 {
@@ -22,6 +24,8 @@ namespace WorldMap
         public virtual List<Location> RobotHistorical { get; set; }
         public virtual List<Location> BallLocationList { get; set; }
         public virtual List<LocationExtended> ObstaclesLocationList { get; set; }
+        public virtual List<LidarPoint> LidarPoints { get; set; }
+        public virtual List<PointD> LidarMap { get; set; }
         public virtual List<PolarPointListExtended> LidarObjectList { get; set; }
 
 
@@ -31,15 +35,19 @@ namespace WorldMap
         // public virtual Heatmap heatMapWaypoint { get; set; }
 
 
-        public LocalWorldMap()
-        {
-
-        }
-
-        public void Init(int robotId, int teamId)
+        public LocalWorldMap(int robotId, int teamId)
         {
             RobotId = robotId;
             TeamId = teamId;
+            RobotLocation = new Location(0, 0, 0, 0, 0, 0);
+            RobotGhostLocation = new Location(0, 0, 0, 0, 0, 0);
+            WaypointLocations = new List<PointD> { };
+            RobotHistorical = new List<Location> { RobotLocation };
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void Init()
+        {
             RobotLocation = new Location(0, 0, 0, 0, 0, 0);
             RobotGhostLocation = new Location(0, 0, 0, 0, 0, 0);
             WaypointLocations = new List<PointD> { };
@@ -142,7 +150,22 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
-        
+        public void OnLidarRawPointReceived(object sender, List<LidarPoint> lidarPoints)
+        {
+            LidarPoints = lidarPoints;
+            double X = RobotLocation.X;
+            double Y = RobotLocation.Y;
+            double Theta = RobotLocation.Theta;
+
+            LidarMap = new List<PointD> { };
+            foreach(LidarPoint point in lidarPoints)
+            {
+                double pointDX = X + (point.Distance * Math.Cos(point.Angle - Theta));
+                double pointDY = Y + (point.Distance * Math.Sin(point.Angle - Theta));
+                LidarMap.Add(new PointD(pointDX, pointDY));
+            }
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
 
         #region Events
         public event EventHandler<Location> OnUpdateRobotLocationEvent;

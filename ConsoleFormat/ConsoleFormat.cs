@@ -273,9 +273,15 @@ namespace ConsoleFormatNS
         #endregion
 
         #region Hex Processor
-        
+
         #endregion
 
+        #region Lidar
+        static public void NewLidarDeviceConnected(object sender, Lidar.LidarDevice e)
+        {
+            ConsoleInformationFormat("LIDAR", "A New Lidar Device is paired");
+        }
+        #endregion
 
     }
 }

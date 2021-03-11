@@ -35,9 +35,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfAsservissementDisplay", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfWorldMapDisplay", "..\WpfWorldMapDisplay\WpfWorldMapDisplay.csproj", "{89604641-927E-47FF-8DB6-91CF5C4976C1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol_Security", "..\Protocol_Security\Protocol_Security.csproj", "{EAC24896-338F-439A-922B-40B11C987A91}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Protocol_Security", "..\Protocol_Security\Protocol_Security.csproj", "{EAC24896-338F-439A-922B-40B11C987A91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleFormat", "..\ConsoleFormat\ConsoleFormat.csproj", "{093EA813-8F12-44D5-8C22-3AE1FFF8A824}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleFormat", "..\ConsoleFormat\ConsoleFormat.csproj", "{093EA813-8F12-44D5-8C22-3AE1FFF8A824}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LidarTIM561", "..\LidarTIM561\LidarTIM561.csproj", "{84E83C7B-C4BF-4547-835F-06743F1D1DFA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LidarProcess", "..\LidarProcess\LidarProcess.csproj", "{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -191,6 +195,22 @@ Global
 		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Release|Any CPU.Build.0 = Release|Any CPU
 		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Release|x64.ActiveCfg = Release|Any CPU
 		{093EA813-8F12-44D5-8C22-3AE1FFF8A824}.Release|x64.Build.0 = Release|Any CPU
+		{84E83C7B-C4BF-4547-835F-06743F1D1DFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84E83C7B-C4BF-4547-835F-06743F1D1DFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84E83C7B-C4BF-4547-835F-06743F1D1DFA}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{84E83C7B-C4BF-4547-835F-06743F1D1DFA}.Debug|x64.Build.0 = Debug|Any CPU
+		{84E83C7B-C4BF-4547-835F-06743F1D1DFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84E83C7B-C4BF-4547-835F-06743F1D1DFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84E83C7B-C4BF-4547-835F-06743F1D1DFA}.Release|x64.ActiveCfg = Release|Any CPU
+		{84E83C7B-C4BF-4547-835F-06743F1D1DFA}.Release|x64.Build.0 = Release|Any CPU
+		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Debug|x64.Build.0 = Debug|Any CPU
+		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Release|x64.ActiveCfg = Release|Any CPU
+		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

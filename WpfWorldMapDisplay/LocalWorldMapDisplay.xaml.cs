@@ -222,7 +222,7 @@ namespace WpfWorldMapDisplay
                     if (TeamMatesDisplayDictionary.Count == 1) //Cas d'un affichage de robot unique (localWorldMap)
                 {
                         AnnotRobotRole.Text = TeamMatesDisplayDictionary.First().Value.robotRole.ToString();
-                    //DrawLidar(); 
+                    DrawLidar(); 
                     DrawHeatMap(TeamMatesDisplayDictionary.First().Key);
                     }
 
@@ -374,7 +374,7 @@ namespace WpfWorldMapDisplay
             //Affichage du lidar uniquement dans la strategy map
             if (lwmdType == LocalWorldMapDisplayType.StrategyMap)
             {
-                //UpdateLidarMap(robotId, localWorldMap.lidarMap);
+                UpdateLidarMap(robotId, localWorldMap.LidarMap);
                 //UpdateLidarProcessedMap(robotId, localWorldMap.lidarMapProcessed);
             }
             UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
@@ -467,8 +467,12 @@ namespace WpfWorldMapDisplay
                 //Affichage des robots
                 // PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Ghost, TeamMatesDisplayDictionary[r.Key].GetRobotGhostPolygon());
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Speed, TeamMatesDisplayDictionary[r.Key].GetRobotSpeedArrow());
-                PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Destination, TeamMatesDisplayDictionary[r.Key].GetRobotDestinationArrow());
-                PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.WayPoint, TeamMatesDisplayDictionary[r.Key].GetRobotWaypointArrow());
+                if (lwmdType == LocalWorldMapDisplayType.WayPointMap)
+                {
+                    PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Destination, TeamMatesDisplayDictionary[r.Key].GetRobotDestinationArrow());
+                    PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.WayPoint, TeamMatesDisplayDictionary[r.Key].GetRobotWaypointArrow());
+                }
+                
                 
 
                 //Rendering des points Lidar

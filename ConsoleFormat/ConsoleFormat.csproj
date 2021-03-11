@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Constants\Constants.csproj" />
     <ProjectReference Include="..\EventArgsLibrary\EventArgsLibrary.csproj" />
+    <ProjectReference Include="..\LidarTIM561\LidarTIM561.csproj" />
   </ItemGroup>
 
 </Project>
