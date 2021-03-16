@@ -123,8 +123,9 @@ namespace RobotEurobot2Roues
 
             #region Local World Map
             localWorldMap = new LocalWorldMap(robotId, teamId);
-            lidarProcess.OnProcessLidarDataEvent += localWorldMap.OnLidarRawPointReceived;
-            // lidarProcess.OnProcessLidarDataEvent += 
+            localWorldMap.OnUpdateRobotLocationEvent += lidarProcess.OnRobotLocation;
+            lidarProcess.OnProcessLidarLineDataEvent += localWorldMap.OnLidarProcessedLineReceived;
+            lidarProcess.OnProcessLidarXYDataEvent += localWorldMap.OnLidarRawPointReceived;
             localWorldMap.Init();
             #endregion
 
@@ -238,6 +239,10 @@ namespace RobotEurobot2Roues
             msgDecoder.OnCorrectMessageReceivedEvent += interfaceRobot.DisplayMessageDecoded;
             msgDecoder.OnErrorMessageReceivedEvent += interfaceRobot.DisplayMessageDecodedError;
             #endregion
+            #region Lidar
+            lidarProcess.OnRawLidarDataEvent += interfaceRobot.OnRawLidarDataReceived;
+            #endregion
+
             /// Affichage des infos en provenance du strategyManager
             strategyManager.OnTextMessageEvent += interfaceRobot.AppendConsole;
 

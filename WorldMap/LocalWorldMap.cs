@@ -24,8 +24,10 @@ namespace WorldMap
         public virtual List<Location> RobotHistorical { get; set; }
         public virtual List<Location> BallLocationList { get; set; }
         public virtual List<LocationExtended> ObstaclesLocationList { get; set; }
-        public virtual List<LidarPoint> LidarPoints { get; set; }
+        public virtual List<PolarPointRssi> LidarPoints { get; set; }
         public virtual List<PointD> LidarMap { get; set; }
+        public virtual List<PointD> LidarLine { get; set; }
+        public virtual List<Segment> LidarSegment { get; set; }
         public virtual List<PolarPointListExtended> LidarObjectList { get; set; }
 
 
@@ -150,22 +152,45 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
-        public void OnLidarRawPointReceived(object sender, List<LidarPoint> lidarPoints)
+        public void OnLidarRawPointReceived(object sender, List<PointD> lidarPoints)
         {
-            LidarPoints = lidarPoints;
-            double X = RobotLocation.X;
-            double Y = RobotLocation.Y;
-            double Theta = RobotLocation.Theta;
-
-            LidarMap = new List<PointD> { };
-            foreach(LidarPoint point in lidarPoints)
-            {
-                double pointDX = X + (point.Distance * Math.Cos(point.Angle - Theta));
-                double pointDY = Y + (point.Distance * Math.Sin(point.Angle - Theta));
-                LidarMap.Add(new PointD(pointDX, pointDY));
-            }
+            LidarMap = lidarPoints;
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
+
+        public void OnLidarProcessedLineReceived(object sender, List<Segment> segments)
+        {
+            //List<Segment> segments = new List<Segment>();
+            //foreach (HoughLine line in lines)
+            //{
+            //    double x = line.rho * Math.Cos(line.theta);
+            //    double y = line.rho * Math.Sin(line.theta);
+
+            //    double slope = line.theta - (Math.PI / 2);
+            //    double yintercept = y - slope * x;
+
+            //    double x1 = x + 1;
+            //    double y1 = slope * x1 + yintercept;
+
+            //    double x2 = x - 1;
+            //    double y2 = slope * x1 + yintercept;
+
+            //    segments.Add(new Segment(x1, y1, x2, y2));
+            //}
+            LidarSegment = segments;
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        private bool InMaxSquare(double x, double y)
+        {
+            double max = Math.Sqrt(Math.Pow(3, 2) + Math.Pow(2, 2));
+            double x_max = max;
+            double x_min = -max;
+            double y_max = max;
+            double y_min = -max;
+            return ((x >= x_min && x <= x_max) && (y >= y_min && y <= y_max));
+        }
+        
 
         #region Events
         public event EventHandler<Location> OnUpdateRobotLocationEvent;

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using Utilities;
+using EventArgsLibrary;
 
 namespace WpfWorldMapDisplay
 {
@@ -26,6 +27,8 @@ namespace WpfWorldMapDisplay
         public double[,] heatMapStrategy;
         public double[,] heatMapWaypoint;
         List<PointD> LidarMap;
+        List<PointD> LidarLine;
+        List<Segment> LidarSegment; 
         List<PointD> lidarProcessedMap;
         List<PolarPointListExtended> lidarObjectList;
         public List<Location> ballLocationList;
@@ -42,6 +45,7 @@ namespace WpfWorldMapDisplay
             robotName = name;
 
             LidarMap = new List<PointD>();
+            LidarLine = new List<PointD>();
             lidarProcessedMap = new List<PointD>();
             ballLocationList = new List<Location>();
         }
@@ -103,6 +107,16 @@ namespace WpfWorldMapDisplay
         public void SetLidarMap(List<PointD> lidarMap)
         {
             this.LidarMap = lidarMap;
+        }
+
+        public void SetLidarLine(List<PointD> lidarLine)
+        {
+            this.LidarLine = lidarLine;
+        }
+
+        public void SetLidarSegment(List<Segment> segments)
+        {
+            LidarSegment = segments;
         }
         public void SetLidarProcessedMap(List<PointD> lidarProcessedMap)
         {
@@ -295,6 +309,28 @@ namespace WpfWorldMapDisplay
                 dataSeries.Append(listX, listY);
             }
             return dataSeries;
+        }
+
+        public XyDataSeries<double, double> GetRobotLidarLinePoints()
+        {
+            var dataSeries = new XyDataSeries<double, double>();
+            if (LidarMap == null)
+                return dataSeries;
+
+            var listX = LidarLine.Select(e => e.X);
+            var listY = LidarLine.Select(e => e.Y);
+
+            if (listX.Count() == listY.Count())
+            {
+                dataSeries.AcceptsUnsortedData = true;
+                dataSeries.Append(listX, listY);
+            }
+            return dataSeries;
+        }
+
+        public List<Segment> GetRobotLidarSegment()
+        {
+            return LidarSegment;
         }
 
         public List<PolygonExtended> GetRobotLidarObjects()

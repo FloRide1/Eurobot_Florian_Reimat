@@ -375,6 +375,9 @@ namespace WpfWorldMapDisplay
             if (lwmdType == LocalWorldMapDisplayType.StrategyMap)
             {
                 UpdateLidarMap(robotId, localWorldMap.LidarMap);
+                UpdateLidarSegment(robotId, localWorldMap.LidarSegment);
+                // UpdateLidarLine(robotId, localWorldMap.LidarLine);
+                
                 //UpdateLidarProcessedMap(robotId, localWorldMap.lidarMapProcessed);
             }
             UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
@@ -505,6 +508,10 @@ namespace WpfWorldMapDisplay
         {
             XyDataSeries<double, double> lidarPts = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarProcessedPts = new XyDataSeries<double, double>();
+            XyDataSeries<double, double> lidarLinePts = new XyDataSeries<double, double>();
+
+
+            sciChartSurface.Annotations.Clear();
             foreach (var r in TeamMatesDisplayDictionary)
             {
                 ////Affichage des robots
@@ -523,7 +530,30 @@ namespace WpfWorldMapDisplay
                 var lidarProcessedData = TeamMatesDisplayDictionary[r.Key].GetRobotLidarProcessedPoints();
                 lidarProcessedPts.Append(lidarProcessedData.XValues, lidarProcessedData.YValues);
                 LidarProcessedPoints.DataSeries = lidarProcessedPts;
-            }
+
+                //lidarLinePts.AcceptsUnsortedData = true;
+                //var lidarLineData = TeamMatesDisplayDictionary[r.Key].GetRobotLidarProcessedPoints();
+                //lidarLinePts.Append(lidarLineData.XValues, lidarLineData.YValues);
+                //LidarLinePoints.DataSeries = lidarLinePts;
+
+                var lidarSegment = TeamMatesDisplayDictionary[r.Key].GetRobotLidarSegment();
+                if (lidarSegment != null)
+                {
+                    foreach (Segment segment in lidarSegment)
+                    {
+                        LineAnnotation line = new LineAnnotation()
+                        {
+                            Stroke = new SolidColorBrush(Colors.Orange),
+                            X1 = segment.X1,
+                            Y1 = segment.Y1,
+                            X2 = segment.X2,
+                            Y2 = segment.Y2
+
+                        };
+                        sciChartSurface.Annotations.Add(line);
+                    }
+                }   
+            }            
         }
 
         public void UpdateRobotLocation(int robotId, Location location)
@@ -596,6 +626,26 @@ namespace WpfWorldMapDisplay
             if (TeamMatesDisplayDictionary.ContainsKey(robotId))
             {
                 TeamMatesDisplayDictionary[robotId].SetLidarMap(lidarMap);
+            }
+        }
+
+        private void UpdateLidarLine(int robotId, List<PointD> lidarLines)
+        {
+            if (lidarLines == null)
+                return;
+            if (TeamMatesDisplayDictionary.ContainsKey(robotId))
+            {
+                TeamMatesDisplayDictionary[robotId].SetLidarLine(lidarLines);
+            }
+        }
+
+        private void UpdateLidarSegment(int robotId, List<Segment> lidarSegments)
+        {
+            if (lidarSegments == null)
+                return;
+            if (TeamMatesDisplayDictionary.ContainsKey(robotId))
+            {
+                TeamMatesDisplayDictionary[robotId].SetLidarSegment(lidarSegments);
             }
         }
 
