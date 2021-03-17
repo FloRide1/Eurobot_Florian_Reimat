@@ -33,34 +33,57 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Momentum.Composition, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Robot Interface\WpfApp1\packages\Momentum.Pm.Api.5.15.1.60\lib\net461\Momentum.Composition.dll</HintPath>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\Microsoft.Bcl.AsyncInterfaces.5.0.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Momentum.Pm.Api, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Robot Interface\WpfApp1\packages\Momentum.Pm.Api.5.15.1.60\lib\net461\Momentum.Pm.Api.dll</HintPath>
+    <Reference Include="Momentum.Composition, Version=5.17.1.36, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\Momentum.Pm.Api.5.17.1.36\lib\net461\Momentum.Composition.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Common, Version=3.9.58.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Robot Interface\WpfApp1\packages\ServiceStack.Common.3.9.58\lib\net35\ServiceStack.Common.dll</HintPath>
+    <Reference Include="Momentum.Pm.Api, Version=5.17.1.36, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\Momentum.Pm.Api.5.17.1.36\lib\net461\Momentum.Pm.Api.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Interfaces, Version=3.9.58.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Robot Interface\WpfApp1\packages\ServiceStack.Common.3.9.58\lib\net35\ServiceStack.Interfaces.dll</HintPath>
+    <Reference Include="ServiceStack.Common, Version=5.0.0.0, Culture=neutral, PublicKeyToken=02c12cbda47e6587, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\ServiceStack.Common.5.10.4\lib\net472\ServiceStack.Common.dll</HintPath>
     </Reference>
-    <Reference Include="ServiceStack.Text, Version=3.9.58.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\Robot Interface\WpfApp1\packages\ServiceStack.Text.3.9.58\lib\net35\ServiceStack.Text.dll</HintPath>
+    <Reference Include="ServiceStack.Interfaces, Version=5.0.0.0, Culture=neutral, PublicKeyToken=02c12cbda47e6587, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\ServiceStack.Interfaces.5.10.4\lib\net472\ServiceStack.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text, Version=5.0.0.0, Culture=neutral, PublicKeyToken=02c12cbda47e6587, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\ServiceStack.Text.5.10.4\lib\net45\ServiceStack.Text.dll</HintPath>
+    </Reference>
+    <Reference Include="SharpGL, Version=3.1.1.0, Culture=neutral, PublicKeyToken=27fc851303210b27, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\SharpGL.3.1.1\lib\net472\SharpGL.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="WinUSBNet, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\RobotPWF2\packages\WinUSBNet.1.0.3\lib\net35\WinUSBNet.dll</HintPath>
+    <Reference Include="WinUSBNet, Version=2.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\RobotEurobot2Roues\packages\WinUSBNet.2.1.0\lib\net45\WinUSBNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -80,6 +103,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

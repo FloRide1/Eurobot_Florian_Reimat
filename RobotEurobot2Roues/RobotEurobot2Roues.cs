@@ -75,6 +75,13 @@ namespace RobotEurobot2Roues
             #endregion
 
             #region Console
+            // Control:
+            bool hex_viewer = false;
+            bool hex_sender = false;
+            bool hex_viewer_error = false;
+            bool hex_sender_error = false;
+            bool hex_processor = false;
+            bool hex_generator = false;
             #region USB Vendor
             usbDriver.OnDeviceAddedEvent += ConsoleFormat.PrintNewDeviceAdded;
             usbDriver.OnDeviceRemovedEvent += ConsoleFormat.PrintDeviceRemoved;
@@ -82,36 +89,49 @@ namespace RobotEurobot2Roues
             #endregion
 
             #region Hex Viewer
-            msgDecoder.OnUnknowByteEvent += ConsoleFormat.PrintUnknowByte;
-            msgDecoder.OnSOFByteReceivedEvent += ConsoleFormat.PrintSOF;
-            msgDecoder.OnFunctionMSBByteReceivedEvent += ConsoleFormat.PrintFunctionMSB;
-            msgDecoder.OnFunctionLSBByteReceivedEvent += ConsoleFormat.PrintFunctionLSB;
-            msgDecoder.OnPayloadLenghtMSBByteReceivedEvent += ConsoleFormat.PrintLenghtMSB;
-            msgDecoder.OnPayloadLenghtLSBByteReceivedEvent += ConsoleFormat.PrintLenghtLSB;
-            msgDecoder.OnPayloadByteReceivedEvent += ConsoleFormat.PrintPayloadByte;
-            msgDecoder.OnCorrectMessageReceivedEvent += ConsoleFormat.PrintCorrectChecksum;
-            msgDecoder.OnErrorMessageReceivedEvent += ConsoleFormat.PrintWrongChecksum;
+            if (hex_viewer)
+            {
+                //msgDecoder.OnUnknowByteEvent += ConsoleFormat.PrintUnknowByte;
+                //msgDecoder.OnSOFByteReceivedEvent += ConsoleFormat.PrintSOF;
+                //msgDecoder.OnFunctionMSBByteReceivedEvent += ConsoleFormat.PrintFunctionMSB;
+                //msgDecoder.OnFunctionLSBByteReceivedEvent += ConsoleFormat.PrintFunctionLSB;
+                //msgDecoder.OnPayloadLenghtMSBByteReceivedEvent += ConsoleFormat.PrintLenghtMSB;
+                //msgDecoder.OnPayloadLenghtLSBByteReceivedEvent += ConsoleFormat.PrintLenghtLSB;
+                //msgDecoder.OnPayloadByteReceivedEvent += ConsoleFormat.PrintPayloadByte;
+                //msgDecoder.OnCorrectMessageReceivedEvent += ConsoleFormat.PrintCorrectChecksum;
+                //msgDecoder.OnErrorMessageReceivedEvent += ConsoleFormat.PrintWrongChecksum;
+            }
             #endregion
 
             #region Hex Viewer Error
-            msgDecoder.OnOverLenghtMessageEvent += ConsoleFormat.PrintOverLenghtWarning;
-            msgDecoder.OnUnknowFunctionEvent += ConsoleFormat.PrintUnknowFunctionReceived;
-            msgDecoder.OnWrongLenghtFunctionEvent += ConsoleFormat.PrintWrongFonctionLenghtReceived;
+            if (hex_viewer_error)
+            {
+                msgDecoder.OnOverLenghtMessageEvent += ConsoleFormat.PrintOverLenghtWarning;
+                msgDecoder.OnUnknowFunctionEvent += ConsoleFormat.PrintUnknowFunctionReceived;
+                msgDecoder.OnWrongLenghtFunctionEvent += ConsoleFormat.PrintWrongFonctionLenghtReceived;
+            }
             #endregion
 
             #region Hex Sender
-            msgEncoder.OnSendMessageEvent += ConsoleFormat.PrintSendMsg;
+            if (hex_sender)
+            {
+                msgEncoder.OnSendMessageEvent += ConsoleFormat.PrintSendMsg;
+            }
+            
             #endregion
 
             #region Hex Sender Error
-            msgEncoder.OnSerialDisconnectedEvent += ConsoleFormat.PrintOnSerialDisconnectedError;
-            msgEncoder.OnUnknownFunctionSentEvent += ConsoleFormat.PrintUnknowFunctionSent;
-            msgEncoder.OnWrongPayloadSentEvent += ConsoleFormat.PrintWrongFunctionLenghtSent;
+            if (hex_sender_error)
+            {
+                msgEncoder.OnSerialDisconnectedEvent += ConsoleFormat.PrintOnSerialDisconnectedError;
+                msgEncoder.OnUnknownFunctionSentEvent += ConsoleFormat.PrintUnknowFunctionSent;
+                msgEncoder.OnWrongPayloadSentEvent += ConsoleFormat.PrintWrongFunctionLenghtSent;
+            }
             #endregion
             #endregion
 
             #region Lidar
-            lidar = new SickLidar(18110177);
+            lidar = new SickLidar(17422959); // 18110177
             lidarProcess = new LidarProcess(robotId, teamId);
 
             lidar.OnLidarDeviceConnectedEvent += lidarProcess.OnNewLidarConnected;
@@ -158,10 +178,6 @@ namespace RobotEurobot2Roues
             }
         }
 
-        private static void Lidar_PointsAvailable(object sender, LidarPointsReadyEventArgs e)
-        {
-            throw new NotImplementedException();
-        }
 
         static Thread t1;
         static void StartRobotInterface()

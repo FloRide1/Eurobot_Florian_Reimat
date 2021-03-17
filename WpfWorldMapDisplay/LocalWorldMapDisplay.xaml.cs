@@ -510,8 +510,14 @@ namespace WpfWorldMapDisplay
             XyDataSeries<double, double> lidarProcessedPts = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarLinePts = new XyDataSeries<double, double>();
 
-
-            sciChartSurface.Annotations.Clear();
+            
+            foreach (AnnotationBase annotation in sciChartSurface.Annotations)
+            {
+                if (annotation.Name == "SegmentLine")
+                {
+                    sciChartSurface.Annotations.Remove(annotation);
+                }
+            }
             foreach (var r in TeamMatesDisplayDictionary)
             {
                 ////Affichage des robots
@@ -544,6 +550,7 @@ namespace WpfWorldMapDisplay
                         LineAnnotation line = new LineAnnotation()
                         {
                             Stroke = new SolidColorBrush(Colors.Orange),
+                            Name = "SegmentLine",
                             X1 = segment.X1,
                             Y1 = segment.Y1,
                             X2 = segment.X2,

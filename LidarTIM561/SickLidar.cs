@@ -81,6 +81,7 @@ namespace Lidar
                     var devices = USBDevice.GetDevices("40F8D7C6-6856-483d-AC31-DC646CA2D89B");
                     foreach (var deviceInfo in devices)
                     {
+ 
                         
                         // Recherche d'un TIM SickLidar précis utilisant son numéro de série
                         if (_serialNumber != 0 && deviceInfo.DevicePath.Contains(_serialNumber.ToString()))

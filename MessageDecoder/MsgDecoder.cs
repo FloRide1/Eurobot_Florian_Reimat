@@ -187,11 +187,12 @@ namespace MessageDecoder
         {
             msgPayload[msgPayloadIndex] = e;
             msgPayloadIndex++;
+            OnPayloadByteReceivedEvent?.Invoke(this, e);
             if (msgPayloadIndex == msgPayloadLenght)
             {
                 OnPayloadReceived(msgPayload);
             }
-            OnPayloadByteReceivedEvent?.Invoke(this, e);
+            
         }
         public virtual void OnPayloadReceived(byte[] e)
         {
@@ -222,7 +223,7 @@ namespace MessageDecoder
         }
         private static byte CalculateChecksum()
         {
-            byte checksum = ConstVar.START_OF_FRAME;
+            byte checksum = 0;
             checksum ^= functionMSB;
             checksum ^= functionLSB;
             checksum ^= payloadLenghtMSB;
