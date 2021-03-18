@@ -45,6 +45,20 @@ namespace EventArgsLibrary
         public int Line { get; set; }
     }
 
+    public class BlobObject : EventArgs
+    {
+        public List<PolarPointRssi> points { get; set; }
+
+        public BlobObject()
+        {
+            points = new List<PolarPointRssi>();
+        }
+        public BlobObject(List<PolarPointRssi> polarPointRssis)
+        {
+            points = polarPointRssis;
+        }
+
+    }
     public class DoubleEventArgs : EventArgs
     {
         public double Value { get; set; }
@@ -193,7 +207,11 @@ namespace EventArgsLibrary
     {
         public double rho { get; set; }
         public double theta { get; set; }
-
+        public HoughLine()
+        {
+            rho = 0;
+            theta = 0;
+        }
         public HoughLine(double rho_a, double theta_a)
         {
             rho = rho_a;
@@ -207,6 +225,14 @@ namespace EventArgsLibrary
         public double Y1 { get; set; }
         public double X2 { get; set; }
         public double Y2 { get; set; }
+
+        public Segment()
+        {
+            X1 = 0;
+            Y1 = 0;
+            X2 = 0;
+            Y2 = 0;
+        }
 
         public Segment(double x1, double y1, double x2, double y2)
         {

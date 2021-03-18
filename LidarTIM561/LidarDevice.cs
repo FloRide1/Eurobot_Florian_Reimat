@@ -36,10 +36,10 @@ namespace Lidar
         #region Properties
 
         /// <summary>Angle minimum de scan.</summary>
-        public double AngleMin { get; set; } = -180;
+        public double AngleMin { get; set; } = -90;
 
         /// <summary>Angle maximum de scan.</summary>
-        public double AngleMax { get; set; } = 180;
+        public double AngleMax { get; set; } = 90;
 
         /// <summary>Position du Lidar dans le référentiel robot.</summary>
         public Location Location { get; set; } = new Location(0,0,0,0,0,0);

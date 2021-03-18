@@ -10,6 +10,7 @@ namespace WorldMap
 {
     public class LocalWorldMap
     {
+        #region Params
         private const double MINIMAL_WORLD_HISTORICAL_DIST = 0.010d;
 
         public virtual int RobotId { get; set; }
@@ -25,7 +26,8 @@ namespace WorldMap
         public virtual List<Location> BallLocationList { get; set; }
         public virtual List<LocationExtended> ObstaclesLocationList { get; set; }
         public virtual List<PolarPointRssi> LidarPoints { get; set; }
-        public virtual List<PointD> LidarMap { get; set; }
+        public virtual List<PointD> LidarMapRaw { get; set; }
+        public virtual List<PointD> LidarMapProcessed { get; set; }
         public virtual List<PointD> LidarLine { get; set; }
         public virtual List<Segment> LidarSegment { get; set; }
         public virtual List<PolarPointListExtended> LidarObjectList { get; set; }
@@ -35,8 +37,8 @@ namespace WorldMap
         // public virtual List<PointD> lidarMapProcessed { get; set; }
         // public virtual Heatmap heatMapStrategy { get; set; }
         // public virtual Heatmap heatMapWaypoint { get; set; }
-
-
+        #endregion
+        #region Constructors
         public LocalWorldMap(int robotId, int teamId)
         {
             RobotId = robotId;
@@ -47,7 +49,8 @@ namespace WorldMap
             RobotHistorical = new List<Location> { RobotLocation };
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
-
+        #endregion
+        #region Methods
         public void Init()
         {
             RobotLocation = new Location(0, 0, 0, 0, 0, 0);
@@ -91,26 +94,10 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
-        public void AddNewWaypointsEvent(object sender, PointD point)
-        {
-            AddNewWaypoints(point);
-        }
-
         public void SetDestinationLocation(Location location)
         {
             DestinationLocation = location;
             OnLocalWorldMapEvent?.Invoke(this, this);
-        }
-
-        public void SetDestinationLocationEvent(object sender, PointD point)
-        {
-            SetDestinationLocation(new Location(point.X, point.Y,0,0,0,0));
-        }
-
-        public void ResetWaypointDestinationEvent(object sender, PointD point)
-        {
-            ResetWaypoints();
-            ResetDestination();
         }
 
         public void ResetWaypoints()
@@ -151,10 +138,37 @@ namespace WorldMap
             OnResetRobotEvent?.Invoke(this, location);
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
+        #endregion
+        #region Input Callback
+        public void AddNewWaypointsEvent(object sender, PointD point)
+        {
+            AddNewWaypoints(point);
+        }
+
+        
+
+        public void SetDestinationLocationEvent(object sender, PointD point)
+        {
+            SetDestinationLocation(new Location(point.X, point.Y,0,0,0,0));
+        }
+
+        public void ResetWaypointDestinationEvent(object sender, PointD point)
+        {
+            ResetWaypoints();
+            ResetDestination();
+        }
+
+        
 
         public void OnLidarRawPointReceived(object sender, List<PointD> lidarPoints)
         {
-            LidarMap = lidarPoints;
+            LidarMapRaw = lidarPoints;
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void OnLidarProcessedPointReceived(object sender, List<PointD> lidarPoints)
+        {
+            LidarMapProcessed = lidarPoints;
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
@@ -181,6 +195,14 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
+
+
+        public void OnGameStateChange(object sender, GameState gameState_a)
+        {
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+        #endregion
+        #region Others
         private bool InMaxSquare(double x, double y)
         {
             double max = Math.Sqrt(Math.Pow(3, 2) + Math.Pow(2, 2));
@@ -190,7 +212,8 @@ namespace WorldMap
             double y_min = -max;
             return ((x >= x_min && x <= x_max) && (y >= y_min && y <= y_max));
         }
-        
+        #endregion
+
 
         #region Events
         public event EventHandler<Location> OnUpdateRobotLocationEvent;
@@ -204,10 +227,7 @@ namespace WorldMap
         #endregion
 
 
-        public void OnGameStateChange(object sender, GameState gameState_a)
-        {
-            OnLocalWorldMapEvent?.Invoke(this, this);
-        }
+        
 
     }
 

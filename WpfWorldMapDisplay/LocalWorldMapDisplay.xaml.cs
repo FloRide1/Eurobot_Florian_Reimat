@@ -374,11 +374,11 @@ namespace WpfWorldMapDisplay
             //Affichage du lidar uniquement dans la strategy map
             if (lwmdType == LocalWorldMapDisplayType.StrategyMap)
             {
-                UpdateLidarMap(robotId, localWorldMap.LidarMap);
+                UpdateLidarRawMap(robotId, localWorldMap.LidarMapRaw);
+                UpdateLidarProcessedMap(robotId, localWorldMap.LidarMapProcessed);
                 UpdateLidarSegment(robotId, localWorldMap.LidarSegment);
                 // UpdateLidarLine(robotId, localWorldMap.LidarLine);
                 
-                //UpdateLidarProcessedMap(robotId, localWorldMap.lidarMapProcessed);
             }
             UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
             UpdateObstacleList(localWorldMap.ObstaclesLocationList);
@@ -632,7 +632,7 @@ namespace WpfWorldMapDisplay
             }
         }
 
-        private void UpdateLidarMap(int robotId, List<PointD> lidarMap)
+        private void UpdateLidarRawMap(int robotId, List<PointD> lidarMap)
         {
             if (lidarMap == null)
                 return;

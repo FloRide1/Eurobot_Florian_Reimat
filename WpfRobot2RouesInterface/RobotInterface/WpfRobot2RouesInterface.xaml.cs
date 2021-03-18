@@ -99,12 +99,12 @@ namespace RobotInterface
             oscilloTheta.ChangeLineColor(1, Colors.Red);
             oscilloTheta.ChangeLineColor(0, Colors.Blue);
             
-            oscilloLidar.AddOrUpdateLine(0, 20000, "Lidar RSSI", false);
-            oscilloLidar.AddOrUpdateLine(1, 20000, "Lidar Distance");
-            oscilloLidar.AddOrUpdateLine(2, 20000, "Balise Points");
+            oscilloLidar.AddOrUpdateLine(0, 20000, "RSSI", false);
+            oscilloLidar.AddOrUpdateLine(1, 20000, "Dist");
+            oscilloLidar.AddOrUpdateLine(2, 20000, "Dist P");
             oscilloLidar.ChangeLineColor(0, Colors.SeaGreen);
-            oscilloLidar.ChangeLineColor(1, Colors.IndianRed);
-            oscilloLidar.ChangeLineColor(2, Colors.LightGoldenrodYellow);
+            oscilloLidar.ChangeLineColor(1, Colors.Blue);
+            oscilloLidar.ChangeLineColor(2, Colors.Red);
 
             asservPositionDisplay.SetTitle("Asservissement Position");
             asservSpeedDisplay.SetTitle("Asservissement Vitesse");
@@ -187,11 +187,11 @@ namespace RobotInterface
             oscilloLidar.UpdatePointListOfLine(1, ptList2);
         }
 
-        public void OnRawLidarBalisePointsReceived(object sender, RawLidarArgs e)
+        public void OnProcessLidarDataReceived(object sender, RawLidarArgs e)
         {
-            List<Point> ptListBalises = new List<Point>();
-            ptListBalises = e.PtList.Select(p => new Point(p.Angle, p.Distance)).ToList();
-            oscilloLidar.UpdatePointListOfLine(2, ptListBalises);
+            List<Point> ptListProcess = new List<Point>();
+            ptListProcess = e.PtList.Select(p => new Point(p.Angle, p.Distance)).ToList();
+            oscilloLidar.UpdatePointListOfLine(2, ptListProcess);
         }
 
         public void OnMessageToDisplayPolarSpeedPidSetupReceived(object sender, PolarPIDSetupArgs e)
