@@ -145,7 +145,7 @@ namespace ConsoleFormatNS
         {
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write("0x" + e.ToString("X2") + " ");
-            Console.ResetColor();
+            // Console.ResetColor();
 
         }
         static public void PrintCorrectChecksum(object sender, MessageByteArgs e)

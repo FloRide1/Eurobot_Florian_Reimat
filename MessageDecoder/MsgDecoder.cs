@@ -31,7 +31,7 @@ namespace MessageDecoder
         private static byte msgChecksum;
 
         private static int msgPayloadIndex = 0; // Maybe edit type
-        public void ByteReceived(object sender, byte b)
+        public void ByteReceived(byte b)
         {
             switch (actualState)
             {
@@ -72,6 +72,17 @@ namespace MessageDecoder
             }
 
         }
+
+        #region Input Callback
+
+        public void BuffReceived(object sender, byte[] buff)
+        {
+            foreach (var b in buff)
+            {
+                ByteReceived(b);
+            }
+        }
+        #endregion
 
         public event EventHandler<EventArgs> OnMessageDecoderCreatedEvent;
         public event EventHandler<byte> OnSOFByteReceivedEvent;

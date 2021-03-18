@@ -68,7 +68,7 @@ namespace RobotEurobot2Roues
 
             #region Communication to Low Lvl
             /// Création des liens entre module, sauf depuis et vers l'interface graphique           
-            usbDriver.OnUSBByteReceivedEvent += msgDecoder.ByteReceived;                                    // Transmission des messages reçus par l'USB au Message Decoder
+            usbDriver.OnUSBuffReceivedEvent += msgDecoder.BuffReceived;                                    // Transmission des messages reçus par l'USB au Message Decoder
             msgDecoder.OnCorrectMessageReceivedEvent += msgProcessor.ProcessRobotDecodedMessage;            // Transmission les messages décodés par le Message Decoder au Message Processor
             msgGenerator.OnMessageToRobotGeneratedEvent += msgEncoder.EncodeAndSendMessage;                 // Envoi des messages du générateur de message à l'encoder
             msgEncoder.OnSendMessageEvent += usbDriver.SendUSBMessage;                                      // Envoi des messages en USB depuis le message encoder
@@ -78,7 +78,7 @@ namespace RobotEurobot2Roues
             // Control:
             bool hex_viewer = false;
             bool hex_sender = false;
-            bool hex_viewer_error = false;
+            bool hex_viewer_error = true;
             bool hex_sender_error = false;
             bool hex_processor = false;
             bool hex_generator = false;
@@ -91,15 +91,15 @@ namespace RobotEurobot2Roues
             #region Hex Viewer
             if (hex_viewer)
             {
-                //msgDecoder.OnUnknowByteEvent += ConsoleFormat.PrintUnknowByte;
-                //msgDecoder.OnSOFByteReceivedEvent += ConsoleFormat.PrintSOF;
-                //msgDecoder.OnFunctionMSBByteReceivedEvent += ConsoleFormat.PrintFunctionMSB;
-                //msgDecoder.OnFunctionLSBByteReceivedEvent += ConsoleFormat.PrintFunctionLSB;
-                //msgDecoder.OnPayloadLenghtMSBByteReceivedEvent += ConsoleFormat.PrintLenghtMSB;
-                //msgDecoder.OnPayloadLenghtLSBByteReceivedEvent += ConsoleFormat.PrintLenghtLSB;
-                //msgDecoder.OnPayloadByteReceivedEvent += ConsoleFormat.PrintPayloadByte;
-                //msgDecoder.OnCorrectMessageReceivedEvent += ConsoleFormat.PrintCorrectChecksum;
-                //msgDecoder.OnErrorMessageReceivedEvent += ConsoleFormat.PrintWrongChecksum;
+                msgDecoder.OnUnknowByteEvent += ConsoleFormat.PrintUnknowByte;
+                msgDecoder.OnSOFByteReceivedEvent += ConsoleFormat.PrintSOF;
+                msgDecoder.OnFunctionMSBByteReceivedEvent += ConsoleFormat.PrintFunctionMSB;
+                msgDecoder.OnFunctionLSBByteReceivedEvent += ConsoleFormat.PrintFunctionLSB;
+                msgDecoder.OnPayloadLenghtMSBByteReceivedEvent += ConsoleFormat.PrintLenghtMSB;
+                msgDecoder.OnPayloadLenghtLSBByteReceivedEvent += ConsoleFormat.PrintLenghtLSB;
+                msgDecoder.OnPayloadByteReceivedEvent += ConsoleFormat.PrintPayloadByte;
+                msgDecoder.OnCorrectMessageReceivedEvent += ConsoleFormat.PrintCorrectChecksum;
+                msgDecoder.OnErrorMessageReceivedEvent += ConsoleFormat.PrintWrongChecksum;
             }
             #endregion
 

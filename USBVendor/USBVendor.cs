@@ -104,7 +104,7 @@ namespace USBVendorNS
         }
 
         //public event EventHandler<>;
-        public event EventHandler<byte> OnUSBByteReceivedEvent;
+        public event EventHandler<byte[]> OnUSBuffReceivedEvent;
         public event EventHandler<string> OnUsbVendorExeptionEvent;
         public event EventHandler<EventArgs> OnDeviceAddedEvent;
         public event EventHandler<EventArgs> OnDeviceRemovedEvent;
@@ -150,10 +150,12 @@ namespace USBVendorNS
                             //RequestToReceiveDataViaIsochronousTransfer(cmv8DeviceListeFound[0], bytesToRead,ref dataBuffer, ref bytesRead, ref readSuccess);
                             _myWinUsbCommunications.ReceiveDataViaBulkTransfer(cmv8DeviceListeFound[0]._winUsbHandle,
                             cmv8DeviceListeFound[0]._myDeviceInfo, bytesToRead, ref dataBuffer, ref bytesRead, ref readSuccess);
-                            foreach (byte element in dataBuffer)
+                            byte[] bufff = new byte[bytesRead];
+                            for (int i = 0; i < bytesRead; i++)
                             {
-                                OnUSBByteReceived(element);
+                                bufff[i] = dataBuffer[i];
                             }
+                            OnUSBByteReceived(bufff);
                             //USBMonitoring.USBRecuMonitor(bufff);
                             //    ProcessUSBReceivedMessage(dataBuffer, totalByteReceived);
                             //rcvMessageQueue.Enqueue(dataBuffer);
@@ -210,9 +212,9 @@ namespace USBVendorNS
         //public delegate void DataReceivedEventHandler(object sender, DataReceivedArgs e);
         
 
-        public virtual void OnUSBByteReceived(byte data)
+        public virtual void OnUSBByteReceived(byte[] buff)
         {
-            OnUSBByteReceivedEvent?.Invoke(this, data);
+            OnUSBuffReceivedEvent?.Invoke(this, buff);
         }
         ///  <summary>
         ///  If a device with the specified device interface GUID hasn't been previously detected,

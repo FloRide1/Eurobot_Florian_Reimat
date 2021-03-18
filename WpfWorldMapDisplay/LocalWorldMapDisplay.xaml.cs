@@ -510,13 +510,19 @@ namespace WpfWorldMapDisplay
             XyDataSeries<double, double> lidarProcessedPts = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarLinePts = new XyDataSeries<double, double>();
 
-            
+            List<AnnotationBase> annotationBase = new List<AnnotationBase>();
             foreach (AnnotationBase annotation in sciChartSurface.Annotations)
             {
                 if (annotation.Name == "SegmentLine")
                 {
-                    sciChartSurface.Annotations.Remove(annotation);
+                    annotationBase.Add(annotation);
+                    
                 }
+            }
+
+            foreach (AnnotationBase annotation in annotationBase)
+            {
+                sciChartSurface.Annotations.Remove(annotation);
             }
             foreach (var r in TeamMatesDisplayDictionary)
             {
