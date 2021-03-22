@@ -14,10 +14,14 @@ namespace LidarProcessNS
 {
     public class LidarProcess
     {
+        #region Parameters
         int robotId, teamId, LidarFrame;
         Location robotLocation;
         List<PolarPointRssi> polarPointRssis;
         List<PointD> pointXYCoord;
+        #endregion
+
+        #region Constructor
         public LidarProcess(int robot, int team)
         {
             robotId = robot;
@@ -25,11 +29,12 @@ namespace LidarProcessNS
             robotLocation = new Location() { };
             LidarFrame = 0;
         }
+        #endregion
 
+        #region Callback
         public void OnNewLidarConnected(object sender, LidarDevice e)
         {
             LidarFrame = 0;
-
         }
 
 
@@ -44,9 +49,9 @@ namespace LidarProcessNS
                 rssiPoint.Distance = point.Distance;
                 rssiPoint.Angle = point.Angle;
                 rssiPoint.Rssi = point.RSSI;
-                
+
                 rawLidarPoints.Add(rssiPoint);
-                
+
             }
             List<PolarPointRssi> FloPoint = new List<PolarPointRssi>();
             foreach (PolarPointRssi points in rawLidarPoints)
@@ -64,8 +69,9 @@ namespace LidarProcessNS
         {
             robotLocation = robot;
         }
+        #endregion
 
-
+        #region Event
         public event EventHandler<RawLidarArgs> OnRawLidarDataEvent;
         public event EventHandler<RawLidarArgs> OnProcessLidarDataEvent;
         public event EventHandler<List<PolarPointRssi>> OnRawLidarPointPolarEvent;
@@ -73,11 +79,13 @@ namespace LidarProcessNS
         public event EventHandler<List<PointD>> OnProcessLidarXYDataEvent;
         public event EventHandler<List<PolarPointRssi>> OnProcessLidarPolarDataEvent;
         public event EventHandler<List<Segment>> OnProcessLidarLineDataEvent;
+        #endregion
+
 
         public void ProcessLidarData(List<PolarPointRssi> polarPointRssi)
         {
             List<PolarPointRssi> validPoint = new List<PolarPointRssi>();
-            foreach(PolarPointRssi p in polarPointRssi)
+            foreach (PolarPointRssi p in polarPointRssi)
             {
                 if (p.Distance <= Math.Sqrt(Math.Pow(3, 2) + Math.Pow(2, 2)))
                 {
@@ -86,55 +94,31 @@ namespace LidarProcessNS
             }
 
 
-            List<BlobObject> Blobs = DetectBlob(validPoint, 0.03, 5);
+            List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 1);
             List<PolarPointRssi> processedPoints = new List<PolarPointRssi>();
-            List<PolarPointRssi> pointFlo = new List<PolarPointRssi>();
-            List<PolarPointRssi> fl0Derivative = new List<PolarPointRssi>();
-            foreach (BlobObject b in Blobs)
+
+            foreach (ClusterObjects c in clusterObjects)
             {
-                foreach (PolarPointRssi p in b.points)
+                foreach (PolarPointRssi p in c.points)
                 {
                     processedPoints.Add(p);
-                    pointFlo.Add(new PolarPointRssi(p.Angle, p.Distance * Math.Cos(p.Angle), p.Rssi));
                 }
             }
 
-            
-
-            int i;
-            for (i = 0; i < pointFlo.Count - 1; i++)
-            {
-                double point = pointFlo[i + 1].Distance - pointFlo[i].Distance;
-                fl0Derivative.Add(new PolarPointRssi(pointFlo[i].Angle, point, pointFlo[i].Rssi));
-            }
 
             List<Segment> Lines = new List<Segment>();
-
-            
-
             OnProcessLidarLineDataEvent?.Invoke(this, Lines);
-            // /!\ Warning NEED TO REMOVE
 
-
-            RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = pointFlo };
+            RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints };
             OnProcessLidarDataEvent?.Invoke(this, processLidar);
 
-            
-
-            processLidar.PtList =  fl0Derivative;
-            OnRawLidarDataEvent?.Invoke(this, processLidar);
-
-
-
-
-            
             OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints);
             OnProcessLidarXYDataEvent?.Invoke(this, ConvertRssiToXYCoord(processedPoints));
         }
 
-        
 
-        public List<ClusterObjects> DetectClusterOfPoint(List<PolarPointRssi> pointsList , double thresold)
+
+        public List<ClusterObjects> DetectClusterOfPoint(List<PolarPointRssi> pointsList, double thresold)
         {
             /// ABD Stand for Adaptative breakpoint Detection
             List<ClusterObjects> listOfClusters = new List<ClusterObjects>();
@@ -158,7 +142,7 @@ namespace LidarProcessNS
         public List<Segment> DetectGlobalLine(List<PolarPointRssi> pointsList, double thresold)
         {
             /// For faster seach of angle in array -> NEED TO EDIT
-            double [] angle_array = { };
+            double[] angle_array = { };
             foreach (PolarPointRssi point in pointsList)
             {
                 angle_array.Append(point.Angle);
@@ -170,14 +154,14 @@ namespace LidarProcessNS
             double angle_step = 5d;
 
             int center_index = GetIndexOfAngle(angle_array, angle);
-            
+
             PointD center_point = ConvertPolarToXYAbsoluteCoord(pointsList[center_index]);
             PointD left_center_point = ConvertPolarToXYAbsoluteCoord(pointsList[center_index - 1]);
             PointD right_center_pointsList = ConvertPolarToXYAbsoluteCoord(pointsList[center_index + 1]);
 
             double[] xPoints = new double[] { left_center_point.X, center_point.X, right_center_pointsList.X };
             double[] yPoints = new double[] { left_center_point.Y, center_point.Y, right_center_pointsList.Y };
-            
+
             /// Get First Linear Regression
             Tuple<double, double> line = Fit.Line(xPoints, yPoints);
             double slope = line.Item1;
@@ -203,7 +187,7 @@ namespace LidarProcessNS
 
                 double delta = CalculateXYDistancePoint(estimated_point, measured_point);
 
-                if (delta <= thresold) 
+                if (delta <= thresold)
                 {
                     xPoints.Append(measured_point.X);
                     yPoints.Append(measured_point.Y);
@@ -220,6 +204,8 @@ namespace LidarProcessNS
                         /// The line end 
                         angle -= 3 * angle_step;
 
+                        /// Try to find the end of the segment
+
                     }
                 }
 
@@ -229,50 +215,16 @@ namespace LidarProcessNS
             return list_of_segments;
         }
 
-        private int GetIndexOfAngle(double[] angle_array, double angle) 
-        {
-            int i, index = 0;
-            double min = Math.Abs(angle - angle_array[0]);
-            for (i = 0; i < angle_array.Count(); i++)
-            {
-                double delta = Math.Abs(angle - angle_array[i]);
-                if (delta < min)
-                {
-                    min = delta;
-                    index = i;
-                }
-            }
-            return i;
-        }
-
-        private double CalculatePolarDistancePoint(PolarPointRssi p1, PolarPointRssi p2)
-        {
-            double r1 = p1.Distance;
-            double r2 = p2.Distance;
-
-            double t1 = p1.Angle;
-            double t2 = p2.Angle;
 
 
-            /// NEED TO REMAKE (SORRY MERGE FAIL HERE)
-            return 0d;
-        }
-        private double CalculateXYDistancePoint(PointD p1 , PointD p2)
-        {
-            double x1 = p1.X;
-            double y1 = p1.Y;
-            double x2 = p2.X;
-            double y2 = p2.Y;
 
-            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
-        }
 
-        public Segment DetectLine(ClusterObjects blob, double thresold, double alignNbr, int moy= 5)
+        public Segment DetectLine(ClusterObjects blob, double thresold, double alignNbr, int moy = 5)
         {
             List<PolarPointRssi> pointList = blob.points;
 
-            List<double>  derivate1 = new List<double>();
-            List<double>  derivate2 = new List<double>();
+            List<double> derivate1 = new List<double>();
+            List<double> derivate2 = new List<double>();
             Segment line = new Segment();
 
             int i;
@@ -290,9 +242,10 @@ namespace LidarProcessNS
             {
                 if (derivate2[i] >= 0 && derivate2[i] <= thresold)
                 {
-                    nbrOfCurrentAlign++;                    
+                    nbrOfCurrentAlign++;
                 }
-                else if (nbrOfCurrentAlign > 0) { 
+                else if (nbrOfCurrentAlign > 0)
+                {
                     if (nbrOfCurrentAlign >= alignNbr)
                     {
                         return CreateLineSegment(pointList, moy);
@@ -310,8 +263,9 @@ namespace LidarProcessNS
             return line;
         }
 
-       
 
+        #region Utils
+        #region Segments
         private Segment CreateLineSegment(List<PolarPointRssi> pointList, double moy)
         {
             int j;
@@ -334,9 +288,9 @@ namespace LidarProcessNS
             Y2 /= moy;
             return new Segment(X1, Y1, X2, Y2);
         }
-        private Segment CreateLineSegment(List<PolarPointRssi> pointList, int first,int last, double moy)
+        private Segment CreateLineSegment(List<PolarPointRssi> pointList, int first, int last, double moy)
         {
-            
+
             int i;
             double X1 = 0, Y1 = 0, X2 = 0, Y2 = 0;
             for (i = 0; i < moy; i++)
@@ -357,7 +311,31 @@ namespace LidarProcessNS
             Y2 /= moy;
             return new Segment(X1, Y1, X2, Y2);
         }
+        #endregion
+        #region Distance Calculate
+        private double CalculatePolarDistancePoint(PolarPointRssi p1, PolarPointRssi p2)
+        {
+            double r1 = p1.Distance;
+            double r2 = p2.Distance;
 
+            double t1 = p1.Angle;
+            double t2 = p2.Angle;
+
+
+            /// NEED TO REMAKE (SORRY MERGE FAIL HERE)
+            return 0d;
+        }
+        private double CalculateXYDistancePoint(PointD p1, PointD p2)
+        {
+            double x1 = p1.X;
+            double y1 = p1.Y;
+            double x2 = p2.X;
+            double y2 = p2.Y;
+
+            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+        }
+        #endregion
+        #region Conversion
         public List<PointD> ConvertRssiToXYCoord(List<PolarPointRssi> lidarPoints)
         {
             double X = robotLocation.X;
@@ -373,6 +351,7 @@ namespace LidarProcessNS
             return XYPoints;
         }
 
+
         private PointD ConvertPolarToRelativeCoord(double angle, double distance)
         {
             double X = robotLocation.X;
@@ -382,7 +361,7 @@ namespace LidarProcessNS
             double pointDY = Y + (distance * Math.Sin(angle - Theta));
             return new PointD(pointDX, pointDY);
         }
-        
+
         private PointD ConvertPolarToXYAbsoluteCoord(PolarPointRssi point)
         {
             double angle = point.Angle;
@@ -404,6 +383,24 @@ namespace LidarProcessNS
             double pointDY = Y + (distance * Math.Sin(angle - Theta));
             return new PointD(pointDX, pointDY);
         }
-
+        #endregion
+        #region Others
+        private int GetIndexOfAngle(double[] angle_array, double angle)
+        {
+            int i, index = 0;
+            double min = Math.Abs(angle - angle_array[0]);
+            for (i = 0; i < angle_array.Count(); i++)
+            {
+                double delta = Math.Abs(angle - angle_array[i]);
+                if (delta < min)
+                {
+                    min = delta;
+                    index = i;
+                }
+            }
+            return i;
+        }
+        #endregion
+        #endregion
     }
 }
