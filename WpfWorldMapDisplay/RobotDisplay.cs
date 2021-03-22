@@ -281,7 +281,7 @@ namespace WpfWorldMapDisplay
                 return dataSeries;
 
 
-            //lock (lidarMap)
+            lock (LidarRawPoints)
             {
                 var listX = LidarRawPoints.Select(e => e.X);
                 var listY = LidarRawPoints.Select(e => e.Y);

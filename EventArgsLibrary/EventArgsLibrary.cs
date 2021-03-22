@@ -45,15 +45,15 @@ namespace EventArgsLibrary
         public int Line { get; set; }
     }
 
-    public class BlobObject : EventArgs
+    public class ClusterObjects : EventArgs
     {
         public List<PolarPointRssi> points { get; set; }
 
-        public BlobObject()
+        public ClusterObjects()
         {
             points = new List<PolarPointRssi>();
         }
-        public BlobObject(List<PolarPointRssi> polarPointRssis)
+        public ClusterObjects(List<PolarPointRssi> polarPointRssis)
         {
             points = polarPointRssis;
         }

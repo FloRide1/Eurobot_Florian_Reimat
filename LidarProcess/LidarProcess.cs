@@ -7,6 +7,8 @@ using Utilities;
 using EventArgsLibrary;
 using Constants;
 using Lidar;
+using MathNet.Numerics;
+using MathNet.Numerics.LinearRegression;
 
 namespace LidarProcessNS
 {
@@ -109,22 +111,6 @@ namespace LidarProcessNS
             List<Segment> Lines = new List<Segment>();
 
             
-            foreach (BlobObject Blob in Blobs)
-            {
-                List<PolarPointRssi> blobPointFlo = new List<PolarPointRssi>();
-                foreach (PolarPointRssi point in Blob.points)
-                {
-                    blobPointFlo.Add(new PolarPointRssi(point.Angle, point.Distance * Math.Cos(point.Angle), point.Rssi));
-                }
-
-                BlobObject BlobFlo = new BlobObject() { points = blobPointFlo };
-                List<Segment> Line = DetectLineFlo(Blob, BlobFlo ,0.015, 35, 5);
-                if (Line.Count != 0)
-                {
-                    Lines.AddRange(Line);
-                }
-            }
-            
 
             OnProcessLidarLineDataEvent?.Invoke(this, Lines);
             // /!\ Warning NEED TO REMOVE
@@ -146,115 +132,142 @@ namespace LidarProcessNS
             OnProcessLidarXYDataEvent?.Invoke(this, ConvertRssiToXYCoord(processedPoints));
         }
 
-        public List<PointD> ConvertRssiToXYCoord(List<PolarPointRssi> lidarPoints)
+        
+
+        public List<ClusterObjects> DetectClusterOfPoint(List<PolarPointRssi> pointsList , double thresold)
         {
-            double X = robotLocation.X;
-            double Y = robotLocation.Y;
-            double Theta = robotLocation.Theta;
-
-            List<PointD> XYPoints = new List<PointD> { };
-            foreach (PolarPointRssi point in lidarPoints)
-            {
-                PointD pointD = ConvertPolarToRelativeCoord(point.Angle, point.Distance);
-                XYPoints.Add(pointD);
-            }
-            return XYPoints;
-        }
-
-        /// Using Hough Transform /!\ Currently Not Working
-        public Segment DetectLineHough(BlobObject blob, uint thresold = 15, double delta = 0.1, int moy = 5)
-        {
-            List<PointD> pointList = ConvertRssiToXYCoord(blob.points);
-
-            Dictionary<double, Dictionary<double, uint>> Matrix = new Dictionary<double, Dictionary<double, uint>>() { };
-            foreach (PointD point in pointList)
-            {
-                double theta;
-                for (theta = 0; theta < 180; theta += delta)
-                {
-                    double rho = point.X * Math.Cos(theta) + point.Y * Math.Sin(theta);
-                    if (!Matrix.ContainsKey(rho))
-                    {
-                        Matrix.Add(rho, new Dictionary<double, uint>() { });
-                    }
-                    if (!Matrix[rho].ContainsKey(theta))
-                    {
-                        Matrix[rho].Add(theta, 0);
-                    }
-                    Matrix[rho][theta]++;
-                }
-            }
-
-            HoughLine Line = new HoughLine();
-            foreach (KeyValuePair<double, Dictionary<double, uint>> rho in Matrix)
-            {
-                foreach (KeyValuePair<double, uint> theta in rho.Value)
-                {
-                    if (theta.Value >= thresold)
-                    {
-                        Line = new HoughLine(rho.Key, theta.Key);
-                    }
-                }
-            }
-
-            Segment segment = new Segment();
-            if (Line.rho != 0 || Line.theta != 0)
-            {
-                int i;
-                double X1 = 0, Y1 = 0, X2 = 0, Y2 = 0;
-                for (i = 0; i < moy; i++)
-                {
-                    X1 += pointList[i].X;
-                    Y1 += pointList[i].Y;
-                }
-                for (i = 0; i < moy; i++)
-                {
-                    X2 += pointList[pointList.Count - 1 - i].X;
-                    Y2 += pointList[pointList.Count - 1 - i].Y;
-                }
-                X1 /= moy;
-                Y1 /= moy;
-                X2 /= moy;
-                Y2 /= moy;
-                segment = new Segment(X1, Y1, X2, Y2);
-            }
-
-            return segment;
-        }
-
-        public List<BlobObject> DetectBlob(List<PolarPointRssi> pointList, double thresold, int minSize)
-        {
-            List<double> derivate = new List<double>();
-            
+            /// ABD Stand for Adaptative breakpoint Detection
+            List<ClusterObjects> listOfClusters = new List<ClusterObjects>();
             int i;
-            for (i = 0; i < pointList.Count - 1; i++)
+            for (i = 1; i < pointsList.Count - 1; i++)
             {
-                derivate.Add(Math.Abs(pointList[i + 1].Distance - pointList[i].Distance));
+                PolarPointRssi point_n_minus_1 = pointsList[i - 1];
+                PolarPointRssi point_n_plus_1 = pointsList[i + 1];
+                PolarPointRssi point_n = pointsList[i];
+
+                double dist_n_minus_1 = point_n_minus_1.Distance;
+                double delta_theta = Math.Abs(point_n_minus_1.Angle - point_n.Angle);
+                // double 
+
+                // double ABD_Thresold = 
             }
 
-            List<BlobObject> validBlob = new List<BlobObject>();
-            BlobObject testBlob= new BlobObject();
-            for (i = 0; i < derivate.Count; i++)
+            return listOfClusters;
+        }
+
+        public List<Segment> DetectGlobalLine(List<PolarPointRssi> pointsList, double thresold)
+        {
+            /// For faster seach of angle in array -> NEED TO EDIT
+            double [] angle_array = { };
+            foreach (PolarPointRssi point in pointsList)
             {
-                
-                if (derivate[i] < thresold)
+                angle_array.Append(point.Angle);
+            }
+
+            /// Begin 
+            int i;
+            double angle = 0d;
+            double angle_step = 5d;
+
+            int center_index = GetIndexOfAngle(angle_array, angle);
+            
+            PointD center_point = ConvertPolarToXYAbsoluteCoord(pointsList[center_index]);
+            PointD left_center_point = ConvertPolarToXYAbsoluteCoord(pointsList[center_index - 1]);
+            PointD right_center_pointsList = ConvertPolarToXYAbsoluteCoord(pointsList[center_index + 1]);
+
+            double[] xPoints = new double[] { left_center_point.X, center_point.X, right_center_pointsList.X };
+            double[] yPoints = new double[] { left_center_point.Y, center_point.Y, right_center_pointsList.Y };
+            
+            /// Get First Linear Regression
+            Tuple<double, double> line = Fit.Line(xPoints, yPoints);
+            double slope = line.Item1;
+            double y_intercept = line.Item2;
+
+            int erreur_count = 0;
+
+            while (Math.Abs(angle) <= Math.PI / 2)
+            {
+                angle += angle_step;
+                /// Calculate estimated point
+                double angle_slope = Toolbox.DegToRad(angle);
+                double angle_y_intercept = 0;
+
+                double estimated_X = (y_intercept - angle_y_intercept) / (angle_slope - slope);
+                double estimated_Y = slope * estimated_X + y_intercept;
+
+                PointD estimated_point = new PointD(estimated_X, estimated_Y);
+
+                /// Calculate Distance with measured point
+                int angle_index = GetIndexOfAngle(angle_array, angle);
+                PointD measured_point = ConvertPolarToXYAbsoluteCoord(pointsList[angle_index]);
+
+                double delta = CalculateXYDistancePoint(estimated_point, measured_point);
+
+                if (delta <= thresold) 
                 {
-                    testBlob.points.Add(pointList[i]);
-                } 
+                    xPoints.Append(measured_point.X);
+                    yPoints.Append(measured_point.Y);
+
+                    line = Fit.Line(xPoints, yPoints);
+                    slope = line.Item1;
+                    y_intercept = line.Item2;
+                }
                 else
                 {
-                    if (testBlob.points.Count > minSize)
+                    erreur_count++;
+                    if (erreur_count == 3)
                     {
-                        validBlob.Add(testBlob);
+                        /// The line end 
+                        angle -= 3 * angle_step;
+
                     }
-                    testBlob = new BlobObject();
                 }
+
             }
 
-            return validBlob;
+            List<Segment> list_of_segments = new List<Segment>();
+            return list_of_segments;
         }
 
-        public Segment DetectLine(BlobObject blob, double thresold, double alignNbr, int moy= 5)
+        private int GetIndexOfAngle(double[] angle_array, double angle) 
+        {
+            int i, index = 0;
+            double min = Math.Abs(angle - angle_array[0]);
+            for (i = 0; i < angle_array.Count(); i++)
+            {
+                double delta = Math.Abs(angle - angle_array[i]);
+                if (delta < min)
+                {
+                    min = delta;
+                    index = i;
+                }
+            }
+            return i;
+        }
+
+        private double CalculatePolarDistancePoint(PolarPointRssi p1, PolarPointRssi p2)
+        {
+            double r1 = p1.Distance;
+            double r2 = p2.Distance;
+
+            double t1 = p1.Angle;
+            double t2 = p2.Angle;
+
+
+            /// NEED TO REMAKE (SORRY MERGE FAIL HERE)
+            return 0d;
+        }
+        private double CalculateXYDistancePoint(PointD p1 , PointD p2)
+        {
+            double x1 = p1.X;
+            double y1 = p1.Y;
+            double x2 = p2.X;
+            double y2 = p2.Y;
+
+            return Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
+        }
+
+        public Segment DetectLine(ClusterObjects blob, double thresold, double alignNbr, int moy= 5)
         {
             List<PolarPointRssi> pointList = blob.points;
 
@@ -297,59 +310,7 @@ namespace LidarProcessNS
             return line;
         }
 
-        public List<Segment> DetectLineFlo(BlobObject sourceBlob, BlobObject fl0Blob, double thresold, int alignNbr, int moy)
-        {
-            List<Segment> listSegments = new List<Segment>();
-            List<double> fl0Derivative = new List<double>();
-
-            int i;
-            for (i = 0; i < fl0Blob.points.Count - 1; i++)
-            {
-                double point = fl0Blob.points[i+ 1].Distance - fl0Blob.points[i].Distance;
-                fl0Derivative.Add(point);
-            }
-            int indexOfFirst = 0;
-            uint nbrOfCurrentAlign = 0;
-            for (i = 0; i < fl0Derivative.Count - 1; i++)
-            {
-                double previousLvl = fl0Derivative[i];
-                if (previousLvl + thresold >= fl0Derivative[i+1] && previousLvl - thresold <= fl0Derivative[i + 1])
-                {
-                    
-                    nbrOfCurrentAlign++;
-
-                    if (nbrOfCurrentAlign == 1)
-                    {
-                        indexOfFirst = i;
-                    }
-                }
-                else if (nbrOfCurrentAlign > 0)
-                {
-                    if (nbrOfCurrentAlign >= alignNbr)
-                    {
-                        if (i < sourceBlob.points.Count)
-                        {
-                            listSegments.Add(CreateLineSegment(sourceBlob.points, indexOfFirst, i, moy));
-                        }
-                        else
-                        {
-                            listSegments.Add(CreateLineSegment(sourceBlob.points, indexOfFirst, sourceBlob.points.Count - 1, moy));
-                        }
-                        
-                    }
-                    nbrOfCurrentAlign = 0;
-                }
-
-            }
-
-            if (nbrOfCurrentAlign >= alignNbr)
-            {
-
-                listSegments.Add(CreateLineSegment(sourceBlob.points, indexOfFirst, sourceBlob.points.Count - 1, moy));
-            }
-
-            return listSegments;
-        }
+       
 
         private Segment CreateLineSegment(List<PolarPointRssi> pointList, double moy)
         {
@@ -397,8 +358,45 @@ namespace LidarProcessNS
             return new Segment(X1, Y1, X2, Y2);
         }
 
+        public List<PointD> ConvertRssiToXYCoord(List<PolarPointRssi> lidarPoints)
+        {
+            double X = robotLocation.X;
+            double Y = robotLocation.Y;
+            double Theta = robotLocation.Theta;
+
+            List<PointD> XYPoints = new List<PointD> { };
+            foreach (PolarPointRssi point in lidarPoints)
+            {
+                PointD pointD = ConvertPolarToRelativeCoord(point.Angle, point.Distance);
+                XYPoints.Add(pointD);
+            }
+            return XYPoints;
+        }
+
         private PointD ConvertPolarToRelativeCoord(double angle, double distance)
         {
+            double X = robotLocation.X;
+            double Y = robotLocation.Y;
+            double Theta = robotLocation.Theta;
+            double pointDX = X + (distance * Math.Cos(angle - Theta));
+            double pointDY = Y + (distance * Math.Sin(angle - Theta));
+            return new PointD(pointDX, pointDY);
+        }
+        
+        private PointD ConvertPolarToXYAbsoluteCoord(PolarPointRssi point)
+        {
+            double angle = point.Angle;
+            double distance = point.Distance;
+
+            double pointDX = distance * Math.Cos(angle);
+            double pointDY = distance * Math.Sin(angle);
+            return new PointD(pointDX, pointDY);
+        }
+
+        private PointD ConvertPolarToRelativeCoord(PolarPointRssi point)
+        {
+            double angle = point.Angle;
+            double distance = point.Distance;
             double X = robotLocation.X;
             double Y = robotLocation.Y;
             double Theta = robotLocation.Theta;

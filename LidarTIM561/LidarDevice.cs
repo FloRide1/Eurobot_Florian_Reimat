@@ -45,7 +45,7 @@ namespace Lidar
         public Location Location { get; set; } = new Location(0,0,0,0,0,0);
 
         /// <summary>Indique si le Lidar est retourné.</summary>
-        public bool IsUpsideDown { get; set; } = false;
+        public bool IsUpsideDown { get; set; } = true;
 
         /// <summary>Liste des points vus par le Lidar en coordonnées polaires (avec RSSI).</summary>
         public List<LidarPoint> LidarPoints { get; } = new List<LidarPoint>();
