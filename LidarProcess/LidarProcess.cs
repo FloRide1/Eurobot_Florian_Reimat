@@ -10,6 +10,11 @@ using Lidar;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearRegression;
 
+
+/// <summary>
+/// Notes for myself Medium Kalman Filter
+/// </summary>
+
 namespace LidarProcessNS
 {
     public class LidarProcess
@@ -148,17 +153,21 @@ namespace LidarProcessNS
                 angle_array.Append(point.Angle);
             }
 
-            /// Begin 
+            /// Init
             int i;
             double angle = 0d;
             double angle_step = 5d;
+            double lenght_minimum = 0.3d;
+
 
             int center_index = GetIndexOfAngle(angle_array, angle);
 
+            /// Get First three Points
             PointD center_point = ConvertPolarToXYAbsoluteCoord(pointsList[center_index]);
             PointD left_center_point = ConvertPolarToXYAbsoluteCoord(pointsList[center_index - 1]);
             PointD right_center_pointsList = ConvertPolarToXYAbsoluteCoord(pointsList[center_index + 1]);
 
+            /// Points for Linear Regression
             double[] xPoints = new double[] { left_center_point.X, center_point.X, right_center_pointsList.X };
             double[] yPoints = new double[] { left_center_point.Y, center_point.Y, right_center_pointsList.Y };
 
@@ -166,22 +175,22 @@ namespace LidarProcessNS
             Tuple<double, double> line = Fit.Line(xPoints, yPoints);
             double slope = line.Item1;
             double y_intercept = line.Item2;
-
-            int erreur_count = 0;
+            
+            /// Init Error
+            int error_count = 0;
 
             while (Math.Abs(angle) <= Math.PI / 2)
             {
                 angle += angle_step;
+
                 /// Calculate estimated point
                 double angle_slope = Toolbox.DegToRad(angle);
                 double angle_y_intercept = 0;
 
-                double estimated_X = (y_intercept - angle_y_intercept) / (angle_slope - slope);
-                double estimated_Y = slope * estimated_X + y_intercept;
-
-                PointD estimated_point = new PointD(estimated_X, estimated_Y);
+                PointD estimated_point = GetCrossingPoint(slope, y_intercept, angle_slope, angle_y_intercept);
 
                 /// Calculate Distance with measured point
+            
                 int angle_index = GetIndexOfAngle(angle_array, angle);
                 PointD measured_point = ConvertPolarToXYAbsoluteCoord(pointsList[angle_index]);
 
@@ -189,6 +198,7 @@ namespace LidarProcessNS
 
                 if (delta <= thresold)
                 {
+                    /// Enhance Linear Regression
                     xPoints.Append(measured_point.X);
                     yPoints.Append(measured_point.Y);
 
@@ -198,24 +208,71 @@ namespace LidarProcessNS
                 }
                 else
                 {
-                    erreur_count++;
-                    if (erreur_count == 3)
+                    /// Measured point does'nt coincide with Estimate point
+                    error_count++;
+                    if (error_count == 3)
                     {
                         /// The line end 
                         angle -= 3 * angle_step;
 
+
                         /// Try to find the end of the segment
+                        /// Make a for loop from the end valid angle and continue until the thresold is uncorrect
+                        int j = 0;
+                        int index_of_last_valid_point = 0;
+                        bool point_is_valid = true;
+                        angle_index = GetIndexOfAngle(angle_array, angle);
+                        
+                        while (point_is_valid)
+                        {
+                            j++;
+                            PolarPointRssi actual_point = pointsList[angle_index + j];
+
+                            double measured_angle = actual_point.Angle;
+                            measured_point = ConvertPolarToXYAbsoluteCoord(actual_point);
+
+                            estimated_point = GetCrossingPoint(slope, y_intercept, measured_angle, 0);
+
+                            if (CalculateXYDistancePoint(measured_point, estimated_point) > thresold)
+                            {
+                                point_is_valid = false;
+                                index_of_last_valid_point = j;
+                            }
+                            else
+                            {
+                                /// Enhance Linear Regression
+                                xPoints.Append(measured_point.X);
+                                yPoints.Append(measured_point.Y);
+
+                                line = Fit.Line(xPoints, yPoints);
+                                slope = line.Item1;
+                                y_intercept = line.Item2;
+                            }                            
+                        }
+                        
+
+
+                        /// Now that we have the last measured index of the segment end the line 
+                        /// with the parallel of the measured point and the estimated line 
+
+
+                        /// Check the lenght of the segment and if it to small abort it 
 
                     }
                 }
-
             }
 
             List<Segment> list_of_segments = new List<Segment>();
             return list_of_segments;
         }
 
+        public PointD GetCrossingPoint(double slope_a, double y_intercept_a, double slope_b, double y_intercept_b)
+        {
+            double estimated_X = (y_intercept_a - y_intercept_b) / (slope_b - slope_a);
+            double estimated_Y = slope_a * estimated_X + y_intercept_a;
 
+            return new PointD(estimated_X, estimated_Y);
+        }
 
 
 
