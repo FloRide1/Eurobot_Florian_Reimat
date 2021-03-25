@@ -242,6 +242,15 @@ namespace EventArgsLibrary
             Y2 = y2;
         }
 
+        public Segment(PointD a, PointD b)
+        {
+            X1 = a.X;
+            Y1 = a.Y;
+            X2 = b.X;
+            Y2 = b.Y;
+        }
+
+
     }
 
     public class IMUDataEventArgs : EventArgs

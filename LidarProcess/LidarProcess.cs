@@ -99,6 +99,7 @@ namespace LidarProcessNS
             }
 
 
+
             List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 1);
             List<PolarPointRssi> processedPoints = new List<PolarPointRssi>();
 
@@ -112,6 +113,7 @@ namespace LidarProcessNS
 
 
             List<Segment> Lines = new List<Segment>();
+            Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.5d));
             OnProcessLidarLineDataEvent?.Invoke(this, Lines);
 
             RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints };
@@ -152,22 +154,26 @@ namespace LidarProcessNS
         /// <param name="angle_step"> Default: 5 degree </param>
         /// <param name="error_max"> The max error countdown before stopping the segment </param>
         /// <returns></returns>
-        public Segment DetectGlobalLine(List<PolarPointRssi> pointsList, double thresold, double angle_of_start = 0d, double angle_step = 5d, int error_max = 3)
+        public Segment DetectGlobalLine(List<PolarPointRssi> pointsList, double thresold, double angle_of_start = 0d,
+            double angle_step = 5d, int error_max = 3, double lenght_minimum = 1d)
         {
             /// Note: Remember to add Array Overflow Security
             /// Note: Avoid 0 Angle (Infinite bug) or implement security
 
             /// For faster seach of angle in array -> NEED TO EDIT
-            double[] angle_array = { };
+            List<double> angle_array = new List<double>();
             foreach (PolarPointRssi point in pointsList)
             {
-                angle_array.Append(point.Angle);
+                if (point.Distance != 0d)
+                {
+                    angle_array.Add(point.Angle);
+                }
+                
             }
 
             /// Init
             int i;
             double angle = angle_of_start;
-            double lenght_minimum = 0.3d;
 
 
             int center_index = GetIndexOfAngle(angle_array, angle);
@@ -194,17 +200,16 @@ namespace LidarProcessNS
             int side;
             for (side = 0; side < 2; side++)
             {
+                angle = Toolbox.DegToRad(angle_of_start);
                 /// This loop is only for making Right (0) + Left (1) Side
                 bool side_is_finish = false;
                 while (Math.Abs(angle) < Math.PI / 2 && !side_is_finish)
                 {
                     /// If the side is Left (1) we invert the step
-                    angle += (side % 2 == 0?1:-1) * angle_step;
-
-                    
+                    angle += (side % 2 == 0?1:-1) * Toolbox.DegToRad(angle_step);
 
                     /// Calculate estimated point
-                    double angle_slope = Toolbox.DegToRad(angle);
+                    double angle_slope = angle;
                     double angle_y_intercept = 0;
 
                     PointD estimated_point = GetCrossingPoint(slope, y_intercept, angle_slope, angle_y_intercept);
@@ -232,7 +237,7 @@ namespace LidarProcessNS
                         if (error_count == error_max)
                         {
                             /// The line end 
-                            angle -= error_max * angle_step;
+                            angle -= ((side % 2 == 0) ? 1 : -1) * error_max * Toolbox.DegToRad(angle_step);
 
 
                             /// Try to find the end of the segment
@@ -244,27 +249,36 @@ namespace LidarProcessNS
                             while (point_is_valid)
                             {
                                 j += (side % 2 == 0 ? 1 : -1);
-                                PolarPointRssi actual_point = pointsList[j];
-
-                                double measured_angle = actual_point.Angle;
-                                measured_point = ConvertPolarToXYAbsoluteCoord(actual_point);
-
-                                estimated_point = GetCrossingPoint(slope, y_intercept, measured_angle, 0);
-
-                                if (CalculateXYDistancePoint(measured_point, estimated_point) > thresold)
+                                if (j < 0 || j >= pointsList.Count)
                                 {
                                     point_is_valid = false;
-                                    index_of_last_valid_point = j;
                                 }
                                 else
                                 {
-                                    /// Enhance Linear Regression
-                                    xPoints.Append(measured_point.X);
-                                    yPoints.Append(measured_point.Y);
 
-                                    line = Fit.Line(xPoints, yPoints);
-                                    slope = line.Item1;
-                                    y_intercept = line.Item2;
+
+                                    PolarPointRssi actual_point = pointsList[j];
+
+                                    double measured_angle = actual_point.Angle;
+                                    measured_point = ConvertPolarToXYAbsoluteCoord(actual_point);
+
+                                    estimated_point = GetCrossingPoint(slope, y_intercept, measured_angle, 0);
+
+                                    if (CalculateXYDistancePoint(measured_point, estimated_point) > thresold)
+                                    {
+                                        point_is_valid = false;
+                                        index_of_last_valid_point = j;
+                                    }
+                                    else
+                                    {
+                                        /// Enhance Linear Regression
+                                        xPoints.Append(measured_point.X);
+                                        yPoints.Append(measured_point.Y);
+
+                                        line = Fit.Line(xPoints, yPoints);
+                                        slope = line.Item1;
+                                        y_intercept = line.Item2;
+                                    }
                                 }
                             }
                             /// Now that we have the last measured index of the segment end the line 
@@ -292,8 +306,16 @@ namespace LidarProcessNS
 
             }
             /// Check the lenght of the segment and if it to small abort it 
-            Segment segment = new Segment();
+            if (CalculateXYDistancePoint(extremity_of_segment[0], extremity_of_segment[1]) < lenght_minimum) 
+            {
+                return new Segment();
+            }
+            if (xPoints.Length <= 7)
+            {
+                return new Segment();
+            }
 
+            Segment segment = new Segment(extremity_of_segment[0], extremity_of_segment[1]);
             return segment;
         }
 
@@ -481,11 +503,15 @@ namespace LidarProcessNS
         }
         #endregion
         #region Others
-        private int GetIndexOfAngle(double[] angle_array, double angle)
+        private int GetIndexOfAngle(List<double> angle_array, double angle)
         {
+            if (angle_array.Count == 0)
+            {
+                return 1;
+            }
             int i, index = 0;
             double min = Math.Abs(angle - angle_array[0]);
-            for (i = 0; i < angle_array.Count(); i++)
+            for (i = 0; i < angle_array.Count ; i++)
             {
                 double delta = Math.Abs(angle - angle_array[i]);
                 if (delta < min)
@@ -494,7 +520,7 @@ namespace LidarProcessNS
                     index = i;
                 }
             }
-            return i;
+            return index;
         }
         #endregion
         #endregion

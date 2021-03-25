@@ -54,7 +54,7 @@ namespace Lidar
                         LidarPoint point = new LidarPoint(distanceCentreRobot, angleAxeRobot, TimData.RssiData[i]);
 
                         // Supression des points en dehors des limites hardware
-                        //if (distance >= 0.01 && distance <= 10.01) // Filtre de distance
+                        if (distance >= 0.01 && distance <= 10.01) // Filtre de distance
                         {
                             LidarPoints.Add(point);
                         }
