@@ -113,7 +113,7 @@ namespace LidarProcessNS
 
 
             List<Segment> Lines = new List<Segment>();
-            Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.5d));
+            Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.2d));
             OnProcessLidarLineDataEvent?.Invoke(this, Lines);
 
             RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints };
@@ -184,11 +184,11 @@ namespace LidarProcessNS
             PointD right_center_pointsList = ConvertPolarToXYAbsoluteCoord(pointsList[center_index + 1]);
 
             /// Points for Linear Regression
-            double[] xPoints = new double[] { left_center_point.X, center_point.X, right_center_pointsList.X };
-            double[] yPoints = new double[] { left_center_point.Y, center_point.Y, right_center_pointsList.Y };
+            List<double> xPoints = new List<double>() { left_center_point.X, center_point.X, right_center_pointsList.X };
+            List<double> yPoints = new List<double>() { left_center_point.Y, center_point.Y, right_center_pointsList.Y };
 
             /// Get First Linear Regression
-            Tuple<double, double> line = Fit.Line(xPoints, yPoints);
+            Tuple<double, double> line = Fit.Line(xPoints.ToArray(), yPoints.ToArray());
             double slope = line.Item1;
             double y_intercept = line.Item2;
             
@@ -223,10 +223,10 @@ namespace LidarProcessNS
                     if (delta <= thresold)
                     {
                         /// Enhance Linear Regression
-                        xPoints.Append(measured_point.X);
-                        yPoints.Append(measured_point.Y);
+                        xPoints.Add(measured_point.X);
+                        yPoints.Add(measured_point.Y);
 
-                        line = Fit.Line(xPoints, yPoints);
+                        line = Fit.Line(xPoints.ToArray(), yPoints.ToArray());
                         slope = line.Item1;
                         y_intercept = line.Item2;
                     }
@@ -255,8 +255,6 @@ namespace LidarProcessNS
                                 }
                                 else
                                 {
-
-
                                     PolarPointRssi actual_point = pointsList[j];
 
                                     double measured_angle = actual_point.Angle;
@@ -267,15 +265,16 @@ namespace LidarProcessNS
                                     if (CalculateXYDistancePoint(measured_point, estimated_point) > thresold)
                                     {
                                         point_is_valid = false;
+                                        j -= (side % 2 == 0 ? 2 : -2);
                                         index_of_last_valid_point = j;
                                     }
                                     else
                                     {
                                         /// Enhance Linear Regression
-                                        xPoints.Append(measured_point.X);
-                                        yPoints.Append(measured_point.Y);
+                                        xPoints.Add(measured_point.X);
+                                        yPoints.Add(measured_point.Y);
 
-                                        line = Fit.Line(xPoints, yPoints);
+                                        line = Fit.Line(xPoints.ToArray(), yPoints.ToArray());
                                         slope = line.Item1;
                                         y_intercept = line.Item2;
                                     }
@@ -293,24 +292,35 @@ namespace LidarProcessNS
                         }
                     }
 
-                    
+
                     if (Math.Abs(angle) >= Math.PI / 2)
                     {
                         /// The loop end without finding the end of the line
                         side_is_finish = true;
                         angle_index = GetIndexOfAngle(angle_array, angle);
                         measured_point = ConvertPolarToXYAbsoluteCoord(pointsList[angle_index]);
-                        extremity_of_segment[side] = FinishTheSegment(measured_point, slope, y_intercept);
+                        estimated_point = GetCrossingPoint(slope, y_intercept, pointsList[angle_index].Angle, 0);
+                        if (CalculateXYDistancePoint(measured_point, estimated_point) <= thresold)
+                        {
+                            extremity_of_segment[side] = FinishTheSegment(measured_point, slope, y_intercept);
+                        }
+
+
+                        
                     }
                 }
 
+            }
+            if (extremity_of_segment[0] == null || extremity_of_segment[1] == null)
+            {
+                return new Segment();
             }
             /// Check the lenght of the segment and if it to small abort it 
             if (CalculateXYDistancePoint(extremity_of_segment[0], extremity_of_segment[1]) < lenght_minimum) 
             {
                 return new Segment();
             }
-            if (xPoints.Length <= 7)
+            if (xPoints.Count <= 3)
             {
                 return new Segment();
             }
@@ -324,7 +334,8 @@ namespace LidarProcessNS
             double perpendicular_slope = -slope;
             double perpendicular_y_intercept = measured_point.Y - (perpendicular_slope * measured_point.X);
 
-            return GetCrossingPoint(slope, y_intercept, perpendicular_slope, perpendicular_y_intercept);
+            PointD point = measured_point;// GetCrossingPoint(slope, y_intercept, perpendicular_slope, perpendicular_y_intercept);
+            return ConvertAbsoluteToRelativeCoord(point);
         }
 
         private PointD GetCrossingPoint(double slope_a, double y_intercept_a, double slope_b, double y_intercept_b)
@@ -501,6 +512,33 @@ namespace LidarProcessNS
             double pointDY = Y + (distance * Math.Sin(angle - Theta));
             return new PointD(pointDX, pointDY);
         }
+
+        private PolarPointRssi ConvertXYToPolarCoord(PointD point)
+        {
+            double X = point.X;
+            double Y = point.Y;
+
+
+            double distance = Math.Sqrt(X * X + Y * Y);
+            double angle;
+            if (X == Y)
+            {
+                angle = Math.PI / 2;
+            }
+            else
+            {
+                angle = Math.Atan(Y / X);
+            }
+            angle += (X < 0) ? Math.PI : 0;
+            return new PolarPointRssi(angle, distance, 0);
+        }
+
+        private PointD ConvertAbsoluteToRelativeCoord(PointD point)
+        {
+            PolarPointRssi pointRssi = ConvertXYToPolarCoord(point);
+            return ConvertPolarToRelativeCoord(pointRssi);
+        }
+
         #endregion
         #region Others
         private int GetIndexOfAngle(List<double> angle_array, double angle)
