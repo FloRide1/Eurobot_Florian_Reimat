@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
+using System.Drawing;
 
 namespace EventArgsLibrary
 {
@@ -45,15 +46,15 @@ namespace EventArgsLibrary
         public int Line { get; set; }
     }
 
-    public class BlobObject : EventArgs
+    public class ClusterObjects : EventArgs
     {
         public List<PolarPointRssi> points { get; set; }
 
-        public BlobObject()
+        public ClusterObjects()
         {
             points = new List<PolarPointRssi>();
         }
-        public BlobObject(List<PolarPointRssi> polarPointRssis)
+        public ClusterObjects(List<PolarPointRssi> polarPointRssis)
         {
             points = polarPointRssis;
         }
@@ -240,6 +241,44 @@ namespace EventArgsLibrary
             Y1 = y1;
             X2 = x2;
             Y2 = y2;
+        }
+
+        public Segment(PointD a, PointD b)
+        {
+            X1 = a.X;
+            Y1 = a.Y;
+            X2 = b.X;
+            Y2 = b.Y;
+        }
+
+
+    }
+
+    public class Cup : EventArgs
+    {
+        public PointD center { get; set; }
+        public double radius { get; set; }
+        public Color color { get; set; }
+
+        public Cup()
+        {
+            center = new PointD();
+            radius = 0;
+            color = Color.White;
+        }
+
+        public Cup(PointD center_a, double radius_a, Color color_a)
+        {
+            center = center_a;
+            radius = radius_a;
+            color = color_a;
+        }
+
+        public Cup(double x, double y, double radius_a, Color color_a)
+        {
+            center = new PointD(x, y);
+            radius = radius_a;
+            color = color_a;
         }
 
     }

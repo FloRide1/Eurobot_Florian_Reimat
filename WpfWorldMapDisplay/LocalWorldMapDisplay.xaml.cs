@@ -377,8 +377,9 @@ namespace WpfWorldMapDisplay
                 UpdateLidarRawMap(robotId, localWorldMap.LidarMapRaw);
                 UpdateLidarProcessedMap(robotId, localWorldMap.LidarMapProcessed);
                 UpdateLidarSegment(robotId, localWorldMap.LidarSegment);
+                UpdateLidarCup(robotId, localWorldMap.LidarCup);
                 // UpdateLidarLine(robotId, localWorldMap.LidarLine);
-                
+
             }
             UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
             UpdateObstacleList(localWorldMap.ObstaclesLocationList);
@@ -518,6 +519,11 @@ namespace WpfWorldMapDisplay
                     annotationBase.Add(annotation);
                     
                 }
+
+                if (annotation.Name == "CupAnnotation")
+                {
+                    annotationBase.Add(annotation);
+                }
             }
 
             foreach (AnnotationBase annotation in annotationBase)
@@ -549,6 +555,7 @@ namespace WpfWorldMapDisplay
                 //LidarLinePoints.DataSeries = lidarLinePts;
 
                 var lidarSegment = TeamMatesDisplayDictionary[r.Key].GetRobotLidarSegment();
+                var lidarCups = TeamMatesDisplayDictionary[r.Key].GetRobotLidarCup();
                 if (lidarSegment != null)
                 {
                     foreach (Segment segment in lidarSegment)
@@ -565,7 +572,25 @@ namespace WpfWorldMapDisplay
                         };
                         sciChartSurface.Annotations.Add(line);
                     }
-                }   
+                }
+
+                if (lidarCups != null)
+                {
+                    foreach (Cup cup in lidarCups)
+                    {
+                        BoxAnnotation oval = new BoxAnnotation()
+                        { 
+                            Background = new SolidColorBrush(Color.FromArgb(cup.color.A, cup.color.R, cup.color.G, cup.color.B)),
+                            Name = "CupAnnotation",
+                            X1 = cup.center.X - cup.radius,
+                            Y1 = cup.center.Y + cup.radius,
+                            X2 = cup.center.X + cup.radius,
+                            Y2 = cup.center.Y - cup.radius,
+                            CornerRadius = new CornerRadius(100)
+                        };
+                        sciChartSurface.Annotations.Add(oval);
+                    }
+                }
             }            
         }
 
@@ -661,6 +686,16 @@ namespace WpfWorldMapDisplay
                 TeamMatesDisplayDictionary[robotId].SetLidarSegment(lidarSegments);
             }
         }
+        private void UpdateLidarCup(int robotId, List<Cup> lidarCups)
+        {
+            if (lidarCups == null)
+                return;
+            if (TeamMatesDisplayDictionary.ContainsKey(robotId))
+            {
+                TeamMatesDisplayDictionary[robotId].SetLidarCup(lidarCups);
+            }
+        }
+
 
         private void UpdateLidarProcessedMap(int robotId, List<PointD> lidarMapProcessed)
         {

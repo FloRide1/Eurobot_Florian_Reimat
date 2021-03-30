@@ -149,6 +149,7 @@ namespace RobotEurobot2Roues
             lidarProcess.OnRawLidarPointXYEvent += localWorldMap.OnLidarRawPointReceived;
             lidarProcess.OnProcessLidarXYDataEvent += localWorldMap.OnLidarProcessedPointReceived;
             lidarProcess.OnProcessLidarLineDataEvent += localWorldMap.OnLidarProcessedLineReceived;
+            lidarProcess.OnProcessLidarCupDataEvent += localWorldMap.OnLidarProcessedCupReceived;
             localWorldMap.Init();
             #endregion
 
@@ -162,8 +163,6 @@ namespace RobotEurobot2Roues
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
             #endregion
                  
-            
-
 
 
 

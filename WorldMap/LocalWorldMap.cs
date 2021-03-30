@@ -30,6 +30,8 @@ namespace WorldMap
         public virtual List<PointD> LidarMapProcessed { get; set; }
         public virtual List<PointD> LidarLine { get; set; }
         public virtual List<Segment> LidarSegment { get; set; }
+
+        public virtual List<Cup> LidarCup { get; set; }
         public virtual List<PolarPointListExtended> LidarObjectList { get; set; }
 
 
@@ -48,6 +50,7 @@ namespace WorldMap
             WaypointLocations = new List<PointD> { };
             RobotHistorical = new List<Location> { RobotLocation };
             OnLocalWorldMapEvent?.Invoke(this, this);
+            LidarCup = new List<Cup>();
         }
         #endregion
         #region Methods
@@ -195,6 +198,12 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
+
+        public void OnLidarProcessedCupReceived(object sender, List<Cup> cups)
+        {
+            LidarCup = cups;
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
 
 
         public void OnGameStateChange(object sender, GameState gameState_a)

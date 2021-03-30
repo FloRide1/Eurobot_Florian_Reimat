@@ -295,7 +295,6 @@ namespace Lidar
                 tms.AngleData.Add(angle);
                 tms.DistanceData.Add(int.Parse(argList[pos++], System.Globalization.NumberStyles.HexNumber));
             }
-
             tms.RssiDataType = argList[pos++];
             tms.ScalingFactor = int.Parse(argList[pos++], System.Globalization.NumberStyles.HexNumber);
             tms.ScalingOffset = int.Parse(argList[pos++], System.Globalization.NumberStyles.HexNumber);

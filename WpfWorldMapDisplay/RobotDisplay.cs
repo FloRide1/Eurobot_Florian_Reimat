@@ -29,7 +29,8 @@ namespace WpfWorldMapDisplay
         List<PointD> LidarRawPoints;
         List<PointD> LidarProcessedPoints;
         List<PointD> LidarLine;
-        List<Segment> LidarSegment; 
+        List<Segment> LidarSegment;
+        List<Cup> LidarCup;
         
         List<PolarPointListExtended> lidarObjectList;
         public List<Location> ballLocationList;
@@ -119,6 +120,12 @@ namespace WpfWorldMapDisplay
         {
             LidarSegment = segments;
         }
+
+        public void SetLidarCup(List<Cup> cups)
+        {
+            LidarCup = cups;
+        }
+
         public void SetLidarProcessedMap(List<PointD> lidarProcessedMap)
         {
             this.LidarProcessedPoints = lidarProcessedMap;
@@ -281,7 +288,7 @@ namespace WpfWorldMapDisplay
                 return dataSeries;
 
 
-            //lock (lidarMap)
+            lock (LidarRawPoints)
             {
                 var listX = LidarRawPoints.Select(e => e.X);
                 var listY = LidarRawPoints.Select(e => e.Y);
@@ -332,6 +339,11 @@ namespace WpfWorldMapDisplay
         public List<Segment> GetRobotLidarSegment()
         {
             return LidarSegment;
+        }
+
+        public List<Cup> GetRobotLidarCup()
+        {
+            return LidarCup;
         }
 
         public List<PolygonExtended> GetRobotLidarObjects()
