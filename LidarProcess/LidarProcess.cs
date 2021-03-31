@@ -101,8 +101,8 @@ namespace LidarProcessNS
 
 
 
-            List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 0.04, 3);
-
+            List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 0.035, 3);
+            
             List<PolarPointRssi> processedPoints = new List<PolarPointRssi>();
             List<Cup> list_of_cups = new List<Cup>();
             foreach (ClusterObjects c in clusterObjects)
@@ -436,24 +436,41 @@ namespace LidarProcessNS
 
             double lenght_of_cluster = CalculatePolarDistancePoint(begin_point, end_point);
 
-            if (lenght_of_cluster >= 0.045 && lenght_of_cluster <= 0.08)
+            if (lenght_of_cluster >= 0.040 && lenght_of_cluster <= 0.08)
             {
                 List<PointD> pointDs = new List<PointD>();
-                double moyenne = 0;
+                double min_rssi = cluster.points[0].Rssi;
+                double max_rssi = cluster.points[0].Rssi;
+
                 foreach (PolarPointRssi point in cluster.points)
                 {
-                    moyenne += point.Rssi;
+                    if (point.Rssi > max_rssi)
+                    {
+                        max_rssi = point.Rssi;
+                    }
+                    if (point.Rssi < min_rssi)
+                    {
+                        min_rssi = point.Rssi;
+                    }
                     pointDs.Add(ConvertPolarToRelativeCoord(point));
                 }
-                moyenne /= cluster.points.Count();
+                //moyenne /= cluster.points.Count();
+                double median = 0.80;
+                double b = cluster.points[(int)(cluster.points.Count() * median)].Rssi;
+                double e = cluster.points[(int)(cluster.points.Count() * (1 - median))].Rssi;
+                double moyenne = (b + e) / 2;
                 Color color = Color.White;
-                if (moyenne <= 12300)
+                if (moyenne >= 9000 && moyenne <= 12000)
                 {
                     color = Color.Green;
                 }
-                else if (moyenne >= 12500)
+                else if (moyenne >= 12000 && moyenne <= 14000)
                 {
                     color = Color.Red;
+                } 
+                else
+                {
+                    return new Cup();
                 }
                 Console.WriteLine(moyenne);
                 PointD center_point = GetMediumPoint(pointDs);
