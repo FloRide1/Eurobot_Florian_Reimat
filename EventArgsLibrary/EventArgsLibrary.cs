@@ -48,6 +48,7 @@ namespace EventArgsLibrary
     public class ClusterObjects : EventArgs
     {
         public List<PolarPointRssi> points { get; set; }
+        public ItemType sus { get; set; }
 
         public ClusterObjects()
         {
@@ -56,6 +57,10 @@ namespace EventArgsLibrary
         public ClusterObjects(List<PolarPointRssi> polarPointRssis)
         {
             points = polarPointRssis;
+        }
+        public ClusterObjects(PolarPointRssi[] pts, int ptsCount)
+        {
+            for (int i = 0; i < ptsCount; i++) points.Add(pts[i]);
         }
 
     }
@@ -185,18 +190,22 @@ namespace EventArgsLibrary
         public int RobotId { get; set; }
         public bool IsHandlingBall { get; set; }
     }
+
     public class PolarSpeedEventArgs : PolarSpeedArgs
     {
         public uint timeStampMs;
     }
+
     public class IndependantSpeedEventArgs : IndependantSpeedArgs
     {
         public uint timeStampMs;
     }
+
     public class AuxiliarySpeedEventArgs : AuxiliarySpeedArgs
     {
         public uint timeStampMs;
     }
+
     public class TirEventArgs : EventArgs
     {
         public int RobotId { get; set; }
