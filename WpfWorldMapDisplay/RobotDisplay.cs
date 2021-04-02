@@ -31,6 +31,7 @@ namespace WpfWorldMapDisplay
         List<PointD> LidarLine;
         List<Segment> LidarSegment;
         List<Cup> LidarCup;
+        List<LidarObjects> LidarObjectList;
         
         List<PolarPointListExtended> lidarObjectList;
         public List<Location> ballLocationList;
@@ -130,9 +131,9 @@ namespace WpfWorldMapDisplay
         {
             this.LidarProcessedPoints = lidarProcessedMap;
         }
-        public void SetLidarObjectList(List<PolarPointListExtended> lidarObjectList)
+        public void SetLidarObjectList(List<LidarObjects> lidarObjectList)
         {
-            this.lidarObjectList = lidarObjectList;
+            this.LidarObjectList = lidarObjectList;
         }
 
         public void SetBallList(List<Location> ballLocationList)
@@ -305,7 +306,7 @@ namespace WpfWorldMapDisplay
         public XyDataSeries<double, double> GetRobotLidarProcessedPoints()
         {
             var dataSeries = new XyDataSeries<double, double>();
-            if (LidarRawPoints == null)
+            if (LidarProcessedPoints == null)
                 return dataSeries;
 
             var listX = LidarProcessedPoints.Select(e => e.X);
@@ -322,7 +323,7 @@ namespace WpfWorldMapDisplay
         public XyDataSeries<double, double> GetRobotLidarLinePoints()
         {
             var dataSeries = new XyDataSeries<double, double>();
-            if (LidarRawPoints == null)
+            if (LidarLine == null)
                 return dataSeries;
 
             var listX = LidarLine.Select(e => e.X);
@@ -334,6 +335,36 @@ namespace WpfWorldMapDisplay
                 dataSeries.Append(listX, listY);
             }
             return dataSeries;
+        }
+
+        public Tuple<XyDataSeries<double, double>, List<System.Drawing.Color>> GetRobotObjectsPoints()
+        {
+            var dataSeries = new XyDataSeries<double, double>();
+            List<System.Drawing.Color> colors = new List<System.Drawing.Color>(); 
+            dataSeries.AcceptsUnsortedData = true;
+
+            if (LidarObjectList == null)
+                return new Tuple<XyDataSeries<double, double>, List<System.Drawing.Color>> (dataSeries, colors);
+
+
+            int i;
+            for (i = 0; i < LidarObjectList.Count(); i++)
+            {
+                                                          
+                var listX = LidarObjectList[i].points.Select(e => e.X);
+                var listY = LidarObjectList[i].points.Select(e => e.Y);
+
+                if (listX.Count() == listY.Count())
+                {
+                    int first_index = dataSeries.Count;
+                    dataSeries.Append(listX, listY);
+                    int last_index = dataSeries.Count;
+
+                    colors.AddRange(Enumerable.Repeat(LidarObjectList[i].color, listX.Count()).ToList());
+                }
+            }
+            
+            return new Tuple<XyDataSeries<double, double>, List<System.Drawing.Color>> (dataSeries, colors);
         }
 
         public List<Segment> GetRobotLidarSegment()

@@ -32,7 +32,7 @@ namespace WorldMap
         public virtual List<Segment> LidarSegment { get; set; }
 
         public virtual List<Cup> LidarCup { get; set; }
-        public virtual List<PolarPointListExtended> LidarObjectList { get; set; }
+        public virtual List<LidarObjects> LidarObjectList { get; set; }
 
 
         // public virtual List<PointD> lidarMap { get; set; }

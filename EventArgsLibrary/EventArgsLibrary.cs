@@ -60,6 +60,23 @@ namespace EventArgsLibrary
         }
 
     }
+
+    public class LidarObjects : EventArgs
+    {
+        public List<PointD> points { get; set; }
+        public Color color { get; set; }
+        public LidarObjects()
+        {
+            points = new List<PointD>();
+            color = Color.White;
+        }
+        public LidarObjects(List<PointD> pointsPointD, Color color_a)
+        {
+            points = pointsPointD;
+            color = color_a;
+        }
+    }
+
     public class DoubleEventArgs : EventArgs
     {
         public double Value { get; set; }

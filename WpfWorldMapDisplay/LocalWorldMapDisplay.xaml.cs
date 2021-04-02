@@ -1,11 +1,13 @@
 ﻿
 using Constants;
 using EventArgsLibrary;
+using SciChart;
 using SciChart.Charting.ChartModifiers;
 using SciChart.Charting.Model.DataSeries;
 using SciChart.Charting.Model.DataSeries.Heatmap2DArrayDataSeries;
 using SciChart.Charting.Visuals.Annotations;
 using SciChart.Charting.Visuals.Axes;
+using SciChart.Charting.Visuals.PaletteProviders;
 using SciChart.Charting.Visuals.RenderableSeries;
 using SciChart.Core.Utility.Mouse;
 using SciChart.Drawing.VisualXcceleratorRasterizer;
@@ -378,10 +380,11 @@ namespace WpfWorldMapDisplay
                 UpdateLidarProcessedMap(robotId, localWorldMap.LidarMapProcessed);
                 UpdateLidarSegment(robotId, localWorldMap.LidarSegment);
                 UpdateLidarCup(robotId, localWorldMap.LidarCup);
+                UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
                 // UpdateLidarLine(robotId, localWorldMap.LidarLine);
 
             }
-            UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
+            
             UpdateObstacleList(localWorldMap.ObstaclesLocationList);
             UpdateBallLocationList(localWorldMap.BallLocationList);
 
@@ -468,8 +471,8 @@ namespace WpfWorldMapDisplay
                 //On trace le robot en dernier pour l'avoir en couche de dessus
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key, TeamMatesDisplayDictionary[r.Key].GetRobotPolygon());
 
-                //Affichage des robots
-                // PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Ghost, TeamMatesDisplayDictionary[r.Key].GetRobotGhostPolygon());
+                /// Affichage des robots
+                /// PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Ghost, TeamMatesDisplayDictionary[r.Key].GetRobotGhostPolygon());
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Speed, TeamMatesDisplayDictionary[r.Key].GetRobotSpeedArrow());
                 if (lwmdType == LocalWorldMapDisplayType.WayPointMap)
                 {
@@ -479,22 +482,23 @@ namespace WpfWorldMapDisplay
                 
                 
 
-                //Rendering des points Lidar
+                /// Rendering des points Lidar
                 lidarPts.AcceptsUnsortedData = true;
                 var lidarData = TeamMatesDisplayDictionary[r.Key].GetRobotLidarPoints();
                 lidarPts.Append(lidarData.XValues, lidarData.YValues);
+
                 lidarProcessedPts.AcceptsUnsortedData = true;
                 var lidarProcessedData = TeamMatesDisplayDictionary[r.Key].GetRobotLidarProcessedPoints();
                 lidarProcessedPts.Append(lidarProcessedData.XValues, lidarProcessedData.YValues);
 
-                //Rendering des objets Lidar
+                /// Rendering des objets Lidar
                 foreach (var polygonObject in TeamMatesDisplayDictionary[r.Key].GetRobotLidarObjects())
                     ObjectsPolygonSeries.AddOrUpdatePolygonExtended(ObjectsPolygonSeries.Count(), polygonObject);
             }
 
             foreach (var r in OpponentDisplayDictionary)
             {
-                //Affichage des robots
+                /// Affichage des robots
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key, OpponentDisplayDictionary[r.Key].GetRobotPolygon());
                 //PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Speed, OpponentDisplayDictionary[r.Key].GetRobotSpeedArrow());
                 //PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Destination, TeamMatesDictionary[r.Key].GetRobotDestinationArrow());
@@ -503,14 +507,18 @@ namespace WpfWorldMapDisplay
             //Affichage des points lidar
             LidarPoints.DataSeries = lidarPts;
             LidarProcessedPoints.DataSeries = lidarProcessedPts;
+
         }
 
         public void DrawLidar()
         {
-            XyDataSeries<double, double> lidarPts = new XyDataSeries<double, double>();
-            XyDataSeries<double, double> lidarProcessedPts = new XyDataSeries<double, double>();
-            XyDataSeries<double, double> lidarLinePts = new XyDataSeries<double, double>();
-
+            XyDataSeries<double, double> lidarPts           = new XyDataSeries<double, double>();
+            XyDataSeries<double, double> lidarProcessedPts  = new XyDataSeries<double, double>();
+            XyDataSeries<double, double> lidarObjectPts     = new XyDataSeries<double, double>();
+            XyDataSeries<double, double> lidarLinePts       = new XyDataSeries<double, double>();
+            XyDataSeries<double, double> lidarRedCupPts     = new XyDataSeries<double, double>();
+            XyDataSeries<double, double> lidarGreenCupPts   = new XyDataSeries<double, double>();
+           
             List<AnnotationBase> annotationBase = new List<AnnotationBase>();
             foreach (AnnotationBase annotation in sciChartSurface.Annotations)
             {
@@ -518,11 +526,6 @@ namespace WpfWorldMapDisplay
                 {
                     annotationBase.Add(annotation);
                     
-                }
-
-                if (annotation.Name == "CupAnnotation")
-                {
-                    annotationBase.Add(annotation);
                 }
             }
 
@@ -549,13 +552,36 @@ namespace WpfWorldMapDisplay
                 lidarProcessedPts.Append(lidarProcessedData.XValues, lidarProcessedData.YValues);
                 LidarProcessedPoints.DataSeries = lidarProcessedPts;
 
-                //lidarLinePts.AcceptsUnsortedData = true;
-                //var lidarLineData = TeamMatesDisplayDictionary[r.Key].GetRobotLidarProcessedPoints();
-                //lidarLinePts.Append(lidarLineData.XValues, lidarLineData.YValues);
-                //LidarLinePoints.DataSeries = lidarLinePts;
+                lidarObjectPts.AcceptsUnsortedData = true;
+                var lidarObjectData = TeamMatesDisplayDictionary[r.Key].GetRobotObjectsPoints();
+                lidarObjectPts.Append(lidarObjectData.Item1.XValues, lidarObjectData.Item1.YValues);
+                ObjectPointMarkerPaletteProvider.UpdateColorList(lidarObjectData.Item2);
+                LidarObjectPoints.DataSeries = lidarObjectPts;
 
-                var lidarSegment = TeamMatesDisplayDictionary[r.Key].GetRobotLidarSegment();
                 var lidarCups = TeamMatesDisplayDictionary[r.Key].GetRobotLidarCup();
+                foreach (Cup cup in lidarCups)
+                {
+                    if (cup.color == System.Drawing.Color.Red)
+                    {
+                        lidarRedCupPts.Append(cup.center.X, cup.center.Y);
+                    }
+
+                    if (cup.color == System.Drawing.Color.Green)
+                    {
+                        lidarGreenCupPts.Append(cup.center.X, cup.center.Y);
+                    }
+                }
+
+                RedCup.DataSeries = lidarRedCupPts;
+                GreenCup.DataSeries = lidarGreenCupPts;
+
+
+            //lidarLinePts.AcceptsUnsortedData = true;
+            //var lidarLineData = TeamMatesDisplayDictionary[r.Key].GetRobotLidarProcessedPoints();
+            //lidarLinePts.Append(lidarLineData.XValues, lidarLineData.YValues);
+            //LidarLinePoints.DataSeries = lidarLinePts;
+
+            var lidarSegment = TeamMatesDisplayDictionary[r.Key].GetRobotLidarSegment();
                 if (lidarSegment != null)
                 {
                     foreach (Segment segment in lidarSegment)
@@ -571,24 +597,6 @@ namespace WpfWorldMapDisplay
 
                         };
                         sciChartSurface.Annotations.Add(line);
-                    }
-                }
-
-                if (lidarCups != null)
-                {
-                    foreach (Cup cup in lidarCups)
-                    {
-                        BoxAnnotation oval = new BoxAnnotation()
-                        { 
-                            Background = new SolidColorBrush(Color.FromArgb(cup.color.A, cup.color.R, cup.color.G, cup.color.B)),
-                            Name = "CupAnnotation",
-                            X1 = cup.center.X - cup.radius,
-                            Y1 = cup.center.Y + cup.radius,
-                            X2 = cup.center.X + cup.radius,
-                            Y2 = cup.center.Y - cup.radius,
-                            CornerRadius = new CornerRadius(100)
-                        };
-                        sciChartSurface.Annotations.Add(oval);
                     }
                 }
             }            
@@ -707,7 +715,7 @@ namespace WpfWorldMapDisplay
             }
         }
 
-        private void UpdateLidarObjects(int robotId, List<PolarPointListExtended> lidarObjectList)
+        private void UpdateLidarObjects(int robotId, List<LidarObjects> lidarObjectList)
         {
             if (lidarObjectList == null)
                 return;
@@ -1245,6 +1253,79 @@ namespace WpfWorldMapDisplay
             var handler = PropertyChanged;
             if (handler != null)
                 handler(this, new PropertyChangedEventArgs(propertyName));
+        }
+    }
+
+    public partial class ObjectPointMarkerPaletteProvider : IPointMarkerPaletteProvider
+    {
+        private XyDataSeries<double, double> _theSourceData;
+        private static List<System.Drawing.Color> colorList;
+
+        public void OnBeginSeriesDraw(IRenderableSeries series)
+        {
+            // OnBeginSeriesDraw is a good place to cache dataseries
+            _theSourceData = (XyDataSeries<double, double>)series.DataSeries;
+        }
+
+        public static void UpdateColorList(List<System.Drawing.Color> colors)
+        {
+            colorList = colors;
+        }
+
+        public PointPaletteInfo? OverridePointMarker(IRenderableSeries series, int index, IPointMetadata metadata)
+        {
+            // Called for every data-point to draw
+            // you can access data from series.DataSeries.XValues and YValues
+            // the index is the index to the data
+            //
+            // the metadata is an optional object you can pass in to DataSeries
+            // remember to cast it!
+
+            // If Y>0.5, draw green
+            if (colorList == null)
+            {
+                return null;
+            }
+
+            if (colorList.Count <= index)
+            {
+                return null;
+            }
+
+            System.Drawing.Color c = colorList[index];
+            return new PointPaletteInfo()
+            {
+                Stroke = Color.FromArgb(c.A, c.R, c.G, c.B),
+            };
+
+            //if (_theSourceData.YValues[index] > 0.5)
+            //{
+            //    return new PointPaletteInfo()
+            //    {
+            //        Stroke = Colors.Green,
+            //    };
+            //}
+            //// If Y>0.2, draw Orange
+            //else if (_theSourceData.YValues[index] > 0.0)
+            //{
+            //    return new PointPaletteInfo()
+            //    {
+            //        Stroke = Colors.Orange,
+            //    };
+            //}
+            //// If Y>0.0 draw Red
+            //else if (_theSourceData.YValues[index] < -0.5)
+            //{
+            //    return new PointPaletteInfo()
+            //    {
+            //        Stroke = Colors.Red,
+            //    };
+            //}
+            //// Else, use series default stroke
+            //else
+            //{
+            //    return null; // default line stroke
+            //}
         }
     }
 }

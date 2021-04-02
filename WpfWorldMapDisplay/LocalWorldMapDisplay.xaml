@@ -9,12 +9,16 @@
              xmlns:s="http://schemas.abtsoftware.co.uk/scichart">
 
     <Grid>
+        
         <s:SciChartSurface x:Name="sciChartSurface" MaxFrameRate="25" Padding="0" BorderThickness="0" Grid.Row="0" 
                            MouseLeftButtonUp="sciChart_MouseLeftButtonUp" MouseDoubleClick="sciChart_MouseDoubleClick"
                            s:VisualXcceleratorEngine.IsEnabled="True"
                            s:VisualXcceleratorEngine.FallbackType="{x:Type s:HighQualityRenderSurface}"
                            s:VisualXcceleratorEngine.DowngradeWithoutException="False"
                            s:VisualXcceleratorEngine.EnableImpossibleMode="False">
+
+            
+
             <!--  Create a X Axis  -->
             <s:SciChartSurface.XAxis>
                 <s:NumericAxis VisibleRange="-12,12" IsCenterAxis="False" AutoRange="Never"  Visibility="Hidden" DrawMajorGridLines="False" DrawMinorGridLines="False"
@@ -25,6 +29,11 @@
                 <s:NumericAxis VisibleRange="-8,8" IsCenterAxis="False" AutoRange="Never" Visibility="Hidden" DrawMajorGridLines="False" DrawMinorGridLines="False"
                                DrawMajorTicks="False" DrawMinorTicks="False" DrawMajorBands="False"/>
             </s:SciChartSurface.YAxis>
+
+            <s:SciChartSurface.Resources>
+                <local:ObjectPointMarkerPaletteProvider x:Key="ObjectPointMarkerPaletteProvider"/>
+            </s:SciChartSurface.Resources>
+
             <s:SciChartSurface.RenderableSeries >
                 <local:PolygonRenderableSeries x:Name="PolygonTerrainSeries" Opacity="0.5">
                 </local:PolygonRenderableSeries>
@@ -50,14 +59,31 @@
                 </s:XyScatterRenderableSeries>
                 <s:XyScatterRenderableSeries x:Name="LidarProcessedPoints" Opacity="0.5">
                     <s:XyScatterRenderableSeries.PointMarker>
-                        <s:EllipsePointMarker Width="4" Height="4" Fill="SteelBlue" Stroke="Red" StrokeThickness="1"/>
+                        <s:EllipsePointMarker Width="4" Height="4" Fill="SteelBlue" Stroke="Purple" StrokeThickness="1"/>
                     </s:XyScatterRenderableSeries.PointMarker>
+                    
+                </s:XyScatterRenderableSeries>
+                <s:XyScatterRenderableSeries x:Name="LidarObjectPoints" Opacity="0.5">
+                    <s:XyScatterRenderableSeries.PointMarker>
+                        <s:EllipsePointMarker Width="6" Height="6" Fill="SteelBlue" Stroke="Aquamarine" StrokeThickness="1" />
+                    </s:XyScatterRenderableSeries.PointMarker>
+
                 </s:XyScatterRenderableSeries>
                 <local:PolygonRenderableSeries x:Name="PolygonSeries" Opacity="0.5">
                 </local:PolygonRenderableSeries>
                 <s:XyScatterRenderableSeries x:Name="BallPoints" Opacity="0.5">
                     <s:XyScatterRenderableSeries.PointMarker>
                         <s:EllipsePointMarker Width="10" Height="10" Fill="Yellow" Stroke="White" StrokeThickness="1"/>
+                    </s:XyScatterRenderableSeries.PointMarker>
+                </s:XyScatterRenderableSeries>
+                <s:XyScatterRenderableSeries x:Name="GreenCup" Opacity="0.8">
+                    <s:XyScatterRenderableSeries.PointMarker>
+                        <s:EllipsePointMarker Width="30" Height="30" Fill="#00FF00" Stroke="DarkGreen" StrokeThickness="2"/>
+                    </s:XyScatterRenderableSeries.PointMarker>
+                </s:XyScatterRenderableSeries>
+                <s:XyScatterRenderableSeries x:Name="RedCup" Opacity="0.8">
+                    <s:XyScatterRenderableSeries.PointMarker>
+                        <s:EllipsePointMarker Width="30" Height="30" Fill="#FF0000" Stroke="DarkRed" StrokeThickness="2"/>
                     </s:XyScatterRenderableSeries.PointMarker>
                 </s:XyScatterRenderableSeries>
                 <local:PolygonRenderableSeries x:Name="BallPolygon" Opacity="0.8" >

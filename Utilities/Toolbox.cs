@@ -80,7 +80,19 @@ namespace Utilities
             return Math.Sqrt((pt2.X - pt1.X)* (pt2.X - pt1.X) + (pt2.Y - pt1.Y)* (pt2.Y - pt1.Y));
             //return Math.Sqrt(Math.Pow(pt2.X - pt1.X, 2) + Math.Pow(pt2.Y - pt1.Y, 2));
         }
-        
+
+
+        public static double Distance(PolarPointRssi p1, PolarPointRssi p2)
+        {
+            double r1 = p1.Distance;
+            double r2 = p2.Distance;
+
+            double t1 = p1.Angle;
+            double t2 = p2.Angle;
+
+            return Math.Sqrt(r1 * r1 + r2 * r2 - 2 * r1 * r2 * Math.Cos(t1 - t2));
+        }
+
         public static double DistanceL1(PointD pt1, PointD pt2)
         {
             return Math.Abs(pt2.X - pt1.X) + Math.Abs(pt2.Y - pt1.Y);
