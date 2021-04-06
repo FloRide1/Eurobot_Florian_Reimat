@@ -98,6 +98,54 @@ namespace Utilities
         }
     }
 
+    public class Segment : EventArgs
+    {
+        public double X1 { get; set; }
+        public double Y1 { get; set; }
+        public double X2 { get; set; }
+        public double Y2 { get; set; }
+
+        public Segment()
+        {
+            X1 = 0;
+            Y1 = 0;
+            X2 = 0;
+            Y2 = 0;
+        }
+
+        public Segment(double x1, double y1, double x2, double y2)
+        {
+            X1 = x1;
+            Y1 = y1;
+            X2 = x2;
+            Y2 = y2;
+        }
+
+        public Segment(PointD a, PointD b)
+        {
+            X1 = a.X;
+            Y1 = a.Y;
+            X2 = b.X;
+            Y2 = b.Y;
+        }
+    }
+
+    public class SegmentExtended
+    {
+        public Segment Segment;
+        public double Width = 10;
+        public System.Drawing.Color Color = System.Drawing.Color.FromArgb(0xFF, 0xFF, 0xFF, 0xFF);
+        public double Opacity = 1;
+        public double[] DashPattern = new double[] { 1.0 };
+
+        public SegmentExtended(PointD ptDebut, PointD ptFin, System.Drawing.Color color, double width = 1)
+        {
+            Segment = new Segment(ptDebut, ptFin);
+            Color = color;
+            Width = width;
+        }
+    }
+
     [ZeroFormattable]
     public class Location
     {

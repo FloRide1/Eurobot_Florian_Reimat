@@ -232,6 +232,7 @@ namespace WpfWorldMapDisplay
                     if (competition == GameMode.RoboCup)
                         PolygonTerrainSeries.RedrawAll();
                     PolygonSeries.RedrawAll();
+                    SegmentSeries.RedrawAll();
                     ObjectsPolygonSeries.RedrawAll();
                     BallPolygon.RedrawAll();
                     DrawTeam();
@@ -520,21 +521,6 @@ namespace WpfWorldMapDisplay
             XyDataSeries<double, double> lidarRedCupPts     = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarGreenCupPts   = new XyDataSeries<double, double>();
            
-
-            /// Need to include base segment drawing
-            List<AnnotationBase> annotationBase = new List<AnnotationBase>();
-            foreach (AnnotationBase annotation in sciChartSurface.Annotations)
-            {
-                if (annotation.Name == "SegmentLine")
-                {
-                    annotationBase.Add(annotation);
-                }
-            }
-
-            foreach (AnnotationBase annotation in annotationBase)
-            {
-                sciChartSurface.Annotations.Remove(annotation);
-            }
             foreach (var r in TeamMatesDisplayDictionary)
             {
                 ////Affichage des robots
@@ -560,6 +546,18 @@ namespace WpfWorldMapDisplay
                 ObjectPointMarkerPaletteProvider.UpdateColorList(lidarObjectData.Item2);
                 LidarObjectPoints.DataSeries = lidarObjectPts;
 
+                SegmentSeries.Clear();
+                List<SegmentExtended> list_of_segments = TeamMatesDisplayDictionary[r.Key].GetRobotLidarSegments();
+                if (list_of_segments != null)
+                {
+                    foreach (SegmentExtended segment in list_of_segments)
+                    {
+                        SegmentSeries.AddSegmentExtended(0, segment);
+
+                    }
+                }
+
+
                 var lidarCups = TeamMatesDisplayDictionary[r.Key].GetRobotLidarCup();
                 if (lidarCups != null)
                 {
@@ -582,31 +580,7 @@ namespace WpfWorldMapDisplay
 
                 RedCup.DataSeries = lidarRedCupPts;
                 GreenCup.DataSeries = lidarGreenCupPts;
-
-
-            //lidarLinePts.AcceptsUnsortedData = true;
-            //var lidarLineData = TeamMatesDisplayDictionary[r.Key].GetRobotLidarProcessedPoints();
-            //lidarLinePts.Append(lidarLineData.XValues, lidarLineData.YValues);
-            //LidarLinePoints.DataSeries = lidarLinePts;
-
-            var lidarSegment = TeamMatesDisplayDictionary[r.Key].GetRobotLidarSegment();
-                if (lidarSegment != null)
-                {
-                    foreach (Segment segment in lidarSegment)
-                    {
-                        LineAnnotation line = new LineAnnotation()
-                        {
-                            Stroke = new SolidColorBrush(Colors.Orange),
-                            Name = "SegmentLine",
-                            X1 = segment.X1,
-                            Y1 = segment.Y1,
-                            X2 = segment.X2,
-                            Y2 = segment.Y2
-
-                        };
-                        sciChartSurface.Annotations.Add(line);
-                    }
-                }
+            
             }            
         }
 
@@ -683,17 +657,7 @@ namespace WpfWorldMapDisplay
             }
         }
 
-        private void UpdateLidarLine(int robotId, List<PointD> lidarLines)
-        {
-            if (lidarLines == null)
-                return;
-            if (TeamMatesDisplayDictionary.ContainsKey(robotId))
-            {
-                TeamMatesDisplayDictionary[robotId].SetLidarLine(lidarLines);
-            }
-        }
-
-        private void UpdateLidarSegment(int robotId, List<Segment> lidarSegments)
+        private void UpdateLidarSegment(int robotId, List<SegmentExtended> lidarSegments)
         {
             if (lidarSegments == null)
                 return;
@@ -711,7 +675,6 @@ namespace WpfWorldMapDisplay
                 TeamMatesDisplayDictionary[robotId].SetLidarCup(lidarCups);
             }
         }
-
 
         private void UpdateLidarProcessedMap(int robotId, List<PointD> lidarMapProcessed)
         {

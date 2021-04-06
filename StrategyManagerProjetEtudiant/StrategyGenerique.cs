@@ -51,6 +51,7 @@ namespace StrategyManagerProjetEtudiantNS
         public string DisplayName;
 
         public GlobalWorldMap globalWorldMap;
+        public LocalWorldMap localWorldMap;
         public Location robotCurrentLocation = new Location(0, 0, 0, 0, 0, 0);
         public double robotOrientation;
 
@@ -75,6 +76,15 @@ namespace StrategyManagerProjetEtudiantNS
 
         //************************ Events reçus ************************************************/
         //public abstract void OnRefBoxMsgReceived(object sender, WorldMap.RefBoxMessageArgs e);
+        public void OnLocalWorldMapReceived(object sender, LocalWorldMap e)
+        {
+            //On récupère la nouvelle worldMap
+            lock (localWorldMap)
+            {
+                localWorldMap = e;
+            }
+        }
+
 
         /// Evènement envoyé par le module de gestion de la LocalWorldMap
         public void OnGlobalWorldMapReceived(object sender, GlobalWorldMap e)
@@ -106,6 +116,7 @@ namespace StrategyManagerProjetEtudiantNS
 
         }
 
+        public abstract void OnGhostLocationReached(object sender, Location location);
 
         /****************************************** Events envoyés ***********************************************/
 
@@ -241,6 +252,24 @@ namespace StrategyManagerProjetEtudiantNS
         public virtual void OnTextMessage(string str)
         {
             OnTextMessageEvent?.Invoke(this, new StringEventArgs { value = str });
+        }
+
+        public event EventHandler<Location> OnWaypointsReachedEvent;
+        public virtual void OnWaypointsReached(Location location)
+        {
+            OnWaypointsReachedEvent?.Invoke(this, location);
+        }
+
+        public event EventHandler<Location> OnDestinationReachedEvent;
+        public virtual void OnDestinationReached(Location location)
+        {
+            OnDestinationReachedEvent?.Invoke(this, location);
+        }
+
+        public event EventHandler<EventArgs> OnGhostCalculationBeginEvent;
+        public virtual void OnGhostCalculationBegin()
+        {
+            OnGhostCalculationBeginEvent?.Invoke(this, new EventArgs());
         }
     }    
 }

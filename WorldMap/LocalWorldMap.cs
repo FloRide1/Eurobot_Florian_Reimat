@@ -29,7 +29,7 @@ namespace WorldMap
         public virtual List<PointD> LidarMapRaw { get; set; }
         public virtual List<PointD> LidarMapProcessed { get; set; }
         public virtual List<PointD> LidarLine { get; set; }
-        public virtual List<Segment> LidarSegment { get; set; }
+        public virtual List<SegmentExtended> LidarSegment { get; set; }
 
         public virtual List<Cup> LidarCup { get; set; }
         public virtual List<LidarObjects> LidarObjectList { get; set; }
@@ -111,7 +111,13 @@ namespace WorldMap
 
         public void ResetDestination()
         {
-            DestinationLocation = new Location();
+            DestinationLocation = null;
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void DeleteFirstWaypoint()
+        {
+            WaypointLocations.RemoveAt(0);
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
@@ -161,7 +167,10 @@ namespace WorldMap
             ResetDestination();
         }
 
-        
+        public void ResetDestinationEvent(object sender, EventArgs e)
+        {
+            ResetDestination();
+        }
 
         public void OnLidarRawPointReceived(object sender, List<PointD> lidarPoints)
         {
@@ -175,7 +184,7 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
-        public void OnLidarProcessedLineReceived(object sender, List<Segment> segments)
+        public void OnLidarProcessedLineReceived(object sender, List<SegmentExtended> segments)
         {
             LidarSegment = segments;
             OnLocalWorldMapEvent?.Invoke(this, this);
@@ -197,6 +206,11 @@ namespace WorldMap
         public void OnGameStateChange(object sender, GameState gameState_a)
         {
             OnLocalWorldMapEvent?.Invoke(this, this);
+        }
+
+        public void OnGhostLocation(object sender, Location location)
+        {
+            RobotGhostLocation = location;
         }
         #endregion
         #region Others

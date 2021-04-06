@@ -28,8 +28,7 @@ namespace WpfWorldMapDisplay
         public double[,] heatMapWaypoint;
         List<PointD> LidarRawPoints;
         List<PointD> LidarProcessedPoints;
-        List<PointD> LidarLine;
-        List<Segment> LidarSegment;
+        List<SegmentExtended> LidarSegment;
         List<Cup> LidarCup;
         List<LidarObjects> LidarObjectList;
         
@@ -48,7 +47,6 @@ namespace WpfWorldMapDisplay
             robotName = name;
 
             LidarRawPoints = new List<PointD>();
-            LidarLine = new List<PointD>();
             LidarProcessedPoints = new List<PointD>();
             ballLocationList = new List<Location>();
         }
@@ -112,12 +110,7 @@ namespace WpfWorldMapDisplay
             this.LidarRawPoints = lidarMap;
         }
 
-        public void SetLidarLine(List<PointD> lidarLine)
-        {
-            this.LidarLine = lidarLine;
-        }
-
-        public void SetLidarSegment(List<Segment> segments)
+        public void SetLidarSegment(List<SegmentExtended> segments)
         {
             LidarSegment = segments;
         }
@@ -320,23 +313,6 @@ namespace WpfWorldMapDisplay
             return dataSeries;
         }
 
-        public XyDataSeries<double, double> GetRobotLidarLinePoints()
-        {
-            var dataSeries = new XyDataSeries<double, double>();
-            if (LidarLine == null)
-                return dataSeries;
-
-            var listX = LidarLine.Select(e => e.X);
-            var listY = LidarLine.Select(e => e.Y);
-
-            if (listX.Count() == listY.Count())
-            {
-                dataSeries.AcceptsUnsortedData = true;
-                dataSeries.Append(listX, listY);
-            }
-            return dataSeries;
-        }
-
         public Tuple<XyDataSeries<double, double>, List<System.Drawing.Color>> GetRobotObjectsPoints()
         {
             var dataSeries = new XyDataSeries<double, double>();
@@ -367,7 +343,7 @@ namespace WpfWorldMapDisplay
             return new Tuple<XyDataSeries<double, double>, List<System.Drawing.Color>> (dataSeries, colors);
         }
 
-        public List<Segment> GetRobotLidarSegment()
+        public List<SegmentExtended> GetRobotLidarSegments()
         {
             return LidarSegment;
         }

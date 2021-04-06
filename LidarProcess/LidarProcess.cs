@@ -83,7 +83,7 @@ namespace LidarProcessNS
         public event EventHandler<List<PointD>> OnRawLidarPointXYEvent;
         public event EventHandler<List<PointD>> OnProcessLidarXYDataEvent;
         public event EventHandler<List<PolarPointRssi>> OnProcessLidarPolarDataEvent;
-        public event EventHandler<List<Segment>> OnProcessLidarLineDataEvent;
+        public event EventHandler<List<SegmentExtended>> OnProcessLidarLineDataEvent;
         public event EventHandler<List<LidarObjects>> OnProcessLidarObjectsDataEvent;
         public event EventHandler<List<Cup>> OnProcessLidarCupDataEvent;
         #endregion
@@ -101,7 +101,7 @@ namespace LidarProcessNS
             }
 
 
-            List<Segment> Lines = new List<Segment>();
+            List<SegmentExtended> Lines = new List<SegmentExtended>();
             List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 0.035, 3);
             List<PolarPointRssi> processedPoints = new List<PolarPointRssi>();
             List<Cup> list_of_cups = new List<Cup>();

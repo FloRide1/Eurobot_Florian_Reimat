@@ -23,28 +23,56 @@ namespace StrategyManagerProjetEtudiantNS
         TaskDemoMove taskDemoMove;
         TaskDemoMessage taskDemoMessage;
 
-        //Timer configTimer;
+        int robotId, teamId;
+
+        Timer GhostTimer;
 
         public StrategyEurobot(int robotId, int teamId, string multicastIpAddress) : base(robotId, teamId, multicastIpAddress)
         {
             taskDemoMove = new TaskDemoMove(this);
             taskDemoMessage = new TaskDemoMessage(this);
+
+            this.robotId = robotId;
+            this.teamId = teamId;
+            localWorldMap = new LocalWorldMap(robotId, teamId);
+
+            GhostTimer = new Timer(20);
+            GhostTimer.Elapsed += OnGhostTimerCalculationOrder;
         }
 
         public override void InitStrategy()
         {
-            // Obtenus directement à partir du script Matlab
+            /// Obtenus directement à partir du script Matlab
             OnOdometryPointToMeter(ConstVar.EUROBOT_ODOMETRY_POINT_TO_METER);
             On2WheelsAngleSetup(- ConstVar.EUROBOT_WHEELS_ANGLE, ConstVar.EUROBOT_WHEELS_ANGLE);
             On2WheelsToPolarMatrixSetup(ConstVar.EUROBOT_MATRIX_X_COEFF, - ConstVar.EUROBOT_MATRIX_X_COEFF, ConstVar.EUROBOT_MATRIX_THETA_COEFF, ConstVar.EUROBOT_MATRIX_THETA_COEFF);
+
+            /// Use only when the robot is disconnect
+            GhostTimer.Start();
         }
-                
+
+
+
 
         /*********************************** Events reçus **********************************************/
-        
+
+        public override void OnGhostLocationReached(object sender, Location location)
+        {
+            OnWaypointsReached(location);
+        }
+
+        private void OnGhostTimerCalculationOrder(object sender, ElapsedEventArgs e)
+        {
+            OnUpdateGhostCalculationOrder();
+        }
 
         /*********************************** Events de sortie **********************************************/
-        
+        public event EventHandler<EventArgs> OnUpdateGhostCalculationOrderEvent;
+
+        public void OnUpdateGhostCalculationOrder()
+        {
+            OnUpdateGhostCalculationOrderEvent?.Invoke(this, new EventArgs());
+        }
     }
        
 

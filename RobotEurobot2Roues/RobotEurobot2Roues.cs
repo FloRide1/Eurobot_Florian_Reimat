@@ -17,6 +17,7 @@ using WorldMap;
 using Utilities;
 using Lidar;
 using LidarProcessNS;
+using TrajectoryPlannerNs;
 
 namespace RobotEurobot2Roues
 {
@@ -32,6 +33,7 @@ namespace RobotEurobot2Roues
         static LidarDevice lidar;
         static LidarProcess lidarProcess;
         static LocalWorldMap localWorldMap;
+        static TrajectoryPlanner trajectoryPlanner;
 
         static WpfRobot2RouesInterface interfaceRobot;
         static GameMode competition = GameMode.Eurobot;
@@ -154,12 +156,19 @@ namespace RobotEurobot2Roues
             localWorldMap.Init();
             #endregion
 
-           
+            #region TrajectoryPlanner
+            trajectoryPlanner = new TrajectoryPlanner(robotId);
+
+            trajectoryPlanner.OnNewGhostLocationEvent += localWorldMap.OnGhostLocation;
+            
+            #endregion
+
             #region Strategy /!\ Need to be Last /!\
             strategyManager.On2WheelsToPolarMatrixSetupEvent += msgGenerator.GenerateMessage2WheelsToPolarMatrixSet;   //Transmission des messages de set-up de la matrice de transformation moteurindepeandt -> polaire en embarqué
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
             strategyManager.OnOdometryPointToMeterSetupEvent += msgGenerator.GenerateMessageOdometryPointToMeter;      //Transmission des messages de set-up du coeff pointToMeter en embarqué
-            
+
+            localWorldMap.OnLocalWorldMapEvent += strategyManager.OnLocalWorldMapReceived;
             ConsoleFormat.PrintStrategyBoot();
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
             #endregion
