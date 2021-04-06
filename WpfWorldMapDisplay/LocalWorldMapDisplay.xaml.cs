@@ -25,6 +25,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Utilities;
 using WorldMap;
+using SciChart.Data.Model;
 
 namespace WpfWorldMapDisplay
 {
@@ -562,6 +563,8 @@ namespace WpfWorldMapDisplay
                 var lidarCups = TeamMatesDisplayDictionary[r.Key].GetRobotLidarCup();
                 if (lidarCups != null)
                 {
+                    lidarRedCupPts.AcceptsUnsortedData = true;
+                    lidarGreenCupPts.AcceptsUnsortedData = true;
                     foreach (Cup cup in lidarCups)
                     {
                         if (cup.color == System.Drawing.Color.Red)
@@ -1261,8 +1264,12 @@ namespace WpfWorldMapDisplay
         }
     }
 
-    public partial class ObjectPointMarkerPaletteProvider : IPointMarkerPaletteProvider
+    public partial class ObjectPointMarkerPaletteProvider : IExtremePointMarkerPaletteProvider
     {
+        private readonly List<Color> _dataPointColors;
+        private readonly Values<Color> _colors = new Values<Color>();
+        public Values<Color> Colors { get { return _colors; } }
+
         private XyDataSeries<double, double> _theSourceData;
         private static List<System.Drawing.Color> colorList;
 

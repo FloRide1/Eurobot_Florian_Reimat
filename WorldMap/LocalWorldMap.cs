@@ -177,23 +177,6 @@ namespace WorldMap
 
         public void OnLidarProcessedLineReceived(object sender, List<Segment> segments)
         {
-            //List<Segment> segments = new List<Segment>();
-            //foreach (HoughLine line in lines)
-            //{
-            //    double x = line.rho * Math.Cos(line.theta);
-            //    double y = line.rho * Math.Sin(line.theta);
-
-            //    double slope = line.theta - (Math.PI / 2);
-            //    double yintercept = y - slope * x;
-
-            //    double x1 = x + 1;
-            //    double y1 = slope * x1 + yintercept;
-
-            //    double x2 = x - 1;
-            //    double y2 = slope * x1 + yintercept;
-
-            //    segments.Add(new Segment(x1, y1, x2, y2));
-            //}
             LidarSegment = segments;
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
@@ -205,6 +188,11 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
+        public void OnLidarProcesObjectsReceived(object sender, List<LidarObjects> lidarObjects)
+        {
+            LidarObjectList = lidarObjects;
+            OnLocalWorldMapEvent?.Invoke(this, this);
+        }
 
         public void OnGameStateChange(object sender, GameState gameState_a)
         {

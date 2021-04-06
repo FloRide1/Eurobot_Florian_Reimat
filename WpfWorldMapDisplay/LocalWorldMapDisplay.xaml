@@ -76,12 +76,12 @@
                 </s:XyScatterRenderableSeries>
                 <s:XyScatterRenderableSeries x:Name="GreenCup" Opacity="0.8">
                     <s:XyScatterRenderableSeries.PointMarker>
-                        <s:EllipsePointMarker Width="30" Height="30" Fill="#00FF00" Stroke="DarkGreen" StrokeThickness="2"/>
+                        <s:EllipsePointMarker Width="14" Height="17" Fill="#00FF00" Stroke="DarkGreen" StrokeThickness="2"/>
                     </s:XyScatterRenderableSeries.PointMarker>
                 </s:XyScatterRenderableSeries>
                 <s:XyScatterRenderableSeries x:Name="RedCup" Opacity="0.8">
                     <s:XyScatterRenderableSeries.PointMarker>
-                        <s:EllipsePointMarker Width="30" Height="30" Fill="#FF0000" Stroke="DarkRed" StrokeThickness="2"/>
+                        <s:EllipsePointMarker Width="14" Height="17" Fill="#FF0000" Stroke="DarkRed" StrokeThickness="2"/>
                     </s:XyScatterRenderableSeries.PointMarker>
                 </s:XyScatterRenderableSeries>
                 <local:PolygonRenderableSeries x:Name="BallPolygon" Opacity="0.8" >

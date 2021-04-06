@@ -150,6 +150,7 @@ namespace RobotEurobot2Roues
             lidarProcess.OnProcessLidarXYDataEvent += localWorldMap.OnLidarProcessedPointReceived;
             lidarProcess.OnProcessLidarLineDataEvent += localWorldMap.OnLidarProcessedLineReceived;
             lidarProcess.OnProcessLidarCupDataEvent += localWorldMap.OnLidarProcessedCupReceived;
+            //lidarProcess.OnProcessLidarObjectsDataEvent += localWorldMap.OnLidarProcesObjectsReceived;
             localWorldMap.Init();
             #endregion
 

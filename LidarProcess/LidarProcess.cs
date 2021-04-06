@@ -84,6 +84,7 @@ namespace LidarProcessNS
         public event EventHandler<List<PointD>> OnProcessLidarXYDataEvent;
         public event EventHandler<List<PolarPointRssi>> OnProcessLidarPolarDataEvent;
         public event EventHandler<List<Segment>> OnProcessLidarLineDataEvent;
+        public event EventHandler<List<LidarObjects>> OnProcessLidarObjectsDataEvent;
         public event EventHandler<List<Cup>> OnProcessLidarCupDataEvent;
         #endregion
 
@@ -112,7 +113,7 @@ namespace LidarProcessNS
                     processedPoints.Add(p);
                 }
 
-                Color color = Toolbox.ColorFromHSL((list_of_objects.Count * 40) % 360, 100, 50);
+                Color color = Toolbox.ColorFromHSL((list_of_objects.Count * 0.20) % 1, 1, 0.5);
                 list_of_objects.Add(new LidarObjects(ConvertRssiToXYCoord(c.points), color));
 
 
@@ -128,10 +129,11 @@ namespace LidarProcessNS
                 {
                     List<PolarPointRssi> ptLineList = ExtractLinesFromCurvature(c.points, polarCourbures);
                     List<PolarPointRssi> ptCornerList = ExtractCornersFromCurvature(c.points, polarCourbures);
-                    if (ptLineList.Count() >= 1)
-                    {
-                        Lines.Add(CreateLineSegment(ptLineList, 1));
-                    }
+                    
+                    //if (ptLineList.Count() >= 1)
+                    //{
+                    //    Lines.Add(CreateLineSegment(ptLineList, 1));
+                    //}
 
                     //foreach (PolarPointRssi p in ptCornerList)
                     //{
@@ -140,7 +142,7 @@ namespace LidarProcessNS
                 }
             }
 
-
+            OnProcessLidarObjectsDataEvent?.Invoke(this, list_of_objects);
 
             // Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.2d));
             OnProcessLidarLineDataEvent?.Invoke(this, Lines);
