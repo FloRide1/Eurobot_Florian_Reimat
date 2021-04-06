@@ -104,12 +104,17 @@ namespace LidarProcessNS
             List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 0.035, 3);
             List<PolarPointRssi> processedPoints = new List<PolarPointRssi>();
             List<Cup> list_of_cups = new List<Cup>();
+            List<LidarObjects> list_of_objects = new List<LidarObjects>();
             foreach (ClusterObjects c in clusterObjects)
             {
-                //foreach (PolarPointRssi p in c.points)
-                //{
-                //    processedPoints.Add(p);
-                //}
+                foreach (PolarPointRssi p in c.points)
+                {
+                    processedPoints.Add(p);
+                }
+
+                Color color = Toolbox.ColorFromHSL((list_of_objects.Count * 40) % 360, 100, 50);
+                list_of_objects.Add(new LidarObjects(ConvertRssiToXYCoord(c.points), color));
+
 
                 Cup cup = DetectCup(c);
                 // The null condition is Bad need to edit
@@ -128,10 +133,10 @@ namespace LidarProcessNS
                         Lines.Add(CreateLineSegment(ptLineList, 1));
                     }
 
-                    foreach (PolarPointRssi p in ptCornerList)
-                    {
-                        processedPoints.Add(p);
-                    }
+                    //foreach (PolarPointRssi p in ptCornerList)
+                    //{
+                    //    processedPoints.Add(p);
+                    //}
                 }
             }
 

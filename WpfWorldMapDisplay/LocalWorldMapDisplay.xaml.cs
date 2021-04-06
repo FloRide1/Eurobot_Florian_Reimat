@@ -519,13 +519,14 @@ namespace WpfWorldMapDisplay
             XyDataSeries<double, double> lidarRedCupPts     = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarGreenCupPts   = new XyDataSeries<double, double>();
            
+
+            /// Need to include base segment drawing
             List<AnnotationBase> annotationBase = new List<AnnotationBase>();
             foreach (AnnotationBase annotation in sciChartSurface.Annotations)
             {
                 if (annotation.Name == "SegmentLine")
                 {
                     annotationBase.Add(annotation);
-                    
                 }
             }
 
@@ -559,18 +560,22 @@ namespace WpfWorldMapDisplay
                 LidarObjectPoints.DataSeries = lidarObjectPts;
 
                 var lidarCups = TeamMatesDisplayDictionary[r.Key].GetRobotLidarCup();
-                foreach (Cup cup in lidarCups)
+                if (lidarCups != null)
                 {
-                    if (cup.color == System.Drawing.Color.Red)
+                    foreach (Cup cup in lidarCups)
                     {
-                        lidarRedCupPts.Append(cup.center.X, cup.center.Y);
-                    }
+                        if (cup.color == System.Drawing.Color.Red)
+                        {
+                            lidarRedCupPts.Append(cup.center.X, cup.center.Y);
+                        }
 
-                    if (cup.color == System.Drawing.Color.Green)
-                    {
-                        lidarGreenCupPts.Append(cup.center.X, cup.center.Y);
+                        if (cup.color == System.Drawing.Color.Green)
+                        {
+                            lidarGreenCupPts.Append(cup.center.X, cup.center.Y);
+                        }
                     }
                 }
+                
 
                 RedCup.DataSeries = lidarRedCupPts;
                 GreenCup.DataSeries = lidarGreenCupPts;
@@ -1281,7 +1286,6 @@ namespace WpfWorldMapDisplay
             // the metadata is an optional object you can pass in to DataSeries
             // remember to cast it!
 
-            // If Y>0.5, draw green
             if (colorList == null)
             {
                 return null;
