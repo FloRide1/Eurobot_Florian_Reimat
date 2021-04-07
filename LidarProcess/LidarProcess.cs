@@ -269,7 +269,7 @@ namespace LidarProcessNS
                     double angle_slope = angle;
                     double angle_y_intercept = 0;
 
-                    PointD estimated_point = GetCrossingPoint(slope, y_intercept, angle_slope, angle_y_intercept);
+                    PointD estimated_point = Toolbox.GetCrossingPoint(slope, y_intercept, angle_slope, angle_y_intercept);
 
                     /// Calculate Distance with measured point
                     int angle_index = GetIndexOfAngle(angle_array, angle);
@@ -317,7 +317,7 @@ namespace LidarProcessNS
                                     double measured_angle = actual_point.Angle;
                                     measured_point = ConvertPolarToXYAbsoluteCoord(actual_point);
 
-                                    estimated_point = GetCrossingPoint(slope, y_intercept, measured_angle, 0);
+                                    estimated_point = Toolbox.GetCrossingPoint(slope, y_intercept, measured_angle, 0);
 
                                     if (Toolbox.Distance(measured_point, estimated_point) > thresold)
                                     {
@@ -341,8 +341,8 @@ namespace LidarProcessNS
                             /// with the parallel of the measured point and the estimated line 
 
                             ///  Note: that line is useless but for safety i write it during Algorithm implementation
-                            measured_point = ConvertPolarToRelativeCoord(pointsList[index_of_last_valid_point]);
-                            extremity_of_segment[side] = FinishTheSegment(measured_point, slope, y_intercept);
+                            measured_point = ConvertPolarToRelativeCoord(pointsList[index_of_last_valid_point]); /// Why Here it's relative | GO down a bit |
+                            extremity_of_segment[side] = Toolbox.GetPerpendicularPoint(measured_point, slope, y_intercept);
 
                             /// Now Switch with the reverse side by ending the while loop
                             side_is_finish = true;
@@ -355,11 +355,11 @@ namespace LidarProcessNS
                         /// The loop end without finding the end of the line
                         side_is_finish = true;
                         angle_index = GetIndexOfAngle(angle_array, angle);
-                        measured_point = ConvertPolarToXYAbsoluteCoord(pointsList[angle_index]);
-                        estimated_point = GetCrossingPoint(slope, y_intercept, pointsList[angle_index].Angle, 0);
+                        measured_point = ConvertPolarToXYAbsoluteCoord(pointsList[angle_index]); /// And here it's absolute
+                        estimated_point = Toolbox.GetCrossingPoint(slope, y_intercept, pointsList[angle_index].Angle, 0);
                         if (Toolbox.Distance(measured_point, estimated_point) <= thresold)
                         {
-                            extremity_of_segment[side] = FinishTheSegment(measured_point, slope, y_intercept);
+                            extremity_of_segment[side] = Toolbox.GetPerpendicularPoint(measured_point, slope, y_intercept);
                         }
 
 
@@ -386,22 +386,7 @@ namespace LidarProcessNS
             return segment;
         }
 
-        private PointD FinishTheSegment(PointD measured_point, double slope, double y_intercept)
-        {
-            double perpendicular_slope = -slope;
-            double perpendicular_y_intercept = measured_point.Y - (perpendicular_slope * measured_point.X);
-
-            PointD point = measured_point;// GetCrossingPoint(slope, y_intercept, perpendicular_slope, perpendicular_y_intercept);
-            return ConvertAbsoluteToRelativeCoord(point);
-        }
-
-        private PointD GetCrossingPoint(double slope_a, double y_intercept_a, double slope_b, double y_intercept_b)
-        {
-            double estimated_X = (y_intercept_a - y_intercept_b) / (slope_b - slope_a);
-            double estimated_Y = slope_a * estimated_X + y_intercept_a;
-
-            return new PointD(estimated_X, estimated_Y);
-        }
+        
         #endregion
 
         #region Small Line

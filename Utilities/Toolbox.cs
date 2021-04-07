@@ -193,6 +193,53 @@ namespace Utilities
             return distance;            
         }
 
+        public static Line ConvertPointsToLine(PointD point_1, PointD point_2)
+        {
+            
+            double slope = 0;
+            if (point_1.X != point_2.X)
+                slope = (point_2.Y - point_2.Y) / (point_2.X - point_1.X);
+
+            double y_intercept = point_1.Y - (point_1.X * slope);
+
+            Line line = new Line(slope, y_intercept);
+            return line;
+        }
+
+        public static PointD GetCrossingPoint(Line line_1, Line line_2)
+        {
+            double estimated_X = (line_1.y_intercept - line_2.y_intercept) / (line_2.slope - line_1.slope);
+            double estimated_Y = line_1.slope * estimated_X + line_1.y_intercept;
+
+            return new PointD(estimated_X, estimated_Y);
+        }
+
+        public static PointD GetCrossingPoint(double slope_a, double y_intercept_a, double slope_b, double y_intercept_b)
+        {
+            double estimated_X = (y_intercept_a - y_intercept_b) / (slope_b - slope_a);
+            double estimated_Y = slope_a * estimated_X + y_intercept_a;
+
+            return new PointD(estimated_X, estimated_Y);
+        }
+
+        public static PointD GetPerpendicularPoint(PointD point, double slope, double y_intercept)
+        {
+            double perpendicular_slope = -slope;
+            double perpendicular_y_intercept = point.Y - (perpendicular_slope * point.X);
+
+            PointD target_point =  GetCrossingPoint(slope, y_intercept, perpendicular_slope, perpendicular_y_intercept);
+            return target_point;
+        }
+
+        public static PointD GetPerpendicularPoint(PointD point, Line line)
+        {
+            double perpendicular_slope = - line.slope;
+            double perpendicular_y_intercept = point.Y - (perpendicular_slope * point.X);
+
+            PointD target_point = GetCrossingPoint(line.slope, line.y_intercept, perpendicular_slope, perpendicular_y_intercept);
+            return target_point;
+        }
+
         public static PointD GetInterceptionLocation(Location target, Location hunter, double huntingSpeed)
         {
             //D'après Al-Kashi, si d est la distance entre le pt target et le pt chasseur, que les vitesses sont constantes 

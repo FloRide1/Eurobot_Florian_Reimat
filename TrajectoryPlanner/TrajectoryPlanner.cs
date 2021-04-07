@@ -19,16 +19,16 @@ namespace TrajectoryPlannerNs
         int robotId;
         bool CalculateTrajectory = false;
 
-        double samplingPeriod = 1 / 50.0d;
+        double samplingPeriod = 1d / 50.0d;
 
-        double max_angular_acceleration = 0.5 * Math.PI * 1.0; /// In rad.s^{-2}
-        double max_linear_acceleration;
+        double max_angular_acceleration = 0.5d * Math.PI * 1.0d; /// In rad.s^{-2}
+        double max_linear_acceleration = 1d;
 
-        double max_angular_speed = 1 * Math.PI * 1.0; /// In rad.s^{-1}
-        double max_linear_speed;
+        double max_angular_speed = 1.0d * Math.PI * 1.0d; /// In rad.s^{-1}
+        double max_linear_speed = 1.4d;
 
         double toleration_angular = 0.01;
-        double toleration_linear;
+        double toleration_linear = 0.01;
 
         Location ActualLocation;
         Location GhostLocation;
@@ -67,7 +67,10 @@ namespace TrajectoryPlannerNs
                 {
                     return;
                 }
-                // GenerateGhostShifting();
+                if (!GenerateGhostShifting())
+                {
+                    return;
+                }
                 CalculateTrajectory = false;
                 OnDestinationReached();
 
@@ -78,7 +81,7 @@ namespace TrajectoryPlannerNs
         {
             /// Init
             double theta_ghost = GhostLocation.Theta;
-            double theta_destination = Math.Atan2(WantedDestination.Y - GhostLocation.Y, WantedDestination.X - GhostLocation.X); ;
+            double theta_destination = Math.Atan2(WantedDestination.Y - GhostLocation.Y, WantedDestination.X - GhostLocation.X);
             double angular_speed = GhostLocation.Vtheta;
 
             /// Loop
@@ -150,9 +153,82 @@ namespace TrajectoryPlannerNs
         }
 
 
-        public void GenerateGhostShifting()
+        public bool GenerateGhostShifting()
         {
+            /// Init
+            PointD xy_ghost = new PointD(GhostLocation.X, GhostLocation.Y);
+            PointD xy_wanted = new PointD(WantedDestination.X, WantedDestination.Y);
+            Line line = Toolbox.ConvertPointsToLine(xy_ghost, xy_wanted);
 
+            PointD xy_destination = Toolbox.GetPerpendicularPoint(xy_wanted, line); /// Make A projection for avoiding infinity movement
+            double linear_speed = GhostLocation.Vx;
+
+            /// Loop
+            double linear_remaining = Toolbox.Distance(xy_ghost, xy_destination);
+            double linear_stop = Math.Pow(linear_speed, 2) / (2 * max_linear_acceleration);
+
+            if (linear_remaining > 0)
+            {
+                if (linear_speed < 0)
+                {
+                    /// Unatural -> Brake
+                    linear_speed = linear_speed - (max_linear_acceleration * samplingPeriod);
+                }
+                else
+                {
+                    if (linear_remaining > linear_stop)
+                    {
+                        if (linear_speed < max_linear_speed)
+                        {
+                            /// Speed Up
+                            linear_speed = linear_speed + (max_linear_acceleration * samplingPeriod);
+                        }
+                    }
+                    else
+                    {
+                        /// Brake
+                        linear_speed = linear_speed - (max_linear_acceleration * samplingPeriod);
+                    }
+                }
+            }
+            else
+            {
+                if (linear_speed > 0)
+                {
+                    /// Unatural -> Brake (Negatively)
+                    linear_speed = linear_speed + (max_linear_acceleration * samplingPeriod);
+                }
+                else
+                {
+                    if (Math.Abs(linear_remaining) > linear_stop)
+                    {
+                        if (linear_speed > -max_linear_speed)
+                        {
+                            /// Speed Up (Negatively)
+                            linear_speed = linear_speed - (max_angular_acceleration * samplingPeriod);
+                        }
+                    }
+                    else
+                    {
+                        /// Brake (Negatively)
+                        linear_speed = linear_speed + (max_angular_acceleration * samplingPeriod);
+                    }
+                }
+            }
+
+            double x_ghost = xy_ghost.X + linear_speed * samplingPeriod * Math.Cos(GhostLocation.Theta);
+            double y_ghost = xy_ghost.X + linear_speed * samplingPeriod * Math.Sin(GhostLocation.Theta);
+            
+            GhostLocation = new Location(x_ghost, y_ghost, GhostLocation.Theta, linear_speed, 0, 0);
+            OnNewGhostLocation(GhostLocation);
+
+            if (Math.Abs(linear_remaining) < toleration_linear)
+            {
+                GhostLocation = WantedDestination;
+                return true;
+            }
+
+            return false;
         }
 
         #endregion

@@ -98,7 +98,25 @@ namespace Utilities
         }
     }
 
-    public class Segment : EventArgs
+    public class Line
+    {
+        public double slope { get; set; }
+        public double y_intercept { get; set; }
+        
+        public Line()
+        {
+            slope = 0;
+            y_intercept = 0;
+        }
+
+        public Line(double slope, double y_intercept)
+        {
+            this.slope = slope;
+            this.y_intercept = y_intercept;
+        }
+    }
+
+    public class Segment
     {
         public double X1 { get; set; }
         public double Y1 { get; set; }
