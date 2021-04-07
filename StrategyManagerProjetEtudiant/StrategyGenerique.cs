@@ -116,6 +116,7 @@ namespace StrategyManagerProjetEtudiantNS
 
         }
 
+
         public abstract void OnGhostLocationReached(object sender, Location location);
 
         /****************************************** Events envoyés ***********************************************/
@@ -254,8 +255,8 @@ namespace StrategyManagerProjetEtudiantNS
             OnTextMessageEvent?.Invoke(this, new StringEventArgs { value = str });
         }
 
-        public event EventHandler<Location> OnWaypointsReachedEvent;
-        public virtual void OnWaypointsReached(Location location)
+        public event EventHandler<PointD> OnWaypointsReachedEvent;
+        public virtual void OnWaypointsReached(PointD location)
         {
             OnWaypointsReachedEvent?.Invoke(this, location);
         }
@@ -270,6 +271,29 @@ namespace StrategyManagerProjetEtudiantNS
         public virtual void OnGhostCalculationBegin()
         {
             OnGhostCalculationBeginEvent?.Invoke(this, new EventArgs());
+        }
+
+        public event EventHandler<EventArgs> OnUpdateGhostCalculationOrderEvent;
+        public void OnUpdateGhostCalculationOrder()
+        {
+            OnUpdateGhostCalculationOrderEvent?.Invoke(this, new EventArgs());
+        }
+
+        public event EventHandler<Location> OnSetActualLocationEvent;
+        public event EventHandler<Location> OnSetWantedLocationEvent;
+        public void OnSetActualLocation(Location location)
+        {
+            OnSetActualLocationEvent?.Invoke(this, location);
+        }
+
+        public void OnSetWantedLocation(Location location)
+        {
+            OnSetWantedLocationEvent?.Invoke(this, location);
+        }
+
+        public void OnSetWantedLocation(PointD point)
+        {
+            OnSetWantedLocationEvent?.Invoke(this, new Location(point.X, point.Y, 0, 0, 0, 0));
         }
     }    
 }

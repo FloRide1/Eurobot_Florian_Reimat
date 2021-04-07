@@ -22,6 +22,7 @@ namespace StrategyManagerProjetEtudiantNS
 
         TaskDemoMove taskDemoMove;
         TaskDemoMessage taskDemoMessage;
+        TaskDestination taskDestination;
 
         int robotId, teamId;
 
@@ -31,12 +32,13 @@ namespace StrategyManagerProjetEtudiantNS
         {
             taskDemoMove = new TaskDemoMove(this);
             taskDemoMessage = new TaskDemoMessage(this);
+            taskDestination = new TaskDestination(this);
 
             this.robotId = robotId;
             this.teamId = teamId;
             localWorldMap = new LocalWorldMap(robotId, teamId);
 
-            GhostTimer = new Timer(20);
+            GhostTimer = new Timer(10);
             GhostTimer.Elapsed += OnGhostTimerCalculationOrder;
         }
 
@@ -58,7 +60,8 @@ namespace StrategyManagerProjetEtudiantNS
 
         public override void OnGhostLocationReached(object sender, Location location)
         {
-            OnWaypointsReached(location);
+            if (taskDestination != null)
+                taskDestination.TaskReached();
         }
 
         private void OnGhostTimerCalculationOrder(object sender, ElapsedEventArgs e)
@@ -67,13 +70,6 @@ namespace StrategyManagerProjetEtudiantNS
         }
 
         /*********************************** Events de sortie **********************************************/
-        public event EventHandler<EventArgs> OnUpdateGhostCalculationOrderEvent;
-
-        public void OnUpdateGhostCalculationOrder()
-        {
-            OnUpdateGhostCalculationOrderEvent?.Invoke(this, new EventArgs());
-        }
+               
     }
-       
-
 }

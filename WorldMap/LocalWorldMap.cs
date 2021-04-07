@@ -210,7 +210,17 @@ namespace WorldMap
 
         public void OnGhostLocation(object sender, Location location)
         {
-            RobotGhostLocation = location;
+            SetGhostRobotLocation(location);
+        }
+
+        public void OnWaypointReached(object sender, PointD point)
+        {
+            DeleteFirstWaypoint();
+        }
+
+        public void OnDestinationReached(object sender, Location location)
+        {
+            ResetDestination();
         }
         #endregion
         #region Others

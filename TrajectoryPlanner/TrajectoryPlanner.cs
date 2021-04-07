@@ -21,13 +21,13 @@ namespace TrajectoryPlannerNs
 
         double samplingPeriod = 1 / 50.0d;
 
-        double max_angular_acceleration;
+        double max_angular_acceleration = 0.5 * Math.PI * 1.0; /// In rad.s^{-2}
         double max_linear_acceleration;
 
-        double max_angular_speed;
+        double max_angular_speed = 1 * Math.PI * 1.0; /// In rad.s^{-1}
         double max_linear_speed;
 
-        double toleration_angular;
+        double toleration_angular = 0.01;
         double toleration_linear;
 
         Location ActualLocation;
@@ -63,9 +63,14 @@ namespace TrajectoryPlannerNs
             /// We rotate first and next we go forward until we end
             if (GhostLocation != WantedDestination && CalculateTrajectory)
             {
-                CalculateGhostRotation();
+                if (!CalculateGhostRotation())
+                {
+                    return;
+                }
                 // GenerateGhostShifting();
                 CalculateTrajectory = false;
+                OnDestinationReached();
+
             }
         }
 
@@ -73,7 +78,7 @@ namespace TrajectoryPlannerNs
         {
             /// Init
             double theta_ghost = GhostLocation.Theta;
-            double theta_destination = WantedDestination.Theta;
+            double theta_destination = Math.Atan2(WantedDestination.Y - GhostLocation.Y, WantedDestination.X - GhostLocation.X); ;
             double angular_speed = GhostLocation.Vtheta;
 
             /// Loop
@@ -189,6 +194,7 @@ namespace TrajectoryPlannerNs
 
         public void OnLaunchCalculation(object sender, EventArgs e)
         {
+            GhostLocation = ActualLocation;
             CalculateTrajectory = true;
         }
 
@@ -201,6 +207,15 @@ namespace TrajectoryPlannerNs
             }
         }
 
+        public void OnCalculateGhostMovement(object sender, EventArgs e)
+        {
+            CalculateGhostMovement();
+        }
+
+        public void OnDestinationReached()
+        {
+            OnDestinationReachedEvent?.Invoke(this, WantedDestination);
+        }
         #endregion
 
     }

@@ -469,12 +469,13 @@ namespace WpfWorldMapDisplay
 
             foreach (var r in TeamMatesDisplayDictionary)
             {
+                PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Ghost, TeamMatesDisplayDictionary[r.Key].GetRobotGhostPolygon());
 
                 //On trace le robot en dernier pour l'avoir en couche de dessus
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key, TeamMatesDisplayDictionary[r.Key].GetRobotPolygon());
 
                 /// Affichage des robots
-                /// PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Ghost, TeamMatesDisplayDictionary[r.Key].GetRobotGhostPolygon());
+                
                 PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.Speed, TeamMatesDisplayDictionary[r.Key].GetRobotSpeedArrow());
                 if (lwmdType == LocalWorldMapDisplayType.WayPointMap)
                 {
@@ -740,11 +741,9 @@ namespace WpfWorldMapDisplay
 
         public void UpdateRobotDestination(int robotId, Location destinationLocation)
         {
-            if (destinationLocation == null)
-                return;
             if (TeamMatesDisplayDictionary.ContainsKey(robotId))
             {
-                TeamMatesDisplayDictionary[robotId].SetDestination(destinationLocation.X, destinationLocation.Y, destinationLocation.Theta);
+                TeamMatesDisplayDictionary[robotId].SetDestination(destinationLocation);
             }
         }
 

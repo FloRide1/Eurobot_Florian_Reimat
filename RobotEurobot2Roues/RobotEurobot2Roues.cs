@@ -153,6 +153,9 @@ namespace RobotEurobot2Roues
             lidarProcess.OnProcessLidarLineDataEvent += localWorldMap.OnLidarProcessedLineReceived;
             lidarProcess.OnProcessLidarCupDataEvent += localWorldMap.OnLidarProcessedCupReceived;
             //lidarProcess.OnProcessLidarObjectsDataEvent += localWorldMap.OnLidarProcesObjectsReceived;
+
+            localWorldMap.OnLocalWorldMapEvent += strategyManager.OnLocalWorldMapReceived;
+            
             localWorldMap.Init();
             #endregion
 
@@ -160,7 +163,8 @@ namespace RobotEurobot2Roues
             trajectoryPlanner = new TrajectoryPlanner(robotId);
 
             trajectoryPlanner.OnNewGhostLocationEvent += localWorldMap.OnGhostLocation;
-            
+            trajectoryPlanner.OnDestinationReachedEvent += strategyManager.OnGhostLocationReached;
+
             #endregion
 
             #region Strategy /!\ Need to be Last /!\
@@ -168,7 +172,15 @@ namespace RobotEurobot2Roues
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
             strategyManager.OnOdometryPointToMeterSetupEvent += msgGenerator.GenerateMessageOdometryPointToMeter;      //Transmission des messages de set-up du coeff pointToMeter en embarqué
 
-            localWorldMap.OnLocalWorldMapEvent += strategyManager.OnLocalWorldMapReceived;
+            strategyManager.OnDestinationReachedEvent += localWorldMap.OnDestinationReached;
+            strategyManager.OnWaypointsReachedEvent += localWorldMap.OnWaypointReached;
+
+            strategyManager.OnSetActualLocationEvent += trajectoryPlanner.OnUpdateActualLocation;
+            strategyManager.OnSetWantedLocationEvent += trajectoryPlanner.OnUpdateWantedDestination;
+            strategyManager.OnGhostCalculationBeginEvent += trajectoryPlanner.OnLaunchCalculation;
+
+            strategyManager.OnUpdateGhostCalculationOrderEvent += trajectoryPlanner.OnCalculateGhostMovement;
+
             ConsoleFormat.PrintStrategyBoot();
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
             #endregion

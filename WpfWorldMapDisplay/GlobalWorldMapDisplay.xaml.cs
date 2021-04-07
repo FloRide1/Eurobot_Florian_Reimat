@@ -338,11 +338,9 @@ namespace WpfWorldMapDisplay
 
         public void UpdateRobotDestination(int robotId, Location destinationLocation)
         {
-            if (destinationLocation == null)
-                return;
             if (TeamMatesDisplayDictionary.ContainsKey(robotId))
             {
-                TeamMatesDisplayDictionary[robotId].SetDestination(destinationLocation.X, destinationLocation.Y, destinationLocation.Theta);
+                TeamMatesDisplayDictionary[robotId].SetDestination(destinationLocation);
             }
         }
 

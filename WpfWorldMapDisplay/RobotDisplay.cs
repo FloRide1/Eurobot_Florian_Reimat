@@ -74,11 +74,9 @@ namespace WpfWorldMapDisplay
         {
             ghostLocation = loc;
         }
-        public void SetDestination(double x, double y, double theta)
+        public void SetDestination(Location location)
         {
-            destinationLocation.X = x;
-            destinationLocation.Y = y;
-            destinationLocation.Theta = theta;
+            destinationLocation = location;
         }
 
         public void SetWayPoint(List<PointD> ppoint)
@@ -205,6 +203,8 @@ namespace WpfWorldMapDisplay
         public PolygonExtended GetRobotDestinationArrow()
         {
             PolygonExtended polygonToDisplay = new PolygonExtended();
+            if (destinationLocation == null)
+                return polygonToDisplay;
             double angleTeteFleche = Math.PI / 6;
             double longueurTeteFleche = 0.10;
             double headingAngle = Math.Atan2(destinationLocation.Y - robotLocation.Y, destinationLocation.X - robotLocation.X);

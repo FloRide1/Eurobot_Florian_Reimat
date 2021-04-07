@@ -13,9 +13,18 @@ namespace StrategyManagerProjetEtudiantNS
     public enum TaskDestinationState
     {
         Arret,
+        Avance,
         Waypoint,
         Destination,
         AvanceEnCours,
+    }
+
+    public enum TaskDestinationMode
+    { 
+        Waypoint,
+        Destination,
+        Manual,
+        Stop,
     }
 
     public class TaskDestination
@@ -23,6 +32,7 @@ namespace StrategyManagerProjetEtudiantNS
         StrategyEurobot parent;
         Thread TaskThread;
         public TaskDestinationState state = TaskDestinationState.Arret;
+        public TaskDestinationMode mode = TaskDestinationMode.Stop;
 
         Stopwatch sw = new Stopwatch();
         
@@ -40,7 +50,61 @@ namespace StrategyManagerProjetEtudiantNS
         {
             this.state = state;
         }
-             
+           
+        public void TaskReached()
+        {
+            switch (mode)
+            {
+                case TaskDestinationMode.Destination:
+                    parent.OnDestinationReached(parent.localWorldMap.DestinationLocation);
+                    break;
+                case TaskDestinationMode.Waypoint:
+                    parent.OnWaypointsReached(parent.localWorldMap.WaypointLocations[0]);
+                    break;
+                default:
+                    break;
+            }
+            mode = TaskDestinationMode.Stop;
+        }
+        
+        void UpdateTaskMode()
+        {
+            if (parent.localWorldMap == null)
+                return;
+            switch (mode)
+            {
+                case TaskDestinationMode.Stop:
+                    if (parent.localWorldMap.DestinationLocation != null)
+                    {
+                        mode = TaskDestinationMode.Destination;
+                        UpdateAndLaunch(parent.localWorldMap.DestinationLocation);
+
+                    }
+                    else if (parent.localWorldMap.WaypointLocations.Count >= 1)
+                    {
+                        mode = TaskDestinationMode.Waypoint;
+                        PointD point = parent.localWorldMap.WaypointLocations[0];
+                        UpdateAndLaunch(new Location(point.X, point.Y, 0, 0, 0, 0));
+                    }
+                    else
+                    {
+                        state = TaskDestinationState.Arret;
+                    }
+                    break;
+                case TaskDestinationMode.Waypoint:
+                    if (parent.localWorldMap.DestinationLocation != null)
+                    {
+                        mode = TaskDestinationMode.Destination;
+                    }
+                    state = TaskDestinationState.Avance;
+                    break;
+                case TaskDestinationMode.Destination:
+                    state = TaskDestinationState.Avance;
+                    break;
+                default:
+                    break;
+            }
+        }
 
         void TaskThreadProcess()
         {
@@ -50,44 +114,31 @@ namespace StrategyManagerProjetEtudiantNS
                 {
                     case TaskDestinationState.Arret:
                         sw.Restart();
-                        if (parent.localWorldMap.DestinationLocation != null)
-                        {
-                            state = TaskDestinationState.Destination;
-                        }
-                        else if (parent.localWorldMap.WaypointLocations.Count >= 1)
-                        {
-                            state = TaskDestinationState.Waypoint;
-                        }
-                        break;
-
-                    case TaskDestinationState.Waypoint:
-                        sw.Restart();
-
-                        if (parent.localWorldMap.DestinationLocation != null)
-                        {
-                            state = TaskDestinationState.Destination;
-                        }
-                        else
-                        {
-
-                            if (parent.localWorldMap.WaypointLocations.Count >= 1)
-                            {
-                                state = TaskDestinationState.AvanceEnCours;
-                            }
-                        }
-                        break;
-                    case TaskDestinationState.Destination:
-                        sw.Restart();
-                        break;
+                        UpdateTaskMode();
+                        break;                    
                     case TaskDestinationState.AvanceEnCours:
                         if (sw.ElapsedMilliseconds > 500)
-                            state = TaskDestinationState.Arret;                           
+                            state = TaskDestinationState.Avance;                           
+                        break;
+                    case TaskDestinationState.Avance:
+                        sw.Restart();
+                        state = TaskDestinationState.AvanceEnCours;
+                        UpdateTaskMode();
                         break;
                     default:
                         break;
                 }
                 Thread.Sleep(100);
             }
+        }
+
+        void UpdateAndLaunch(Location location)
+        {
+            parent.OnSetActualLocation(parent.localWorldMap.RobotLocation);
+            parent.OnSetWantedLocation(location);
+
+            parent.OnGhostCalculationBegin();
+
         }
     }
 }
