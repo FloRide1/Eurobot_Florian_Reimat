@@ -60,6 +60,9 @@ namespace StrategyManagerProjetEtudiantNS
                     break;
                 case TaskDestinationMode.Waypoint:
                     parent.OnWaypointsReached(parent.localWorldMap.WaypointLocations[0]);
+
+                    Random rand = new Random();
+                    parent.OnSetNewWaypoint(new PointD((rand.NextDouble() - 0.5) * 2.6, (rand.NextDouble() - 0.5) * 1.8)); /// Only for fun
                     break;
                 default:
                     break;

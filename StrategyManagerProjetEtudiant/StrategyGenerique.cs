@@ -281,6 +281,9 @@ namespace StrategyManagerProjetEtudiantNS
 
         public event EventHandler<Location> OnSetActualLocationEvent;
         public event EventHandler<Location> OnSetWantedLocationEvent;
+        public event EventHandler<PointD> OnSetNewWaypointEvent;
+        public event EventHandler<Location> OnSetNewDestinationEvent;
+
         public void OnSetActualLocation(Location location)
         {
             OnSetActualLocationEvent?.Invoke(this, location);
@@ -294,6 +297,16 @@ namespace StrategyManagerProjetEtudiantNS
         public void OnSetWantedLocation(PointD point)
         {
             OnSetWantedLocationEvent?.Invoke(this, new Location(point.X, point.Y, 0, 0, 0, 0));
+        }
+
+        public void OnSetNewWaypoint(PointD point)
+        {
+            OnSetNewWaypointEvent?.Invoke(this, point);
+        }
+
+        public void OnSetNewDestination(Location location)
+        {
+            OnSetNewDestinationEvent?.Invoke(this, location);
         }
     }    
 }

@@ -180,6 +180,9 @@ namespace RobotEurobot2Roues
             strategyManager.OnSetWantedLocationEvent += trajectoryPlanner.OnUpdateWantedDestination;
             strategyManager.OnGhostCalculationBeginEvent += trajectoryPlanner.OnLaunchCalculation;
 
+            strategyManager.OnSetNewWaypointEvent += localWorldMap.AddNewWaypointsEvent;
+            strategyManager.OnSetNewDestinationEvent += localWorldMap.SetDestinationLocationEvent;
+
             strategyManager.OnUpdateGhostCalculationOrderEvent += trajectoryPlanner.OnCalculateGhostMovement;
 
             ConsoleFormat.PrintStrategyBoot();

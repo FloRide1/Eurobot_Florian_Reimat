@@ -154,7 +154,10 @@ namespace WorldMap
             AddNewWaypoints(point);
         }
 
-        
+        public void SetDestinationLocationEvent(object sender, Location location)
+        {
+            SetDestinationLocation(location);
+        }
 
         public void SetDestinationLocationEvent(object sender, PointD point)
         {

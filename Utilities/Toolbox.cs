@@ -193,6 +193,29 @@ namespace Utilities
             return distance;            
         }
 
+        public static PointD ProjectedPointOnLineFromWaypoint(PointD pt, PointD ptSeg1, PointD ptSeg2)
+        {
+            /// STOLEN FROM KEENAN
+            
+            var A = pt.X - ptSeg1.X;
+            var B = pt.Y - ptSeg1.Y;
+            var C = ptSeg2.X - ptSeg1.X;
+            var D = ptSeg2.Y - ptSeg1.Y;
+
+            double dot = A * C + B * D;
+            double len_sq = C * C + D * D;
+            double param = -1;
+            if (len_sq != 0) //in case of 0 length line
+                param = dot / len_sq;
+
+            double xx, yy;
+
+            xx = ptSeg1.X + param * C;
+            yy = ptSeg1.Y + param * D;
+
+            return new PointD(xx, yy);
+        }
+
         public static Line ConvertPointsToLine(PointD point_1, PointD point_2)
         {
             
@@ -216,27 +239,19 @@ namespace Utilities
 
         public static PointD GetCrossingPoint(double slope_a, double y_intercept_a, double slope_b, double y_intercept_b)
         {
-            double estimated_X = (y_intercept_a - y_intercept_b) / (slope_b - slope_a);
-            double estimated_Y = slope_a * estimated_X + y_intercept_a;
-
-            return new PointD(estimated_X, estimated_Y);
+            return GetCrossingPoint(new Line(slope_a, y_intercept_a), new Line(slope_b, y_intercept_b));
         }
 
         public static PointD GetPerpendicularPoint(PointD point, double slope, double y_intercept)
         {
-            double perpendicular_slope = -slope;
-            double perpendicular_y_intercept = point.Y - (perpendicular_slope * point.X);
-
-            PointD target_point =  GetCrossingPoint(slope, y_intercept, perpendicular_slope, perpendicular_y_intercept);
-            return target_point;
+            return GetPerpendicularPoint(point, new Line(slope, y_intercept));
         }
 
         public static PointD GetPerpendicularPoint(PointD point, Line line)
         {
-            double perpendicular_slope = - line.slope;
-            double perpendicular_y_intercept = point.Y - (perpendicular_slope * point.X);
+            Line perpendicular_line = new Line(- line.slope, point.Y - (-line.slope * point.X));
 
-            PointD target_point = GetCrossingPoint(line.slope, line.y_intercept, perpendicular_slope, perpendicular_y_intercept);
+            PointD target_point = GetCrossingPoint(line, perpendicular_line);
             return target_point;
         }
 
