@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -98,53 +99,13 @@ namespace LidarProcessNS
                 }
             }
 
-
-<<<<<<< Updated upstream
-
-            List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 1);
-=======
-            List<Segment> Lines = new List<Segment>();
-            List<ClusterObjects> clusterObjects = FloDetectCusters(validPoint,validPoint.Count(), 50);
->>>>>>> Stashed changes
+            List<Cup> cups = FloCupDetector(validPoint,validPoint.Count(), 75);
             List<PolarPointRssi> processedPoints = new List<PolarPointRssi>();
 
-            foreach (ClusterObjects c in clusterObjects)
+            foreach (Cup c in cups)
             {
-                foreach (PolarPointRssi p in c.points)
-<<<<<<< Updated upstream
-                {
-                    processedPoints.Add(p);
-                }
-=======
-                {
-                    processedPoints.Add(p);
-                }
-
-                Cup cup = DetectCup(c);
-                // The null condition is Bad need to edit
-                if (cup != null)
-                {
-                    list_of_cups.Add(cup);
-                }
-
-                //List<PolarCourbure> polarCourbures = ExtractCurvature(c.points);
-                //if (polarCourbures != null)
-                //{
-                //    List<PolarPointRssi> ptLineList = ExtractLinesFromCurvature(c.points, polarCourbures);
-                //    List<PolarPointRssi> ptCornerList = ExtractCornersFromCurvature(c.points, polarCourbures);
-                //    if (ptLineList.Count() >= 1)
-                //    {
-                //        Lines.Add(CreateLineSegment(ptLineList, 1));
-                //    }
-                    
-                //    foreach (PolarPointRssi p in ptCornerList)
-                //    {
-                //        processedPoints.Add(p);
-                //    }
-                //}
->>>>>>> Stashed changes
+                processedPoints.Add(c.pos);
             }
-
 
             List<Segment> Lines = new List<Segment>();
             Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.2d));
@@ -157,15 +118,68 @@ namespace LidarProcessNS
             OnProcessLidarXYDataEvent?.Invoke(this, ConvertRssiToXYCoord(processedPoints));
         }
 
-        public List<ClusterObjects> FloDetectCusters(List<PolarPointRssi> points, int lidarRes, int lowRes)
+        public List<Cup> FloCupDetector(List<PolarPointRssi> points, int lidarRes, int lowRes)
         {
-            List<ClusterObjects> clusters = new List<ClusterObjects>();
-            PolarPointRssi[] lowResPoints = new PolarPointRssi[lowRes];
+            List<PolarPointRssi> lowResPoints = new List<PolarPointRssi> { };
+            List<PolarPointRssi> moddedLowResPoints = new List<PolarPointRssi> { };
 
-            for(int i = 0; i < lidarRes/lowRes; i++) lowResPoints[i] = points[(lidarRes / lowRes)*i];
-            clusters.Add(new ClusterObjects(lowResPoints,lowRes));
+            for (int i = 0; i < lowRes; i++)
+            {
+                lowResPoints.Add(points[(lidarRes / lowRes) * i]);
+            }
 
-            return clusters;
+            foreach(PolarPointRssi pieceOfShit in lowResPoints)
+            {
+                moddedLowResPoints.Add(new PolarPointRssi(pieceOfShit.Angle, pieceOfShit.Distance, pieceOfShit.Rssi));
+            }
+
+            for (int i = 2; i < lowRes - 2 ; i++)
+            {
+                double avrgDist = 0;
+                for(int ii = -2 ; ii < 3 ; ii++)
+                {
+                    avrgDist += lowResPoints[i + ii].Distance;
+                }
+                moddedLowResPoints[i].Distance = avrgDist / 5;
+            }
+
+            moddedLowResPoints[0].Distance = 0;
+            moddedLowResPoints[1].Distance = 0;
+            moddedLowResPoints[lowRes - 1].Distance = 0;
+            moddedLowResPoints[lowRes - 2].Distance = 0;
+
+            List<List<PolarPointRssi>> clusters = new List<List<PolarPointRssi>> { };
+            List<Cup> cups = new List<Cup> { };
+            List<PolarPointRssi> pois = new List<PolarPointRssi> { };
+
+            for (int i = 0; i < lowRes; i++)
+            {
+                if(points[i * (lidarRes/lowRes)].Distance < moddedLowResPoints[i].Distance * 0.97)
+                {
+                    for (int ii = (lidarRes / lowRes) * (i - 1); ii < (lidarRes / lowRes) * (i + 1); ii++)
+                    {
+                        //if (points[ii].Distance < moddedLowResPoints[i].Distance)
+                        //{
+                            pois.Add(points[ii]);
+                        //}
+                    }
+                }
+                else
+                {
+                    if (pois.Count() > 0)
+                    {
+                        clusters.Add(pois);
+                    }
+                    pois.Clear();
+                }
+            }
+
+            foreach (List<PolarPointRssi> things in clusters)
+            {
+                cups.Add(new Cup(things[0], Color.White));
+            }
+
+            return cups;
         }
 
         public List<ClusterObjects> DetectClusterOfPoint(List<PolarPointRssi> pointsList, double thresold)
@@ -435,57 +449,6 @@ namespace LidarProcessNS
             return line;
         }
 
-<<<<<<< Updated upstream
-=======
-        public Cup DetectCup(ClusterObjects cluster)
-        {
-            /// TEMPORARY NEED TO EDIT: ONLY FOR DEBUG PURPOSE
-
-            PolarPointRssi begin_point = cluster.points[0];
-            PolarPointRssi end_point = cluster.points[cluster.points.Count - 1];
-
-            double lenght_of_cluster = CalculatePolarDistancePoint(begin_point, end_point);
-
-            if (lenght_of_cluster >= 0.040 && lenght_of_cluster <= 0.08)
-            {
-                cluster.sus = ItemType.Cup;
-                List<PointD> pointDs = new List<PointD>();
-
-                foreach (PolarPointRssi point in cluster.points)
-                {
-                    pointDs.Add(ConvertPolarToRelativeCoord(point));
-                }
-
-                double median = 0.80;
-                double b = cluster.points[(int)(cluster.points.Count() * median)].Rssi;
-                double e = cluster.points[(int)(cluster.points.Count() * (1 - median))].Rssi;
-                double moyenne = (b + e) / 2;
-                Color color = Color.White;
-
-                if (moyenne >= 9000 && moyenne <= 12000)
-                {
-                    color = Color.Green;
-                }
-                else if (moyenne >= 12000 && moyenne <= 14000)
-                {
-                    color = Color.Red;
-                }
-                else
-                {
-                    color = Color.White;
-                }
-
-                //Console.WriteLine(2*centerDistance*angleDifferenceHalf/Math.Atan(centerDistance));
-                PointD center_point = GetMediumPoint(pointDs);
-                return new Cup(center_point, 0.065, color);
-            }
-            else
-            {
-                return new Cup();
-            }
-
-        }
-
         #region Gies Detection
         List<PolarCourbure> ExtractCurvature(List<PolarPointRssi> ptList)
         {
@@ -706,7 +669,7 @@ namespace LidarProcessNS
         }
 
         #endregion
->>>>>>> Stashed changes
+
 
         #region Utils
         #region Segments

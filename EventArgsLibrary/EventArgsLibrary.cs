@@ -48,7 +48,6 @@ namespace EventArgsLibrary
     public class ClusterObjects : EventArgs
     {
         public List<PolarPointRssi> points { get; set; }
-        public ItemType sus { get; set; }
 
         public ClusterObjects()
         {
@@ -58,12 +57,25 @@ namespace EventArgsLibrary
         {
             points = polarPointRssis;
         }
-        public ClusterObjects(PolarPointRssi[] pts, int ptsCount)
-        {
-            for (int i = 0; i < ptsCount; i++) points.Add(pts[i]);
+    }
+
+    public class Cup : EventArgs
+    {
+        public PolarPointRssi pos { get; set; }
+        public Color color { get; set; }
+
+        public Cup() {
+            pos = new PolarPointRssi(0, 0, 0);
+            color = Color.White;
         }
 
+        public Cup(PolarPointRssi newPos, Color newColor)
+        {
+            pos = newPos;
+            color = newColor;
+        }
     }
+
     public class DoubleEventArgs : EventArgs
     {
         public double Value { get; set; }

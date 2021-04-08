@@ -8,8 +8,13 @@ namespace Utilities
 {
     public class PointD
     {
-        public double X;// { get; set; }
-        public double Y;// { get; set; }
+        public double X { get; set; }
+        public double Y { get; set; }
+
+        public PointD()
+        {
+        }
+
         public PointD(double x, double y)
         {
             X = x;

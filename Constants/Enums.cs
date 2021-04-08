@@ -25,13 +25,4 @@ namespace Constants
         Left,
         Right
     }
-
-    public enum ItemType
-    {
-        Unknown,
-        Wall,
-        Corner,
-        Cup,
-        Robot
-    }
 }
