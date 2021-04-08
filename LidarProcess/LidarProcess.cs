@@ -481,7 +481,7 @@ namespace LidarProcessNS
                 {
                     return new Cup();
                 }
-                Console.WriteLine(moyenne);
+                //Console.WriteLine(moyenne);
                 PointD center_point = GetMediumPoint(pointDs);
                 return new Cup(center_point, 0.065, color);
             }
