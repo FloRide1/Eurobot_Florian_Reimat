@@ -163,6 +163,7 @@ namespace RobotEurobot2Roues
             trajectoryPlanner = new TrajectoryPlanner(robotId);
 
             trajectoryPlanner.OnNewGhostLocationEvent += localWorldMap.OnGhostLocation;
+            trajectoryPlanner.OnNewRobotLocationEvent += localWorldMap.OnRobotLocation;
             trajectoryPlanner.OnDestinationReachedEvent += strategyManager.OnGhostLocationReached;
 
             #endregion

@@ -213,6 +213,11 @@ namespace WorldMap
             SetGhostRobotLocation(location);
         }
 
+        public void OnRobotLocation(object sender, Location location)
+        {
+            OnUpdateRobotLocation(location);
+        }
+
         public void OnWaypointReached(object sender, PointD point)
         {
             DeleteFirstWaypoint();

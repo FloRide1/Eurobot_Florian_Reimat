@@ -38,7 +38,7 @@ namespace StrategyManagerProjetEtudiantNS
             this.teamId = teamId;
             localWorldMap = new LocalWorldMap(robotId, teamId);
 
-            GhostTimer = new Timer(10);
+            GhostTimer = new Timer(20);
             GhostTimer.Elapsed += OnGhostTimerCalculationOrder;
         }
 

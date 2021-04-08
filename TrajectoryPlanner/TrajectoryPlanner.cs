@@ -17,7 +17,15 @@ namespace TrajectoryPlannerNs
         /// </summary>
         #region Parameters
         int robotId;
-        bool CalculateTrajectory = false;
+
+        private enum TrajectoryState
+        {
+            Idle,
+            Angular,
+            Linear
+        }
+
+        TrajectoryState state = TrajectoryState.Idle;
 
         double samplingPeriod = 1d / 50.0d;
 
@@ -55,24 +63,33 @@ namespace TrajectoryPlannerNs
 
             GhostLocation = ActualLocation;
 
-            CalculateTrajectory = true;
+            state = TrajectoryState.Angular;
         }
 
         public void CalculateGhostMovement()
         {
             /// We rotate first and next we go forward until we end
-            if (GhostLocation != WantedDestination && CalculateTrajectory)
+            if (GhostLocation != WantedDestination && state != TrajectoryState.Idle)
             {
-                if (!CalculateGhostRotation())
+                if (state == TrajectoryState.Angular)
                 {
-                    return;
+                    if (CalculateGhostRotation())
+                    {
+                        state = TrajectoryState.Linear;
+                    }
                 }
-                if (!GenerateGhostShifting())
+                else if (state == TrajectoryState.Linear)
                 {
-                    return;
-                }
-                CalculateTrajectory = false;
-                OnDestinationReached();
+                    if (GenerateGhostShifting())
+                    {
+                        state = TrajectoryState.Idle;
+                        GhostLocation = new Location(WantedDestination.X, WantedDestination.Y, GhostLocation.Theta, 0, 0, 0);
+                        OnNewGhostLocation(GhostLocation);
+                        //ActualLocation = GhostLocation; /// NEED TO DELETE JUST FOR FUN
+                        //OnNewRobotLocation(ActualLocation); /// NEED TO DELETE JUST FOR FUN
+                        OnDestinationReached();
+                    }
+                }             
 
             }
         }
@@ -145,7 +162,6 @@ namespace TrajectoryPlannerNs
 
             if (Math.Abs(theta_remaining) < toleration_angular)
             {
-                GhostLocation = WantedDestination;
                 return true;
             }
             return false;
@@ -158,13 +174,18 @@ namespace TrajectoryPlannerNs
             /// Init
             PointD xy_ghost = new PointD(GhostLocation.X, GhostLocation.Y);
             PointD xy_wanted = new PointD(WantedDestination.X, WantedDestination.Y);
+
             Line line = Toolbox.ConvertPointsToLine(xy_ghost, xy_wanted);
 
             PointD xy_destination = Toolbox.GetPerpendicularPoint(xy_wanted, line); /// Make A projection for avoiding infinity movement
             double linear_speed = GhostLocation.Vx;
 
             /// Loop
+            double theta_destination = Math.Atan2(WantedDestination.Y - GhostLocation.Y, WantedDestination.X - GhostLocation.X);
+            double theta_remaining = theta_destination - Toolbox.ModuloByAngle(theta_destination, GhostLocation.Theta);
+
             double linear_remaining = Toolbox.Distance(xy_ghost, xy_destination);
+            linear_remaining *= (theta_remaining > Math.PI / 2) ? -1 : 1;
             double linear_stop = Math.Pow(linear_speed, 2) / (2 * max_linear_acceleration);
 
             if (linear_remaining > 0)
@@ -205,26 +226,26 @@ namespace TrajectoryPlannerNs
                         if (linear_speed > -max_linear_speed)
                         {
                             /// Speed Up (Negatively)
-                            linear_speed = linear_speed - (max_angular_acceleration * samplingPeriod);
+                            linear_speed = linear_speed - (max_linear_acceleration * samplingPeriod);
                         }
                     }
                     else
                     {
                         /// Brake (Negatively)
-                        linear_speed = linear_speed + (max_angular_acceleration * samplingPeriod);
+                        linear_speed = linear_speed + (max_linear_acceleration * samplingPeriod);
                     }
                 }
             }
 
             double x_ghost = xy_ghost.X + linear_speed * samplingPeriod * Math.Cos(GhostLocation.Theta);
-            double y_ghost = xy_ghost.X + linear_speed * samplingPeriod * Math.Sin(GhostLocation.Theta);
+            double y_ghost = xy_ghost.Y + linear_speed * samplingPeriod * Math.Sin(GhostLocation.Theta);
             
             GhostLocation = new Location(x_ghost, y_ghost, GhostLocation.Theta, linear_speed, 0, 0);
             OnNewGhostLocation(GhostLocation);
 
             if (Math.Abs(linear_remaining) < toleration_linear)
             {
-                GhostLocation = WantedDestination;
+                
                 return true;
             }
 
@@ -235,6 +256,7 @@ namespace TrajectoryPlannerNs
 
         #region Events
         public event EventHandler<Location> OnNewGhostLocationEvent;
+        public event EventHandler<Location> OnNewRobotLocationEvent;
         public event EventHandler<Location> OnNewMovingOrderEvent;
         public event EventHandler<Location> OnDestinationReachedEvent;
         public event EventHandler<PolarSpeedArgs> OnPolarSpeedOrderEvent;
@@ -255,6 +277,11 @@ namespace TrajectoryPlannerNs
         {
             OnNewGhostLocationEvent?.Invoke(this, location);
         }
+
+        public virtual void OnNewRobotLocation(Location location)
+        {
+            OnNewRobotLocationEvent?.Invoke(this, location);
+        }
         #endregion
 
         #region Input CallBack
@@ -271,7 +298,7 @@ namespace TrajectoryPlannerNs
         public void OnLaunchCalculation(object sender, EventArgs e)
         {
             GhostLocation = ActualLocation;
-            CalculateTrajectory = true;
+            state = TrajectoryState.Angular;
         }
 
         public void OnPhysicalPositionReceived(object sender, LocationArgs e)
@@ -292,6 +319,8 @@ namespace TrajectoryPlannerNs
         {
             OnDestinationReachedEvent?.Invoke(this, WantedDestination);
         }
+
+
         #endregion
 
     }

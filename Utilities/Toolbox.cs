@@ -198,7 +198,7 @@ namespace Utilities
             
             double slope = 0;
             if (point_1.X != point_2.X)
-                slope = (point_2.Y - point_2.Y) / (point_2.X - point_1.X);
+                slope = (point_2.Y - point_1.Y) / (point_2.X - point_1.X);
 
             double y_intercept = point_1.Y - (point_1.X * slope);
 
