@@ -221,6 +221,14 @@ namespace EventArgsLibrary
         public float Puissance { get; set; }
     }
 
+    public enum LidarDataType
+    {
+        RawData = 0,
+        ProcessedData1 = 1,
+        ProcessedData2 = 2,
+        ProcessedData3 = 3,
+    }
+
     public class HoughLine : EventArgs
     {
         public double rho { get; set; }

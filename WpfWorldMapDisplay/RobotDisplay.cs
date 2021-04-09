@@ -26,8 +26,8 @@ namespace WpfWorldMapDisplay
 
         public double[,] heatMapStrategy;
         public double[,] heatMapWaypoint;
-        List<PointD> LidarRawPoints;
-        List<PointD> LidarProcessedPoints;
+        List<PointDExtended> LidarRawPoints;
+        List<PointDExtended>[] LidarProcessedPoints = new List<PointDExtended>[3];
         List<SegmentExtended> LidarSegment;
         List<Cup> LidarCup;
         List<LidarObjects> LidarObjectList;
@@ -46,8 +46,6 @@ namespace WpfWorldMapDisplay
             ghostShape = ghstShape;
             robotName = name;
 
-            LidarRawPoints = new List<PointD>();
-            LidarProcessedPoints = new List<PointD>();
             ballLocationList = new List<Location>();
         }
 
@@ -103,9 +101,21 @@ namespace WpfWorldMapDisplay
             this.heatMapWaypoint = heatMap;
         }
 
-        public void SetLidarMap(List<PointD> lidarMap)
+
+        public void SetLidarMap(List<PointDExtended> lidarMap, LidarDataType dataType)
         {
-            this.LidarRawPoints = lidarMap;
+            switch (dataType)
+            {
+                case LidarDataType.RawData:
+                    this.LidarRawPoints = lidarMap;
+                    break;
+                case LidarDataType.ProcessedData1:
+                    this.LidarProcessedPoints[0] = lidarMap;
+                    break;
+                default:
+                    break;
+            }
+            
         }
 
         public void SetLidarSegment(List<SegmentExtended> segments)
@@ -118,10 +128,6 @@ namespace WpfWorldMapDisplay
             LidarCup = cups;
         }
 
-        public void SetLidarProcessedMap(List<PointD> lidarProcessedMap)
-        {
-            this.LidarProcessedPoints = lidarProcessedMap;
-        }
         public void SetLidarObjectList(List<LidarObjects> lidarObjectList)
         {
             this.LidarObjectList = lidarObjectList;
@@ -284,8 +290,8 @@ namespace WpfWorldMapDisplay
 
             lock (LidarRawPoints)
             {
-                var listX = LidarRawPoints.Select(e => e.X);
-                var listY = LidarRawPoints.Select(e => e.Y);
+                var listX = LidarRawPoints.Select(e => e.Pt.X);
+                var listY = LidarRawPoints.Select(e => e.Pt.Y);
 
                 if (listX.Count() == listY.Count())
                 {
@@ -302,8 +308,8 @@ namespace WpfWorldMapDisplay
             if (LidarProcessedPoints == null)
                 return dataSeries;
 
-            var listX = LidarProcessedPoints.Select(e => e.X);
-            var listY = LidarProcessedPoints.Select(e => e.Y);
+            var listX = LidarProcessedPoints.Select(e => e.Pt.X);
+            var listY = LidarProcessedPoints.Select(e => e.Pt.Y);
 
             if (listX.Count() == listY.Count())
             {

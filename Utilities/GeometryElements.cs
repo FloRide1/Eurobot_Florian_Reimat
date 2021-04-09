@@ -23,7 +23,21 @@ namespace Utilities
             Y = y;
         }
     }
-    
+
+    public class PointDExtended
+    {
+        public PointD Pt;
+        public Color Color;
+        public double Width;
+
+        public PointDExtended(PointD pt, Color c, double size)
+        {
+            Pt = pt;
+            Color = c;
+            Width = size;
+        }
+    }
+
     public class Point3D
     {
         public double X;// { get; set; }
@@ -82,6 +96,21 @@ namespace Utilities
         public PolarPointRssi()
         {
 
+        }
+    }
+
+
+    public class PolarPointRssiExtended
+    {
+        public PolarPointRssi Pt { get; set; }
+        public double Width { get; set; }
+        public Color Color { get; set; }
+
+        public PolarPointRssiExtended(PolarPointRssi pt, double width, Color c)
+        {
+            Pt = pt;
+            Width = width;
+            Color = c;
         }
     }
 

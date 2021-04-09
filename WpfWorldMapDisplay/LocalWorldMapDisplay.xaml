@@ -39,6 +39,8 @@
                 </local:PolygonRenderableSeries>
                 <local:SegmentRenderableSeries x:Name="SegmentSeries" Opacity="0.5">
                 </local:SegmentRenderableSeries>
+                <local:PointListRenderableSeries x:Name="LidarPtExtendedSeries" Opacity="1">
+                </local:PointListRenderableSeries>
                 <s:FastUniformHeatmapRenderableSeries x:Name="heatmapSeries" Opacity="0.6">
                     <s:FastUniformHeatmapRenderableSeries.ColorMap>
                         <s:HeatmapColorPalette Minimum="-1" Maximum="1">
@@ -65,11 +67,6 @@
                         <s:EllipsePointMarker Width="4" Height="4" Fill="SteelBlue" Stroke="Purple" StrokeThickness="1"/>
                     </s:XyScatterRenderableSeries.PointMarker>
                 </s:XyScatterRenderableSeries>
-                <s:ExtremeScatterRenderableSeries x:Name="LidarObjectPoints" Opacity="0.5" PaletteProvider="{StaticResource ObjectPointMarkerPaletteProvider}">
-                    <s:ExtremeScatterRenderableSeries.PointMarker >
-                        <s:EllipsePointMarker Width="6" Height="6" Fill="SteelBlue" Stroke="Aquamarine" StrokeThickness="1"/>
-                    </s:ExtremeScatterRenderableSeries.PointMarker>
-                </s:ExtremeScatterRenderableSeries>
                 <local:PolygonRenderableSeries x:Name="PolygonSeries" Opacity="0.5">
                 </local:PolygonRenderableSeries>
                 <s:XyScatterRenderableSeries x:Name="BallPoints" Opacity="0.5">
