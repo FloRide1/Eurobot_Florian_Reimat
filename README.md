@@ -15,15 +15,24 @@ of this project is  pretty similar to the source.
 	- [x] MsgGenerator
 	- [x] MsgProcessor
 	- [x] UsbVendor
-- [ ] Add an Trajectory Planner (Basic)
+- [ ] Make the Trajectory Planner
+	- [x] Ghost Rotation
+	- [x] Ghost Shifting
+	- [ ] PID Controller
+	- [ ] Robot Enslavement
 - [ ] Improve WPF interface 
-	- [ ] Handle Multiple Waypoints 
+	- [x] Handle Multiple Waypoints 
 	- [ ] Preview Trajectory Planner before applying
-	- [ ] Improve Ghost Preview
+	- [x] Improve Ghost Preview
 	- [ ] Add Rack State Wpf Controller
 	- [ ] Add Points Estimation Wpf Controller
 	- [ ] Make an only Match Wpf Controller
 - [ ] Make an Strategy Manager
+- [ ] Make Lidar Processing
+	- [x] Make Clusters Detection
+	- [x] Make Cup Detection
+	- [x] Make Line Detection
+	- [ ] Make Rectangle Fitting
 - [x] Others
 	- [x] Implementing Protocol Security
 
