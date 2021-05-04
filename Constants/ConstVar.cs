@@ -11,8 +11,7 @@ namespace Constants
         public const byte START_OF_FRAME = 0xFE;
         public const byte MAX_MSG_LENGHT = 255;
 
-        public const string SCICHART_RUNTIME_KEY = "RJWA77RbaJDdCRJpg4Iunl5Or6/FPX1xT+Gzu495Eaa0ZahxWi3jkNFDjUb/w70cHXyv7viRTjiNRrYqnqGA+Dc/yzIIzTJlf1s4DJvmQc8TCSrH7MBeQ2ON5lMs/vO0p6rBlkaG+wwnJk7cp4PbOKCfEQ4NsMb8cT9nckfdcWmaKdOQNhHsrw+y1oMR7rIH+rGes0jGGttRDhTOBxwUJK2rBA9Z9PDz2pGOkPjy9fwQ4YY2V4WPeeqM+6eYxnDZ068mnSCPbEnBxpwAldwXTyeWdXv8sn3Dikkwt3yqphQxvs0h6a8Dd6K/9UYni3o8pRkTed6SWodQwICcewfHTyGKQowz3afARj07et2h+becxowq3cRHL+76RyukbIXMfAqLYoT2UzDJNsZqcPPq/kxeXujuhT4SrNF3444MU1GaZZ205KYEMFlz7x/aEnjM6p3BuM6ZuO3Fjf0A0Ki/NBfS6n20E07CTGRtI6AsM2m59orPpI8+24GFlJ9xGTjoRA==";
-
+        public const string SCICHART_RUNTIME_KEY = "Wh4gbehyfiMgkJA2zpELG3Z1hR4/RsihR9mWQXQ4oz3z/12i6QyyTgoag5ThU5WmVg3FVgxOAS3stZHqZrMg0btp5DhpXrOEp8zPV/UBZcZO3W9yEzvIuu0odvX0tx8s+EG27UvGlc6qUQXylWIRiG/Pyz9BN4CYd7bHOMQKTEnx6vpexCxfZYK930TYzo2hCJJTaty93ld1feRDCYlGubQMDcV3+9Ogsc+P67ldqTghn5pUZfukASkp3Pw1wui/TPR3iLp1rDTN7RJWzfFkMhTPjDLw46hW18ixWCzWb1F2fI1OghfjcLQFCAVw+v90KsP3V71OaVtW9Ur2WcH0/p0Rlzi+HjmE2rvQkiJjiOr5AoP/tKTM6AmfsCUA3WtHQ/gDpUkkXcadoIZ9YPkt9mR0WdmzsPFMuQ56L38ZpIRVVytLFrPH9yfsDbffsfRMwTU99x9OOgozJorss2WXY4Da8EROiVvcyS1/2UP/KRoYvbTZGrEVe/a/ii4DIhZOvg==";
         public const double EUROBOT_ODOMETRY_POINT_TO_METER = 1.178449e-06;
         public const double EUROBOT_WHEELS_ANGLE = 1.570796e+00;
         public const double EUROBOT_MATRIX_X_COEFF = 5.000000e-01;

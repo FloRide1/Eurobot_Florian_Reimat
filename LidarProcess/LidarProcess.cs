@@ -64,9 +64,10 @@ namespace LidarProcessNS
                 FloPoint.Add(new PolarPointRssi(points.Angle, points.Distance * Math.Cos(points.Angle), points.Rssi));
             }
             rawLidar.PtList = rawLidarPoints;
+
             OnRawLidarDataEvent?.Invoke(this, rawLidar);
             OnRawLidarPointPolarEvent?.Invoke(this, rawLidarPoints);
-            OnRawLidarPointXYEvent?.Invoke(this, ConvertRssiToXYCoord(rawLidarPoints));
+            OnRawLidarPointXYEvent?.Invoke(this, rawLidarPoints.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
             ProcessLidarData(rawLidarPoints);
         }
 
@@ -80,8 +81,8 @@ namespace LidarProcessNS
         public event EventHandler<RawLidarArgs> OnRawLidarDataEvent;
         public event EventHandler<RawLidarArgs> OnProcessLidarDataEvent;
         public event EventHandler<List<PolarPointRssi>> OnRawLidarPointPolarEvent;
-        public event EventHandler<List<PointD>> OnRawLidarPointXYEvent;
-        public event EventHandler<List<PointD>> OnProcessLidarXYDataEvent;
+        public event EventHandler<List<PointDExtended>> OnRawLidarPointXYEvent;
+        public event EventHandler<List<PointDExtended>> OnProcessLidarXYDataEvent;
         public event EventHandler<List<PolarPointRssi>> OnProcessLidarPolarDataEvent;
         public event EventHandler<List<SegmentExtended>> OnProcessLidarLineDataEvent;
         public event EventHandler<List<LidarObjects>> OnProcessLidarObjectsDataEvent;
@@ -154,7 +155,7 @@ namespace LidarProcessNS
             OnProcessLidarDataEvent?.Invoke(this, processLidar);
 
             OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints);
-            OnProcessLidarXYDataEvent?.Invoke(this, ConvertRssiToXYCoord(processedPoints));
+            OnProcessLidarXYDataEvent?.Invoke(this, processedPoints.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
         }
         #endregion
 
@@ -236,9 +237,9 @@ namespace LidarProcessNS
             int center_index = GetIndexOfAngle(angle_array, angle);
 
             /// Get First three Points
-            PointD center_point = ConvertPolarToXYAbsoluteCoord(pointsList[center_index]);
-            PointD left_center_point = ConvertPolarToXYAbsoluteCoord(pointsList[center_index - 1]);
-            PointD right_center_pointsList = ConvertPolarToXYAbsoluteCoord(pointsList[center_index + 1]);
+            PointD center_point = Toolbox.ConvertPolarToPointD(pointsList[center_index]);
+            PointD left_center_point = Toolbox.ConvertPolarToPointD(pointsList[center_index - 1]);
+            PointD right_center_pointsList = Toolbox.ConvertPolarToPointD(pointsList[center_index + 1]);
 
             /// Points for Linear Regression
             List<double> xPoints = new List<double>() { left_center_point.X, center_point.X, right_center_pointsList.X };
@@ -273,7 +274,7 @@ namespace LidarProcessNS
 
                     /// Calculate Distance with measured point
                     int angle_index = GetIndexOfAngle(angle_array, angle);
-                    PointD measured_point = ConvertPolarToXYAbsoluteCoord(pointsList[angle_index]);
+                    PointD measured_point = Toolbox.ConvertPolarToPointD(pointsList[angle_index]);
 
                     double delta = Toolbox.Distance(estimated_point, measured_point);
 
@@ -315,7 +316,7 @@ namespace LidarProcessNS
                                     PolarPointRssi actual_point = pointsList[j];
 
                                     double measured_angle = actual_point.Angle;
-                                    measured_point = ConvertPolarToXYAbsoluteCoord(actual_point);
+                                    measured_point = Toolbox.ConvertPolarToPointD(actual_point);
 
                                     estimated_point = Toolbox.GetCrossingPoint(slope, y_intercept, measured_angle, 0);
 
@@ -355,7 +356,7 @@ namespace LidarProcessNS
                         /// The loop end without finding the end of the line
                         side_is_finish = true;
                         angle_index = GetIndexOfAngle(angle_array, angle);
-                        measured_point = ConvertPolarToXYAbsoluteCoord(pointsList[angle_index]); /// And here it's absolute
+                        measured_point = Toolbox.ConvertPolarToPointD(pointsList[angle_index]); /// And here it's absolute
                         estimated_point = Toolbox.GetCrossingPoint(slope, y_intercept, pointsList[angle_index].Angle, 0);
                         if (Toolbox.Distance(measured_point, estimated_point) <= thresold)
                         {
@@ -647,6 +648,7 @@ namespace LidarProcessNS
         }
         #endregion
         #region Conversion
+
         public List<PointD> ConvertRssiToXYCoord(List<PolarPointRssi> lidarPoints)
         {
             double X = robotLocation.X;
@@ -662,7 +664,6 @@ namespace LidarProcessNS
             return XYPoints;
         }
 
-
         private PointD ConvertPolarToRelativeCoord(double angle, double distance)
         {
             double X = robotLocation.X;
@@ -670,16 +671,6 @@ namespace LidarProcessNS
             double Theta = robotLocation.Theta;
             double pointDX = X + (distance * Math.Cos(angle - Theta));
             double pointDY = Y + (distance * Math.Sin(angle - Theta));
-            return new PointD(pointDX, pointDY);
-        }
-
-        private PointD ConvertPolarToXYAbsoluteCoord(PolarPointRssi point)
-        {
-            double angle = point.Angle;
-            double distance = point.Distance;
-
-            double pointDX = distance * Math.Cos(angle);
-            double pointDY = distance * Math.Sin(angle);
             return new PointD(pointDX, pointDY);
         }
 
@@ -695,29 +686,9 @@ namespace LidarProcessNS
             return new PointD(pointDX, pointDY);
         }
 
-        private PolarPointRssi ConvertXYToPolarCoord(PointD point)
-        {
-            double X = point.X;
-            double Y = point.Y;
-
-
-            double distance = Math.Sqrt(X * X + Y * Y);
-            double angle;
-            if (X == Y)
-            {
-                angle = Math.PI / 2;
-            }
-            else
-            {
-                angle = Math.Atan(Y / X);
-            }
-            angle += (X < 0) ? Math.PI : 0;
-            return new PolarPointRssi(angle, distance, 0);
-        }
-
         private PointD ConvertAbsoluteToRelativeCoord(PointD point)
         {
-            PolarPointRssi pointRssi = ConvertXYToPolarCoord(point);
+            PolarPointRssi pointRssi = Toolbox.ConvertPointDToPolar(point);
             return ConvertPolarToRelativeCoord(pointRssi);
         }
 

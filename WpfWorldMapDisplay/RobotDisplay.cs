@@ -19,6 +19,7 @@ namespace WpfWorldMapDisplay
         private Location ghostLocation;
         private Location destinationLocation;
         private List<PointD> waypointLocation;
+
         public string robotName = "";
         public RoboCupRobotRole robotRole = RoboCupRobotRole.Stopped;
         public string DisplayMessage = "";
@@ -26,8 +27,9 @@ namespace WpfWorldMapDisplay
 
         public double[,] heatMapStrategy;
         public double[,] heatMapWaypoint;
+
         List<PointDExtended> LidarRawPoints;
-        List<PointDExtended>[] LidarProcessedPoints = new List<PointDExtended>[3];
+        private List<PointDExtended>[] LidarProcessedPoints = new List<PointDExtended>[3];
         List<SegmentExtended> LidarSegment;
         List<Cup> LidarCup;
         List<LidarObjects> LidarObjectList;
@@ -308,9 +310,18 @@ namespace WpfWorldMapDisplay
             if (LidarProcessedPoints == null)
                 return dataSeries;
 
-            var listX = LidarProcessedPoints.Select(e => e.Pt.X);
-            var listY = LidarProcessedPoints.Select(e => e.Pt.Y);
+            List<double> listX = new List<double>();
+            List<double> listY = new List<double>();
 
+            foreach (List<PointDExtended> list_of_points in LidarProcessedPoints)
+            {
+                if (list_of_points != null)
+                {
+                    listX.AddRange(list_of_points.Select(e => e.Pt.X).ToList());
+                    listY.AddRange(list_of_points.Select(e => e.Pt.Y).ToList());
+                }
+            }
+            
             if (listX.Count() == listY.Count())
             {
                 dataSeries.AcceptsUnsortedData = true;

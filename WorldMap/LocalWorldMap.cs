@@ -26,8 +26,8 @@ namespace WorldMap
         public virtual List<Location> BallLocationList { get; set; }
         public virtual List<LocationExtended> ObstaclesLocationList { get; set; }
         public virtual List<PolarPointRssi> LidarPoints { get; set; }
-        public virtual List<PointD> LidarMapRaw { get; set; }
-        public virtual List<PointD> LidarMapProcessed { get; set; }
+        public virtual List<PointDExtended> LidarMapRaw { get; set; }
+        public virtual List<PointDExtended> LidarMapProcessed { get; set; }
         public virtual List<PointD> LidarLine { get; set; }
         public virtual List<SegmentExtended> LidarSegment { get; set; }
 
@@ -175,13 +175,13 @@ namespace WorldMap
             ResetDestination();
         }
 
-        public void OnLidarRawPointReceived(object sender, List<PointD> lidarPoints)
+        public void OnLidarRawPointReceived(object sender, List<PointDExtended> lidarPoints)
         {
             LidarMapRaw = lidarPoints;
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
-        public void OnLidarProcessedPointReceived(object sender, List<PointD> lidarPoints)
+        public void OnLidarProcessedPointReceived(object sender, List<PointDExtended> lidarPoints)
         {
             LidarMapProcessed = lidarPoints;
             OnLocalWorldMapEvent?.Invoke(this, this);

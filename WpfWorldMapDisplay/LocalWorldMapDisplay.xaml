@@ -30,10 +30,6 @@
                                DrawMajorTicks="False" DrawMinorTicks="False" DrawMajorBands="False"/>
             </s:SciChartSurface.YAxis>
 
-            <s:SciChartSurface.Resources>
-                <local:ObjectPointMarkerPaletteProvider x:Key="ObjectPointMarkerPaletteProvider"/>
-            </s:SciChartSurface.Resources>
-
             <s:SciChartSurface.RenderableSeries >
                 <local:PolygonRenderableSeries x:Name="PolygonTerrainSeries" Opacity="0.5">
                 </local:PolygonRenderableSeries>
