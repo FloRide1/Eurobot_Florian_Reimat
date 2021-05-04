@@ -18,6 +18,7 @@ using Utilities;
 using Lidar;
 using LidarProcessNS;
 using TrajectoryPlannerNs;
+using WpfMatchInterface;
 
 namespace RobotEurobot2Roues
 {
@@ -36,9 +37,12 @@ namespace RobotEurobot2Roues
         static TrajectoryPlanner trajectoryPlanner;
 
         static WpfRobot2RouesInterface interfaceRobot;
+        static WpfMatchInterfaceClass interfaceMatch;
+
         static GameMode competition = GameMode.Eurobot;
 
         static bool usingXBoxController;
+        static bool usingMatchDisplay = true;
         
         static object ExitLock = new object();
 
@@ -188,17 +192,17 @@ namespace RobotEurobot2Roues
             ConsoleFormat.PrintStrategyBoot();
             strategyManager.InitStrategy(); //à faire après avoir abonné les events !
             #endregion
-                 
 
-
-
-            StartRobotInterface();            
+            if (usingMatchDisplay)
+            {
+                StartMatchInterface();
+            }
+            else
+            {
+                StartRobotInterface();
+            }
+                      
             ConsoleFormat.EndMainBootSequence();
-
-            
-
-
-
 
             while (!exitSystem)
             {
@@ -221,9 +225,24 @@ namespace RobotEurobot2Roues
 
             });
             t1.SetApartmentState(ApartmentState.STA);
-            t1.Start();
+            t1.Start();   
+        }
 
-            
+        static Thread t2;
+        static void StartMatchInterface()
+        {
+
+            t2 = new Thread(() =>
+            {
+                //Attention, il est nécessaire d'ajouter PresentationFramework, PresentationCore, WindowBase and your wpf window application aux ressources.
+                interfaceMatch = new WpfMatchInterfaceClass();
+                interfaceMatch.Loaded += RegisterMatchInterfaceEvents;
+                interfaceMatch.ShowDialog();
+
+
+            });
+            t2.SetApartmentState(ApartmentState.STA);
+            t2.Start();
         }
 
         static void RegisterRobotInterfaceEvents(object sender, EventArgs e)
@@ -297,6 +316,11 @@ namespace RobotEurobot2Roues
 
             interfaceRobot.OnGameStateEditionEvent += localWorldMap.OnGameStateChange;
 
+
+        }
+
+        static void RegisterMatchInterfaceEvents(object sender, EventArgs e)
+        {
 
         }
 

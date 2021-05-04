@@ -124,6 +124,10 @@
       <Project>{b2d0126f-8c82-4eaa-87e5-67415f589098}</Project>
       <Name>WorldMap</Name>
     </ProjectReference>
+    <ProjectReference Include="..\WpfMatchInterface\WpfMatchInterface.csproj">
+      <Project>{27af57da-3dbb-451b-a9d9-c2015d1aa9be}</Project>
+      <Name>WpfMatchInterface</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WpfRobot2RouesInterface\RobotInterface\WpfRobot2RouesInterface.csproj">
       <Project>{EF0ACD78-0BFB-4AC0-9685-90C53BEE0DF1}</Project>
       <Name>WpfRobot2RouesInterface</Name>
