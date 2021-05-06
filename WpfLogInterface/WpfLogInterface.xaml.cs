@@ -24,5 +24,10 @@ namespace WpfLogInterfaceNs
         {
             InitializeComponent();
         }
+
+        private void OnReplaySelectionClick(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

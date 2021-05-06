@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTimers", "..\HighFr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfLogInterface", "..\WpfLogInterface\WpfLogInterface.csproj", "{6021A9AB-90D6-4F7F-AEFD-1A0BC372B318}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogReplay", "..\LogReplay\LogReplay.csproj", "{4A227E8F-4045-4418-98A0-228C0ACC30FF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -271,6 +273,14 @@ Global
 		{6021A9AB-90D6-4F7F-AEFD-1A0BC372B318}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6021A9AB-90D6-4F7F-AEFD-1A0BC372B318}.Release|x64.ActiveCfg = Release|Any CPU
 		{6021A9AB-90D6-4F7F-AEFD-1A0BC372B318}.Release|x64.Build.0 = Release|Any CPU
+		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Debug|x64.ActiveCfg = Debug|x64
+		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Debug|x64.Build.0 = Debug|x64
+		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Release|x64.ActiveCfg = Release|x64
+		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
