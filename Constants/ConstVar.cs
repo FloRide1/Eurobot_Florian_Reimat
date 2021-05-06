@@ -16,5 +16,12 @@ namespace Constants
         public const double EUROBOT_WHEELS_ANGLE = 1.570796e+00;
         public const double EUROBOT_MATRIX_X_COEFF = 5.000000e-01;
         public const double EUROBOT_MATRIX_THETA_COEFF = 4.166667e+00;
+
+        public const double FREQ_IN_HZ = 50d;
+
+        public const string PROJECT_NAME = "Eurobot2021";
+        public const string LOG_FOLDER_NAME = "LogFiles";
+        public const long MAX_LOG_FILE_SIZE = 90000000;
+        
     }
 }

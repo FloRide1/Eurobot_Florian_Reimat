@@ -49,6 +49,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrajectoryPlanner", "..\Tra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfMatchInterface", "..\WpfMatchInterface\WpfMatchInterface.csproj", "{27AF57DA-3DBB-451B-A9D9-C2015D1AA9BE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogRecorder", "..\LogRecorder\LogRecorder.csproj", "{A6E0C194-07F2-4581-99B1-10009288E309}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdvancedTimers", "..\HighFreqTimer\AdvancedTimers.csproj", "{ECC907ED-F9B2-457F-901E-720987934E47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -241,6 +245,22 @@ Global
 		{27AF57DA-3DBB-451B-A9D9-C2015D1AA9BE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{27AF57DA-3DBB-451B-A9D9-C2015D1AA9BE}.Release|x64.ActiveCfg = Release|Any CPU
 		{27AF57DA-3DBB-451B-A9D9-C2015D1AA9BE}.Release|x64.Build.0 = Release|Any CPU
+		{A6E0C194-07F2-4581-99B1-10009288E309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6E0C194-07F2-4581-99B1-10009288E309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6E0C194-07F2-4581-99B1-10009288E309}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A6E0C194-07F2-4581-99B1-10009288E309}.Debug|x64.Build.0 = Debug|Any CPU
+		{A6E0C194-07F2-4581-99B1-10009288E309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6E0C194-07F2-4581-99B1-10009288E309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6E0C194-07F2-4581-99B1-10009288E309}.Release|x64.ActiveCfg = Release|Any CPU
+		{A6E0C194-07F2-4581-99B1-10009288E309}.Release|x64.Build.0 = Release|Any CPU
+		{ECC907ED-F9B2-457F-901E-720987934E47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECC907ED-F9B2-457F-901E-720987934E47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECC907ED-F9B2-457F-901E-720987934E47}.Debug|x64.ActiveCfg = Debug|x64
+		{ECC907ED-F9B2-457F-901E-720987934E47}.Debug|x64.Build.0 = Debug|x64
+		{ECC907ED-F9B2-457F-901E-720987934E47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECC907ED-F9B2-457F-901E-720987934E47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECC907ED-F9B2-457F-901E-720987934E47}.Release|x64.ActiveCfg = Release|x64
+		{ECC907ED-F9B2-457F-901E-720987934E47}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

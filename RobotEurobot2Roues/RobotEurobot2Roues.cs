@@ -42,7 +42,7 @@ namespace RobotEurobot2Roues
         static GameMode competition = GameMode.Eurobot;
 
         static bool usingXBoxController;
-        static bool usingMatchDisplay = true;
+        static bool usingMatchDisplay = false;
         
         static object ExitLock = new object();
 
