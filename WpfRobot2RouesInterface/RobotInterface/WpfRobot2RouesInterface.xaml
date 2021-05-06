@@ -7,6 +7,7 @@
         xmlns:ext="clr-namespace:WpfWorldMapDisplay;assembly=WpfWorldMapDisplay"
         xmlns:oscillo="clr-namespace:WpfOscilloscopeControl;assembly=WpfOscilloscopeControl"
         xmlns:AsservDisplay="clr-namespace:WpfAsservissementDisplay;assembly=WpfAsservissementDisplay"
+        xmlns:Log="clr-namespace:WpfLogInterfaceNs;assembly=WpfLogInterface"
         x:Class="RobotInterface.WpfRobot2RouesInterface"
         mc:Ignorable="d"
         Title="Robot Interface" Closing="Window_Closing" SourceInitialized="Window_SourceInitialized"        
@@ -136,13 +137,9 @@
         <Viewbox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="1" Stretch="Uniform" MaxWidth="900" MaxHeight="800"   >
             <ext:LocalWorldMapDisplay x:Name="worldMapDisplayWaypoint" Padding="5" Width="300" Height="200" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" MouseDoubleClick="OnWaypointMapDoubleClick" MouseRightButtonDown="OnWaypointRightButtonDown" MouseDown="OnWaypointMouseWheelClick" ></ext:LocalWorldMapDisplay>
         </Viewbox>
-        <Grid Grid.Row="3" Grid.Column="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="25"/>
-                <RowDefinition Height="1*"/>
-            </Grid.RowDefinitions>
-            <StackPanel Orientation="Horizontal" Margin="57,25,-57,100" Grid.Row="1"/>
-        </Grid>
+        <Viewbox Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="1" Stretch="Uniform">
+            <Log:WpfLogInterface x:Name="logDisplay" Width="Auto" Height="Auto"/>
+        </Viewbox>
 
     </Grid>
 </Window>
