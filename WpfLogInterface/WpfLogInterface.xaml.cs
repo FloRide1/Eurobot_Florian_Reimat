@@ -21,7 +21,7 @@ namespace WpfLogInterfaceNs
     public partial class WpfLogInterface : UserControl
     {
         private bool logrecorder = false;
-        private bool pause_play_logging = false;
+        private bool logreplay = false;
         private bool pause_play_replay = false;
 
         public WpfLogInterface()
@@ -38,8 +38,8 @@ namespace WpfLogInterfaceNs
 
         private void OnLogReplayClick(object sender, RoutedEventArgs e)
         {
-            pause_play_logging = !pause_play_logging;
-            OnLogReplayEvent?.Invoke(this, pause_play_logging);
+            logreplay = !logreplay;
+            OnLogReplayEvent?.Invoke(this, logreplay);
         }
 
         private void On_Pause_Play_Click(object sender, RoutedEventArgs e)

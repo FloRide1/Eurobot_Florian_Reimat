@@ -380,7 +380,7 @@ namespace WpfWorldMapDisplay
             if (lwmdType == LocalWorldMapDisplayType.StrategyMap)
             {
                 UpdateLidarMap(robotId, localWorldMap.LidarMapRaw, LidarDataType.RawData);
-                UpdateLidarMap(robotId, localWorldMap.LidarMapProcessed, LidarDataType.ProcessedData1);
+                // UpdateLidarMap(robotId, localWorldMap.LidarMapProcessed, LidarDataType.ProcessedData1);
                 UpdateLidarSegment(robotId, localWorldMap.LidarSegment);
                 UpdateLidarCup(robotId, localWorldMap.LidarCup);
                 UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
@@ -509,8 +509,9 @@ namespace WpfWorldMapDisplay
                 //PolygonSeries.AddOrUpdatePolygonExtended(r.Key + (int)Caracteristique.WayPoint, TeamMatesDictionary[r.Key].GetRobotWaypointArrow());
             }
             //Affichage des points lidar
+
             LidarPoints.DataSeries = lidarPts;
-            LidarProcessedPoints.DataSeries = lidarProcessedPts;
+            // LidarProcessedPoints.DataSeries = lidarProcessedPts;
 
         }
 
