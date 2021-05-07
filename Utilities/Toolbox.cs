@@ -466,6 +466,17 @@ namespace Utilities
             return new PointD(xx, yy);
         }
 
+        public static double Area_of_a_Triangle (PointD a, PointD b, PointD c)
+        {
+            double a_b = Toolbox.Distance(a, b);
+            double a_c = Toolbox.Distance(a, c);
+            double b_c = Toolbox.Distance(b, c);
+
+            double s = (a_b + a_c + b_c) / 2;
+
+            return Math.Sqrt(s * ((s - a_b) * (s - a_c) * (s - b_c)));
+        }
+
     }
 }
 

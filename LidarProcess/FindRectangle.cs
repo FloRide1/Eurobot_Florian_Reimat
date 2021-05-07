@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Utilities;
+using MIConvexHull;
 
 namespace LidarProcessNS
 {
@@ -14,6 +15,12 @@ namespace LidarProcessNS
 
 	public static class FindRectangle
     {
+
+		public static void Rotating_Caliper()
+        {
+			// ConvexHull.Create2D()
+        }
+
 		public static List<RectangleOriented> FindAllPossibleRectangle(List<List<PointDExtended>> list_of_family_corners, double thresold)
         {
 			List<RectangleOriented> list_of_rectangles = new List<RectangleOriented>();
