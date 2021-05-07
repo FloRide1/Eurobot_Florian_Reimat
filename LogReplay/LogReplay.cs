@@ -15,7 +15,7 @@ using Utilities;
 using ZeroFormatter;
 using Constants;
 
-namespace LogReplay
+namespace LogReplayNs
 {
     public class LogReplay
     {

@@ -45,30 +45,24 @@ namespace LidarProcessNS
 
         public void OnRawPointAvailable(object sender, LidarPointsReadyEventArgs lidarPoints)
         {
-            RawLidarArgs rawLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame };
-            List<PolarPointRssi> rawLidarPoints = new List<PolarPointRssi> { };
+            RawLidarArgs rawLidar = new RawLidarArgs() {
+                RobotId = robotId, 
+                LidarFrameNumber = LidarFrame,
+                PtList = lidarPoints.LidarPoints.Select(x => new PolarPointRssi(x.Angle, x.Distance, x.RSSI)).ToList() 
+            };
+
+
+            OnRawLidarArgs(sender, rawLidar);
+        }
+
+        public void OnRawLidarArgs(object sender, RawLidarArgs rawLidarArgs)
+        {
             LidarFrame++;
-            foreach (var point in lidarPoints.LidarPoints)
-            {
-                PolarPointRssi rssiPoint = new PolarPointRssi();
-                rssiPoint.Distance = point.Distance;
-                rssiPoint.Angle = point.Angle;
-                rssiPoint.Rssi = point.RSSI;
 
-                rawLidarPoints.Add(rssiPoint);
-
-            }
-            List<PolarPointRssi> FloPoint = new List<PolarPointRssi>();
-            foreach (PolarPointRssi points in rawLidarPoints)
-            {
-                FloPoint.Add(new PolarPointRssi(points.Angle, points.Distance * Math.Cos(points.Angle), points.Rssi));
-            }
-            rawLidar.PtList = rawLidarPoints;
-
-            OnRawLidarDataEvent?.Invoke(this, rawLidar);
-            OnRawLidarPointPolarEvent?.Invoke(this, rawLidarPoints);
-            OnRawLidarPointXYEvent?.Invoke(this, rawLidarPoints.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
-            ProcessLidarData(rawLidarPoints);
+            OnRawLidarDataEvent?.Invoke(this, rawLidarArgs);
+            OnRawLidarPointPolarEvent?.Invoke(this, rawLidarArgs.PtList);
+            OnRawLidarPointXYEvent?.Invoke(this, rawLidarArgs.PtList.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
+            ProcessLidarData(rawLidarArgs.PtList);
         }
 
         public void OnRobotLocation(object sender, Location robot)

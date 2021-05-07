@@ -88,6 +88,14 @@
       <Project>{84e83c7b-c4bf-4547-835f-06743f1d1dfa}</Project>
       <Name>LidarTIM561</Name>
     </ProjectReference>
+    <ProjectReference Include="..\LogRecorder\LogRecorder.csproj">
+      <Project>{a6e0c194-07f2-4581-99b1-10009288e309}</Project>
+      <Name>LogRecorder</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\LogReplay\LogReplay.csproj">
+      <Project>{4a227e8f-4045-4418-98a0-228c0acc30ff}</Project>
+      <Name>LogReplay</Name>
+    </ProjectReference>
     <ProjectReference Include="..\MessageDecoder\MessageDecoder.csproj">
       <Project>{4603885F-CC5E-43E5-A4AF-063030CB0A32}</Project>
       <Name>MessageDecoder</Name>

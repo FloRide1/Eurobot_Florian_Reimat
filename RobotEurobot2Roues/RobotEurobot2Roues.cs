@@ -19,6 +19,9 @@ using Lidar;
 using LidarProcessNS;
 using TrajectoryPlannerNs;
 using WpfMatchInterface;
+using LogRecorderNs;
+using LogReplayNs;
+
 
 namespace RobotEurobot2Roues
 {
@@ -38,6 +41,9 @@ namespace RobotEurobot2Roues
 
         static WpfRobot2RouesInterface interfaceRobot;
         static WpfMatchInterfaceClass interfaceMatch;
+
+        static LogRecorder logRecorder;
+        static LogReplay logReplay;
 
         static GameMode competition = GameMode.Eurobot;
 
@@ -69,6 +75,9 @@ namespace RobotEurobot2Roues
 
             xBoxManette = new XBoxController(robotId);
             ConsoleFormat.SetupXboxController();
+
+            logRecorder = new LogRecorder();
+            logReplay = new LogReplay();
 
             strategyManager = new StrategyEurobot(robotId, teamId, "224.16.32.79");
 
@@ -317,6 +326,42 @@ namespace RobotEurobot2Roues
             interfaceRobot.OnGameStateEditionEvent += localWorldMap.OnGameStateChange;
 
 
+            interfaceRobot.OnEnableDisableLoggingEvent += logRecorder.OnEnableDisableLoggingReceived;
+            interfaceRobot.OnEnableDisableLogReplayEvent += InterfaceRobot_OnEnableDisableLogReplayEvent;
+            interfaceRobot.OnEnableDisableLogReplayEvent += logReplay.OnEnableDisableLogReplayEvent;
+            //interfaceRobot.OnPausePlaySwitchEvent += On_Log_Pause_Play_Switch;
+            //interfaceRobot.OnBackBtnEvent += On_Log_Back_Click;
+            //interfaceRobot.OnSkipBtnEvent += On_Log_Skip_Click;
+
+        }
+
+        private static void InterfaceRobot_OnEnableDisableLogReplayEvent(object sender, BoolEventArgs e)
+        {
+            /// Fonction lancée lors d'un appui sur Enable / Disable de l'interface
+            /// On fait deux choses : 
+            ///     On suspend le msgProcessor
+            ///     On reroute les évènements Lidar - SpeedPolar
+
+            if (e.value)
+            {
+                //On enable le Replay
+                /// On fait sauter le lidar et l'USB entrant
+                lidar.PointsAvailable -= lidarProcess.OnRawPointAvailable;
+                usbDriver.OnUSBuffReceivedEvent -= msgDecoder.BuffReceived;
+
+                logReplay.OnLidarEvent += lidarProcess.OnRawLidarArgs;
+                //logReplay.OnSpeedPolarOdometryFromReplayEvent += kalmanPositioning.OnOdometryRobotSpeedReceived;
+            }
+            else
+            {
+                //On disable le Replay
+                /// On remet le lidar et l'USB entrant
+                lidar.PointsAvailable += lidarProcess.OnRawPointAvailable;
+                usbDriver.OnUSBuffReceivedEvent += msgDecoder.BuffReceived;
+
+                logReplay.OnLidarEvent -= lidarProcess.OnRawLidarArgs;
+                //logReplay.OnSpeedPolarOdometryFromReplayEvent -= kalmanPositioning.OnOdometryRobotSpeedReceived;
+            }
         }
 
         static void RegisterMatchInterfaceEvents(object sender, EventArgs e)

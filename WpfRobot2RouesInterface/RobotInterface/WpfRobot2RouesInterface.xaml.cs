@@ -28,11 +28,21 @@ namespace RobotInterface
         GameMode gameMode;
         DispatcherTimer timerAffichage = new DispatcherTimer();
 
+        int nbMsgSent = 0;
+
+        int nbMsgReceived = 0;
+
+        double zoomFactor = 5;
+        bool isZoomed = false;
+        int lastZoomedRow = 0;
+        int lastZoomedCol = 0;
+
         public WpfRobot2RouesInterface(GameMode gamemode)
         {
             gameMode = gamemode;
             InitializeComponent();
-            
+
+            #region Needed
             //Among other settings, this code may be used
             CultureInfo ci = CultureInfo.CurrentUICulture;
 
@@ -42,6 +52,7 @@ namespace RobotInterface
                 ci = new CultureInfo("Fr");
             }
             catch { }
+
             Thread.CurrentThread.CurrentCulture = ci;
             Thread.CurrentThread.CurrentUICulture = ci;
 
@@ -49,7 +60,9 @@ namespace RobotInterface
             FrameworkElement.LanguageProperty.OverrideMetadata(
                     typeof(FrameworkElement),
                     new FrameworkPropertyMetadata(
-                        XmlLanguage.GetLanguage(ci.IetfLanguageTag)));
+                        XmlLanguage.GetLanguage(ci.IetfLanguageTag)
+                    )
+            );
 
             //Among other code
             if (CultureInfo.CurrentCulture.NumberFormat.NumberDecimalSeparator != ".")
@@ -57,34 +70,13 @@ namespace RobotInterface
                 //Handler attach - will not be done if not needed
                 PreviewKeyDown += new KeyEventHandler(MainWindow_PreviewKeyDown);
             }
-            
-            var currentDir = Directory.GetCurrentDirectory();
-            var racineProjets = Directory.GetParent(currentDir);
-            var imagePath = racineProjets.Parent.Parent.FullName.ToString() + "\\Images\\";
-            if (gameMode == GameMode.Eurobot)
-            {
-                worldMapDisplayStrategy.Init(gameMode, LocalWorldMapDisplayType.StrategyMap);
-                worldMapDisplayStrategy.SetFieldImageBackGround(imagePath + "Eurobot_Background.png");
-                worldMapDisplayWaypoint.Init(gameMode, LocalWorldMapDisplayType.WayPointMap);
-                worldMapDisplayWaypoint.SetFieldImageBackGround(imagePath + "Eurobot_Background.png");
-            }
 
-            worldMapDisplayStrategy.InitTeamMate((int)TeamId.Team1 + (int)RobotId.Robot1, GameMode.Eurobot,  "Wally");
-            worldMapDisplayWaypoint.InitTeamMate((int)TeamId.Team1 + (int)RobotId.Robot1, GameMode.Eurobot,  "Wally");
-
-            worldMapDisplayStrategy.OnCtrlClickOnHeatMapEvent += WorldMapDisplay_OnCtrlClickOnHeatMapEvent;
-            worldMapDisplayWaypoint.OnCtrlClickOnHeatMapEvent += WorldMapDisplay_OnCtrlClickOnHeatMapEvent;
-
-
-            //foreach (string s in SerialPort.GetPortNames())
-            //{
-            //    Console.WriteLine("   {0}", s);
-            //}
-                                   
             timerAffichage.Interval = new TimeSpan(0, 0, 0, 0, 50);
             timerAffichage.Tick += TimerAffichage_Tick;
             timerAffichage.Start();
+            #endregion
 
+            #region Oscillo Configs
             oscilloX.SetTitle("Vx");
             oscilloX.AddOrUpdateLine(0, 100, "Vitesse X Consigne");
             oscilloX.AddOrUpdateLine(1, 100, "Vitesse X");
@@ -105,9 +97,42 @@ namespace RobotInterface
             oscilloLidar.ChangeLineColor(0, Colors.SeaGreen);
             oscilloLidar.ChangeLineColor(1, Colors.Blue);
             oscilloLidar.ChangeLineColor(2, Colors.Red);
+            #endregion
 
+            #region Asserv Config
             asservPositionDisplay.SetTitle("Asservissement Position");
             asservSpeedDisplay.SetTitle("Asservissement Vitesse");
+            #endregion
+
+            #region Map Config
+            worldMapDisplayStrategy.InitTeamMate((int)TeamId.Team1 + (int)RobotId.Robot1, GameMode.Eurobot, "Wally");
+            worldMapDisplayWaypoint.InitTeamMate((int)TeamId.Team1 + (int)RobotId.Robot1, GameMode.Eurobot, "Wally");
+
+            worldMapDisplayStrategy.OnCtrlClickOnHeatMapEvent += WorldMapDisplay_OnCtrlClickOnHeatMapEvent;
+            worldMapDisplayWaypoint.OnCtrlClickOnHeatMapEvent += WorldMapDisplay_OnCtrlClickOnHeatMapEvent;
+
+            var currentDir = Directory.GetCurrentDirectory();
+            var racineProjets = Directory.GetParent(currentDir);
+            var imagePath = racineProjets.Parent.Parent.FullName.ToString() + "\\Images\\";
+
+            if (gameMode == GameMode.Eurobot)
+            {
+                worldMapDisplayStrategy.Init(gameMode, LocalWorldMapDisplayType.StrategyMap);
+                worldMapDisplayStrategy.SetFieldImageBackGround(imagePath + "Eurobot_Background.png");
+                worldMapDisplayWaypoint.Init(gameMode, LocalWorldMapDisplayType.WayPointMap);
+                worldMapDisplayWaypoint.SetFieldImageBackGround(imagePath + "Eurobot_Background.png");
+            }
+            #endregion
+
+            #region Log Config
+
+            logDisplay.OnLogReplayEvent += OnEnableDisableLogReplay;
+            logDisplay.OnLogRecorderSwitchEvent += OnEnableDisableLogging;
+            logDisplay.OnPausePlaySwitchEvent += On_Log_Pause_Play_Switch;
+            logDisplay.OnBackBtnEvent += On_Log_Back_Click;
+            logDisplay.OnSkipBtnEvent += On_Log_Skip_Click;
+
+            #endregion
         }
 
         void MainWindow_PreviewKeyDown(object sender, KeyEventArgs e)
@@ -130,9 +155,15 @@ namespace RobotInterface
             }
         }
 
-        int nbMsgSent = 0;
+        
 
-        int nbMsgReceived = 0;
+        public void ResetInterfaceState()
+        {
+            oscilloX.ResetGraph();
+            oscilloTheta.ResetGraph();
+        }
+
+        #region Inputs Callback
         public void DisplayMessageDecoded(object sender, MessageByteArgs e)
         {
             nbMsgReceived += 1;
@@ -157,25 +188,20 @@ namespace RobotInterface
             worldMapDisplayStrategy.UpdateRobotLocation(location.RobotId, location.Location);
         }
 
+        
+
+
+        
 
         public void OnLocalWorldMapStrategyEvent(object sender, LocalWorldMap e)
         {
-            //throw new NotImplementedException();
             worldMapDisplayStrategy.UpdateLocalWorldMap(e);
-            //Dispatcher.BeginInvoke(new Action(delegate ()
-            //{
-            //    worldMapDisplayStrategy.UpdateWorldMapDisplay();
-            //}));
         }
         public void OnLocalWorldMapWayPointEvent(object sender, LocalWorldMap e)
         {
-            //throw new NotImplementedException();
             worldMapDisplayWaypoint.UpdateLocalWorldMap(e);
-            //Dispatcher.BeginInvoke(new Action(delegate ()
-            //{
-            //    worldMapDisplayWaypoint.UpdateWorldMapDisplay();
-            //}));
         }
+        
 
         public void OnRawLidarDataReceived(object sender, RawLidarArgs e)
         {
@@ -215,15 +241,9 @@ namespace RobotInterface
         public void OnMessageToDisplayPositionPidCorrectionReceived(object sender, PolarPidCorrectionArgs e)
         {
             asservPositionDisplay.UpdatePolarSpeedCorrectionValues(e.CorrPx, e.CorrPTheta, e.CorrIx, e.CorrITheta, e.CorrDx, e.CorrDTheta);
-        }        
-
-        public void ResetInterfaceState()
-        {
-            oscilloX.ResetGraph();
-            oscilloTheta.ResetGraph();
         }
 
-         public void UpdateSpeedPolarOdometryOnInterface(object sender, PolarSpeedEventArgs e)
+        public void UpdateSpeedPolarOdometryOnInterface(object sender, PolarSpeedEventArgs e)
         {
             oscilloX.AddPointToLine(1, e.timeStampMs / 1000.0, e.Vx);
             oscilloTheta.AddPointToLine(1, e.timeStampMs / 1000.0, e.Vtheta);
@@ -237,14 +257,14 @@ namespace RobotInterface
         }
         public void ActualizeAccelDataOnGraph(object sender, AccelEventArgs e)
         {
-            oscilloX.AddPointToLine(2, e.timeStampMS, e.accelX);          
+            oscilloX.AddPointToLine(2, e.timeStampMS, e.accelX);
         }
 
         public void UpdateImuDataOnGraph(object sender, IMUDataEventArgs e)
         {
-            oscilloX.AddPointToLine(2, e.EmbeddedTimeStampInMs/1000.0, e.accelX);
+            oscilloX.AddPointToLine(2, e.EmbeddedTimeStampInMs / 1000.0, e.accelX);
             oscilloTheta.AddPointToLine(2, e.EmbeddedTimeStampInMs / 1000.0, e.gyroZ);
-            currentTime = e.EmbeddedTimeStampInMs/1000.0;
+            currentTime = e.EmbeddedTimeStampInMs / 1000.0;
         }
 
         public void UpdatePolarSpeedConsigneOnGraph(object sender, PolarSpeedArgs e)
@@ -255,6 +275,12 @@ namespace RobotInterface
             //asservSpeedDisplay.UpdateConsigneValues(e.Vx, e.Vy, e.Vtheta);
         }
 
+        
+
+        
+
+
+        #region Not Coded
         public void UpdateIndependantSpeedConsigneOnGraph(object sender, IndependantSpeedEventArgs e)
         {
             //oscilloM1.AddPointToLine(4, e.timeStampMs / 1000.0, e.VitesseMoteur1);
@@ -263,12 +289,6 @@ namespace RobotInterface
             //oscilloM4.AddPointToLine(4, e.timeStampMs / 1000.0, e.VitesseMoteur4);
         }
 
-        //public void UpdateAuxiliarySpeedConsigneOnGraph(object sender, AuxiliaryMotorsVitesseDataEventArgs e)
-        //{
-        //    oscilloM5.AddPointToLine(4, e.timeStampMS / 1000.0, e.vitesseMotor5);
-        //    oscilloM6.AddPointToLine(4, e.timeStampMS / 1000.0, e.vitesseMotor6);
-        //    oscilloM7.AddPointToLine(4, e.timeStampMS / 1000.0, e.vitesseMotor7);
-        //}
 
         public void UpdateMotorsCurrentsOnGraph(object sender, MotorsCurrentsEventArgs e)
         {
@@ -277,14 +297,6 @@ namespace RobotInterface
             //oscilloM3.AddPointToLine(1, e.timeStampMS / 1000.0, e.motor3);
             //oscilloM4.AddPointToLine(1, e.timeStampMS / 1000.0, e.motor4);
         }
-
-        //public void UpdateMotorsSpeedsOnGraph(object sender, MotorsVitesseDataEventArgs e)
-        //{
-        //    oscilloM1.AddPointToLine(0, e.timeStampMS / 1000.0, e.vitesseMotor1);
-        //    oscilloM2.AddPointToLine(0, e.timeStampMS / 1000.0, e.vitesseMotor2);
-        //    oscilloM3.AddPointToLine(0, e.timeStampMS / 1000.0, e.vitesseMotor3);
-        //    oscilloM4.AddPointToLine(0, e.timeStampMS / 1000.0, e.vitesseMotor4);
-        //}
 
         public void UpdateMotorsPositionOnGraph(object sender, MotorsPositionDataEventArgs e)
         {
@@ -301,6 +313,7 @@ namespace RobotInterface
             //oscilloM3.AddPointToLine(3, e.timeStampMS / 1000.0, e.motor3);
             //oscilloM4.AddPointToLine(3, e.timeStampMS / 1000.0, e.motor4);
         }
+        #endregion
 
         public void UpdateSpeedPolarPidErrorCorrectionConsigneDataOnGraph(object sender, PolarPidErrorCorrectionConsigneDataArgs e)
         {
@@ -528,11 +541,9 @@ namespace RobotInterface
                 LabelNbIMUDataPerSec.Content = "Nb IMU data / sec : " + e.nbMessageIMU;
             }));
         }
+        
 
-        double zoomFactor = 5;
-        bool isZoomed = false;
-        int lastZoomedRow = 0;
-        int lastZoomedCol = 0;
+       
         private void ZoomOnGraph_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             int row = 0, column = 0;
@@ -580,126 +591,10 @@ namespace RobotInterface
         }
         private void WorldMapDisplay_OnCtrlClickOnHeatMapEvent(object sender, PositionArgs e)
         {
-            //RefBoxMessage msg = new RefBoxMessage();
-            //msg.command = RefBoxCommand.GOTO;
-            //msg.targetTeam = TeamIpAddress;
-            //msg.robotID = (int)TeamId.Team1 + (int)RobotId.Robot1;
-            //msg.posX = e.X;
-            //msg.posY = e.Y;
-            //msg.posTheta = 0;
-            //OnRefereeBoxReceivedCommand(msg);
-        }
-        #region OUTPUT EVENT
-        //OUTPUT EVENT
-        public delegate void EnableDisableMotorsEventHandler(object sender, BoolEventArgs e);
 
-        public event EnableDisableMotorsEventHandler OnEnableDisableMotorsFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableDisableTirFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableDisableServosFromInterfaceGeneratedEvent;
-        public event EventHandler<ByteEventArgs> OnSetAsservissementModeFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableDisableControlManetteFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableDisableLoggingEvent;
-        public event EventHandler<BoolEventArgs> OnEnableDisableLogReplayEvent;
-        public event EventHandler<BoolEventArgs> OnEnableMotorCurrentDataFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableEncodersDataFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableEncodersRawDataFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableMotorsSpeedConsigneDataFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent;
-        public event EventHandler<BoolEventArgs> OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent;
-        public event EventHandler<PolarPIDSetupArgs> OnSetRobotPIDFromInterfaceGeneratedEvent;
-        public event EventHandler<EventArgs> OnCalibrateGyroFromInterfaceGeneratedEvent;
-        public event EventHandler<GameState> OnGameStateEditionEvent;
-        public event EventHandler<PointD> OnWaypointLeftDoubleClick;
-        public event EventHandler<PointD> OnStrategyLeftDoubleClick;
-        public event EventHandler<PointD> OnWaypointRightClick;
-        public event EventHandler<PointD> OnStrategyRightClick;
-        public event EventHandler<PointD> OnWaypointWheelClick;
-        public event EventHandler<PointD> OnStrategyWheelClick;
-
-        public virtual void OnEnableDisableMotorsFromInterface(bool val)
-        {
-            OnEnableDisableMotorsFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-        
-        public virtual void OnEnableDisableTirFromInterface(bool val)
-        {
-            OnEnableDisableTirFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-        
-        public virtual void OnEnableDisableServosFromInterface(bool val)
-        {
-            OnEnableDisableServosFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-        
-        public virtual void OnSetAsservissementModeFromInterface(byte val)
-        {
-            OnSetAsservissementModeFromInterfaceGeneratedEvent?.Invoke(this, new ByteEventArgs { Value = val });
         }
 
-        
-        public virtual void OnEnableDisableControlManetteFromInterface(bool val)
-        {
-            OnEnableDisableControlManetteFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-
-        
-        public virtual void OnEnableDisableLogging(bool val)
-        {
-            OnEnableDisableLoggingEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-
-        public virtual void OnEnableDisableLogReplay(bool val)
-        {
-            OnEnableDisableLogReplayEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-        
-        public virtual void OnEnableMotorCurrentDataFromInterface(bool val)
-        {
-            OnEnableMotorCurrentDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-
-        public virtual void OnEnableEncodersDataFromInterface(bool val)
-        {
-            OnEnableEncodersDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-
-        public virtual void OnEnableEncodersRawDataFromInterface(bool val)
-        {
-            OnEnableEncodersRawDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-
-        
-        public virtual void OnEnableMotorSpeedConsigneDataFromInterface(bool val)
-        {
-            OnEnableMotorsSpeedConsigneDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-        
-        public virtual void OnEnableSpeedPIDEnableDebugInternalFromInterface(bool val)
-        {
-            OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-
-        public virtual void OnEnablePowerMonitoringDataFromInterface(bool val)
-        {
-            OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-        
-        public virtual void OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterface(bool val)
-        {
-            OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent?.Invoke(this, new BoolEventArgs { value = val });
-        }
-        
-        public virtual void OnSetRobotPIDFromInterface(double px, double ix, double dx, double py, double iy, double dy, double ptheta, double itheta, double dtheta)
-        {
-            OnSetRobotPIDFromInterfaceGeneratedEvent?.Invoke(this, new PolarPIDSetupArgs { P_x = px, I_x = ix, D_x = dx, P_y = py, I_y = iy, D_y = dy, P_theta = ptheta, I_theta = itheta, D_theta = dtheta });
-        }
-
-        public virtual void OnCalibrateGyroFromInterface()
-        {
-            OnCalibrateGyroFromInterfaceGeneratedEvent?.Invoke(this, new EventArgs());
-        }
-        #endregion
+       
 
         AsservissementMode currentAsservissementMode = AsservissementMode.Disabled;
         private void ButtonEnableAsservissement_Click(object sender, RoutedEventArgs e)
@@ -720,16 +615,7 @@ namespace RobotInterface
 
         private void CheckBoxEnableAsservissementDebugData_Checked(object sender, RoutedEventArgs e)
         {
-            //if (CheckBoxEnableAsservissementDebugData.IsChecked ?? false)
-            //{
-            //    OnEnableSpeedPIDEnableDebugInternalFromInterface(true);
-            //    OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterface(true);
-            //}
-            //else
-            //{
-            //    OnEnableSpeedPIDEnableDebugInternalFromInterface(false);
-            //    OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterface(false);
-            //}
+
         }               
         
         bool currentXBoxActivation = false;
@@ -806,17 +692,150 @@ namespace RobotInterface
                 OnStrategyWheelClick?.Invoke(this, new PointD(point.X, point.Y));
             }
         }
+        #endregion
 
-        //private void CheckBoxEnablePowerMonitoringData_Checked(object sender, RoutedEventArgs e)
-        //{
-        //    if (CheckBoxEnablePowerMonitoringData.IsChecked ?? false)
-        //    {
-        //        OnEnablePowerMonitoringDataFromInterface(true);
-        //    }
-        //    else
-        //    {
-        //        OnEnablePowerMonitoringDataFromInterface(false);
-        //    }
-        //}
+        #region OUTPUT EVENT
+        //OUTPUT EVENT
+        public delegate void EnableDisableMotorsEventHandler(object sender, BoolEventArgs e);
+
+        public event EnableDisableMotorsEventHandler OnEnableDisableMotorsFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableTirFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableServosFromInterfaceGeneratedEvent;
+        public event EventHandler<ByteEventArgs> OnSetAsservissementModeFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableControlManetteFromInterfaceGeneratedEvent;
+       
+        public event EventHandler<BoolEventArgs> OnEnableMotorCurrentDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableEncodersDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableEncodersRawDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableMotorsSpeedConsigneDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent;
+        public event EventHandler<BoolEventArgs> OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent;
+        public event EventHandler<PolarPIDSetupArgs> OnSetRobotPIDFromInterfaceGeneratedEvent;
+        public event EventHandler<EventArgs> OnCalibrateGyroFromInterfaceGeneratedEvent;
+
+        #region Map
+        public event EventHandler<GameState> OnGameStateEditionEvent;
+        public event EventHandler<PointD> OnWaypointLeftDoubleClick;
+        public event EventHandler<PointD> OnStrategyLeftDoubleClick;
+        public event EventHandler<PointD> OnWaypointRightClick;
+        public event EventHandler<PointD> OnStrategyRightClick;
+        public event EventHandler<PointD> OnWaypointWheelClick;
+        public event EventHandler<PointD> OnStrategyWheelClick;
+        #endregion
+
+        #region Log
+        public event EventHandler<BoolEventArgs> OnEnableDisableLoggingEvent;
+        public event EventHandler<BoolEventArgs> OnEnableDisableLogReplayEvent;
+
+
+        public event EventHandler<BoolEventArgs> OnPausePlaySwitchEvent;
+
+        public event EventHandler<EventArgs> OnSkipBtnEvent;
+        public event EventHandler<EventArgs> OnBackBtnEvent;
+        #endregion
+
+        public virtual void OnEnableDisableMotorsFromInterface(bool val)
+        {
+            OnEnableDisableMotorsFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnEnableDisableTirFromInterface(bool val)
+        {
+            OnEnableDisableTirFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnEnableDisableServosFromInterface(bool val)
+        {
+            OnEnableDisableServosFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnSetAsservissementModeFromInterface(byte val)
+        {
+            OnSetAsservissementModeFromInterfaceGeneratedEvent?.Invoke(this, new ByteEventArgs { Value = val });
+        }
+
+
+        public virtual void OnEnableDisableControlManetteFromInterface(bool val)
+        {
+            OnEnableDisableControlManetteFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+
+       
+        public virtual void OnEnableMotorCurrentDataFromInterface(bool val)
+        {
+            OnEnableMotorCurrentDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnEnableEncodersDataFromInterface(bool val)
+        {
+            OnEnableEncodersDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnEnableEncodersRawDataFromInterface(bool val)
+        {
+            OnEnableEncodersRawDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+
+        public virtual void OnEnableMotorSpeedConsigneDataFromInterface(bool val)
+        {
+            OnEnableMotorsSpeedConsigneDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnEnableSpeedPIDEnableDebugInternalFromInterface(bool val)
+        {
+            OnEnableSpeedPIDEnableDebugInternalFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnEnablePowerMonitoringDataFromInterface(bool val)
+        {
+            OnEnablePowerMonitoringDataFromInterfaceGeneratedEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterface(bool val)
+        {
+            OnEnableSpeedPIDEnableDebugErrorCorrectionConsigneFromInterfaceEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnSetRobotPIDFromInterface(double px, double ix, double dx, double py, double iy, double dy, double ptheta, double itheta, double dtheta)
+        {
+            OnSetRobotPIDFromInterfaceGeneratedEvent?.Invoke(this, new PolarPIDSetupArgs { P_x = px, I_x = ix, D_x = dx, P_y = py, I_y = iy, D_y = dy, P_theta = ptheta, I_theta = itheta, D_theta = dtheta });
+        }
+
+        public virtual void OnCalibrateGyroFromInterface()
+        {
+            OnCalibrateGyroFromInterfaceGeneratedEvent?.Invoke(this, new EventArgs());
+        }
+
+
+        public virtual void OnEnableDisableLogging(object sender, bool val)
+        {
+            OnEnableDisableLoggingEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+        public virtual void OnEnableDisableLogReplay(object sender, bool val)
+        {
+            OnEnableDisableLogReplayEvent?.Invoke(this, new BoolEventArgs { value = val });
+        }
+
+
+        private void On_Log_Pause_Play_Switch(object sender, bool e)
+        {
+            OnPausePlaySwitchEvent?.Invoke(this, new BoolEventArgs { value = e });
+        }
+
+        private void On_Log_Skip_Click(object sender, EventArgs e)
+        {
+            OnSkipBtnEvent?.Invoke(this, e);
+        }
+
+        private void On_Log_Back_Click(object sender, EventArgs e)
+        {
+            OnBackBtnEvent?.Invoke(this, e);
+        }
+
+        #endregion
     }
 }

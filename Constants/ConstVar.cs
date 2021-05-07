@@ -19,7 +19,7 @@ namespace Constants
 
         public const double FREQ_IN_HZ = 50d;
 
-        public const string PROJECT_NAME = "Eurobot2021";
+        public const string PROJECT_NAME = "Eurobot_Florian_Reimat";
         public const string LOG_FOLDER_NAME = "LogFiles";
         public const long MAX_LOG_FILE_SIZE = 90000000;
         
