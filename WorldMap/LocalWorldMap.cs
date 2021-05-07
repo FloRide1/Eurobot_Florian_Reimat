@@ -5,6 +5,7 @@ using Utilities;
 using EventArgsLibrary;
 using System.Windows;
 using Lidar;
+using System.Linq;
 
 namespace WorldMap
 {
@@ -175,15 +176,35 @@ namespace WorldMap
             ResetDestination();
         }
 
-        public void OnLidarRawPointReceived(object sender, List<PointDExtended> lidarPoints)
+        public void OnLidarRawPointReceived(object sender, List<PolarPointRssiExtended> lidarPoints)
         {
-            LidarMapRaw = lidarPoints;
+            
+
+            LidarMapRaw = lidarPoints.Select(
+                x => new PointDExtended(
+                    new PointD( 
+                        RobotLocation.X + (x.Pt.Distance * Math.Cos(x.Pt.Angle - RobotLocation.Theta)),
+                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(x.Pt.Angle - RobotLocation.Theta))
+                    ),
+                    x.Color,
+                    x.Width
+                )
+            ).ToList();
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
-        public void OnLidarProcessedPointReceived(object sender, List<PointDExtended> lidarPoints)
+        public void OnLidarProcessedPointReceived(object sender, List<PolarPointRssiExtended> lidarPoints)
         {
-            LidarMapProcessed = lidarPoints;
+            LidarMapProcessed = lidarPoints.Select(
+                x => new PointDExtended(
+                    new PointD(
+                        RobotLocation.X + (x.Pt.Distance * Math.Cos(x.Pt.Angle - RobotLocation.Theta)),
+                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(x.Pt.Angle - RobotLocation.Theta))
+                    ),
+                    x.Color,
+                    x.Width
+                )
+            ).ToList();
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
@@ -219,6 +240,11 @@ namespace WorldMap
         public void OnRobotLocation(object sender, Location location)
         {
             OnUpdateRobotLocation(location);
+        }
+
+        public void OnRobotLocationArgs(object sender, LocationArgs location)
+        {
+            OnUpdateRobotLocation(location.Location);
         }
 
         public void OnWaypointReached(object sender, PointD point)

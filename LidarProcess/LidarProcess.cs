@@ -60,7 +60,7 @@ namespace LidarProcessNS
             LidarFrame++;
 
             OnRawLidarDataEvent?.Invoke(this, rawLidarArgs);
-            OnRawLidarPointPolarEvent?.Invoke(this, rawLidarArgs.PtList);
+            OnRawLidarPointPolarEvent?.Invoke(this, rawLidarArgs.PtList.Select(x => new PolarPointRssiExtended(x, 3, Color.Purple)).ToList());
             OnRawLidarPointXYEvent?.Invoke(this, rawLidarArgs.PtList.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
             ProcessLidarData(rawLidarArgs.PtList);
         }
@@ -74,10 +74,9 @@ namespace LidarProcessNS
         #region Event
         public event EventHandler<RawLidarArgs> OnRawLidarDataEvent;
         public event EventHandler<RawLidarArgs> OnProcessLidarDataEvent;
-        public event EventHandler<List<PolarPointRssi>> OnRawLidarPointPolarEvent;
+        public event EventHandler<List<PolarPointRssiExtended>> OnRawLidarPointPolarEvent;
         public event EventHandler<List<PointDExtended>> OnRawLidarPointXYEvent;
-        public event EventHandler<List<PointDExtended>> OnProcessLidarXYDataEvent;
-        public event EventHandler<List<PolarPointRssi>> OnProcessLidarPolarDataEvent;
+        public event EventHandler<List<PolarPointRssiExtended>> OnProcessLidarPolarDataEvent;
         public event EventHandler<List<SegmentExtended>> OnProcessLidarLineDataEvent;
         public event EventHandler<List<LidarObjects>> OnProcessLidarObjectsDataEvent;
         public event EventHandler<List<Cup>> OnProcessLidarCupDataEvent;
@@ -109,7 +108,7 @@ namespace LidarProcessNS
                 }
 
                 Color color = Toolbox.ColorFromHSL((list_of_objects.Count * 0.20) % 1, 1, 0.5);
-                list_of_objects.Add(new LidarObjects(ConvertRssiToXYCoord(c.points), color));
+                list_of_objects.Add(new LidarObjects(c.points.Select(x => Toolbox.ConvertPolarToPointD(x)).ToList(), color));
 
 
                 Cup cup = DetectCup(c);
@@ -148,8 +147,8 @@ namespace LidarProcessNS
             RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints };
             OnProcessLidarDataEvent?.Invoke(this, processLidar);
 
-            OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints);
-            OnProcessLidarXYDataEvent?.Invoke(this, processedPoints.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
+            OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints.Select(x => new PolarPointRssiExtended(x, 3, Color.Purple)).ToList());
+            //OnProcessLidarXYDataEvent?.Invoke(this, processedPoints.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
         }
         #endregion
 
@@ -336,7 +335,7 @@ namespace LidarProcessNS
                             /// with the parallel of the measured point and the estimated line 
 
                             ///  Note: that line is useless but for safety i write it during Algorithm implementation
-                            measured_point = ConvertPolarToRelativeCoord(pointsList[index_of_last_valid_point]); /// Why Here it's relative | GO down a bit |
+                            measured_point = Toolbox.ConvertPolarToPointD(pointsList[index_of_last_valid_point]); /// Why Here it's relative | GO down a bit |
                             extremity_of_segment[side] = Toolbox.GetPerpendicularPoint(measured_point, slope, y_intercept);
 
                             /// Now Switch with the reverse side by ending the while loop
@@ -442,26 +441,13 @@ namespace LidarProcessNS
 
             if (lenght_of_cluster >= 0.040 && lenght_of_cluster <= 0.08)
             {
-                List<PointD> pointDs = new List<PointD>();
-                double min_rssi = cluster.points[0].Rssi;
-                double max_rssi = cluster.points[0].Rssi;
+                List<PointD> pointDs = cluster.points.Select(x => Toolbox.ConvertPolarToPointD(x)).ToList();
 
-                foreach (PolarPointRssi point in cluster.points)
-                {
-                    if (point.Rssi > max_rssi)
-                    {
-                        max_rssi = point.Rssi;
-                    }
-                    if (point.Rssi < min_rssi)
-                    {
-                        min_rssi = point.Rssi;
-                    }
-                    pointDs.Add(ConvertPolarToRelativeCoord(point));
-                }
-                //moyenne /= cluster.points.Count();
                 double median = 0.80;
+
                 double b = cluster.points[(int)(cluster.points.Count() * median)].Rssi;
                 double e = cluster.points[(int)(cluster.points.Count() * (1 - median))].Rssi;
+
                 double moyenne = (b + e) / 2;
                 Color color = Color.White;
                 if (moyenne >= 9000 && moyenne <= 12000)
@@ -601,13 +587,13 @@ namespace LidarProcessNS
             double X1 = 0, Y1 = 0, X2 = 0, Y2 = 0;
             for (j = 0; j < moy; j++)
             {
-                PointD point = ConvertPolarToRelativeCoord(pointList[j].Angle, pointList[j].Distance);
+                PointD point = Toolbox.ConvertPolarToPointD(pointList[j]);
                 X1 += point.X;
                 Y1 += point.Y;
             }
             for (j = 0; j < moy; j++)
             {
-                PointD point = ConvertPolarToRelativeCoord(pointList[pointList.Count - 1 - j].Angle, pointList[pointList.Count - 1 - j].Distance);
+                PointD point = Toolbox.ConvertPolarToPointD(pointList[pointList.Count - 1 - j]);
                 X2 += point.X;
                 Y2 += point.Y;
             }
@@ -624,13 +610,13 @@ namespace LidarProcessNS
             double X1 = 0, Y1 = 0, X2 = 0, Y2 = 0;
             for (i = 0; i < moy; i++)
             {
-                PointD point = ConvertPolarToRelativeCoord(pointList[first + i].Angle, pointList[first + i].Distance);
+                PointD point = Toolbox.ConvertPolarToPointD(pointList[first + i]);
                 X1 += point.X;
                 Y1 += point.Y;
             }
             for (i = 0; i < moy; i++)
             {
-                PointD point = ConvertPolarToRelativeCoord(pointList[last - i].Angle, pointList[last - i].Distance);
+                PointD point = Toolbox.ConvertPolarToPointD(pointList[last - i]);
                 X2 += point.X;
                 Y2 += point.Y;
             }
@@ -643,48 +629,7 @@ namespace LidarProcessNS
         #endregion
         #region Conversion
 
-        public List<PointD> ConvertRssiToXYCoord(List<PolarPointRssi> lidarPoints)
-        {
-            double X = robotLocation.X;
-            double Y = robotLocation.Y;
-            double Theta = robotLocation.Theta;
-
-            List<PointD> XYPoints = new List<PointD> { };
-            foreach (PolarPointRssi point in lidarPoints)
-            {
-                PointD pointD = ConvertPolarToRelativeCoord(point.Angle, point.Distance);
-                XYPoints.Add(pointD);
-            }
-            return XYPoints;
-        }
-
-        private PointD ConvertPolarToRelativeCoord(double angle, double distance)
-        {
-            double X = robotLocation.X;
-            double Y = robotLocation.Y;
-            double Theta = robotLocation.Theta;
-            double pointDX = X + (distance * Math.Cos(angle - Theta));
-            double pointDY = Y + (distance * Math.Sin(angle - Theta));
-            return new PointD(pointDX, pointDY);
-        }
-
-        private PointD ConvertPolarToRelativeCoord(PolarPointRssi point)
-        {
-            double angle = point.Angle;
-            double distance = point.Distance;
-            double X = robotLocation.X;
-            double Y = robotLocation.Y;
-            double Theta = robotLocation.Theta;
-            double pointDX = X + (distance * Math.Cos(angle - Theta));
-            double pointDY = Y + (distance * Math.Sin(angle - Theta));
-            return new PointD(pointDX, pointDY);
-        }
-
-        private PointD ConvertAbsoluteToRelativeCoord(PointD point)
-        {
-            PolarPointRssi pointRssi = Toolbox.ConvertPointDToPolar(point);
-            return ConvertPolarToRelativeCoord(pointRssi);
-        }
+    
 
         #endregion
         #region Others

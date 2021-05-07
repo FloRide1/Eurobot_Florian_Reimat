@@ -112,6 +112,10 @@
       <Project>{AD4884AD-631B-42E4-B6BB-F86B16BD6A68}</Project>
       <Name>MessageProcessor</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Positioning2Wheels\Positioning2Wheels.csproj">
+      <Project>{df70181a-3438-4683-9b0c-ea9bea3b663d}</Project>
+      <Name>Positioning2Wheels</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StrategyManagerProjetEtudiant\StrategyManagerProjetEtudiant.csproj">
       <Project>{45B66B72-B07F-4BBD-85F5-DB8A5C438B69}</Project>
       <Name>StrategyManagerProjetEtudiant</Name>

@@ -43,8 +43,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LidarTIM561", "..\LidarTIM5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LidarProcess", "..\LidarProcess\LidarProcess.csproj", "{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Position2Wheels", "..\Position2Wheels\Position2Wheels.csproj", "{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrajectoryPlanner", "..\TrajectoryPlanner\TrajectoryPlanner.csproj", "{90B7311A-EACE-44FE-AA3B-B4FDD13CC3D0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfMatchInterface", "..\WpfMatchInterface\WpfMatchInterface.csproj", "{27AF57DA-3DBB-451B-A9D9-C2015D1AA9BE}"
@@ -56,6 +54,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WpfLogInterface", "..\WpfLogInterface\WpfLogInterface.csproj", "{6021A9AB-90D6-4F7F-AEFD-1A0BC372B318}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogReplay", "..\LogReplay\LogReplay.csproj", "{4A227E8F-4045-4418-98A0-228C0ACC30FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Positioning2Wheels", "..\Positioning2Wheels\Positioning2Wheels.csproj", "{DF70181A-3438-4683-9B0C-EA9BEA3B663D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -225,14 +225,6 @@ Global
 		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Release|x64.ActiveCfg = Release|Any CPU
 		{C3C168D3-37FC-4BB3-AB65-4701C7F2E7A5}.Release|x64.Build.0 = Release|Any CPU
-		{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}.Debug|x64.Build.0 = Debug|Any CPU
-		{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}.Release|x64.ActiveCfg = Release|Any CPU
-		{9F2CED3D-DDC1-45EB-9292-AC4022AECA9D}.Release|x64.Build.0 = Release|Any CPU
 		{90B7311A-EACE-44FE-AA3B-B4FDD13CC3D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{90B7311A-EACE-44FE-AA3B-B4FDD13CC3D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90B7311A-EACE-44FE-AA3B-B4FDD13CC3D0}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -281,6 +273,14 @@ Global
 		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Release|x64.ActiveCfg = Release|x64
 		{4A227E8F-4045-4418-98A0-228C0ACC30FF}.Release|x64.Build.0 = Release|x64
+		{DF70181A-3438-4683-9B0C-EA9BEA3B663D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF70181A-3438-4683-9B0C-EA9BEA3B663D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF70181A-3438-4683-9B0C-EA9BEA3B663D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DF70181A-3438-4683-9B0C-EA9BEA3B663D}.Debug|x64.Build.0 = Debug|Any CPU
+		{DF70181A-3438-4683-9B0C-EA9BEA3B663D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF70181A-3438-4683-9B0C-EA9BEA3B663D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF70181A-3438-4683-9B0C-EA9BEA3B663D}.Release|x64.ActiveCfg = Release|Any CPU
+		{DF70181A-3438-4683-9B0C-EA9BEA3B663D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -28,6 +28,9 @@ namespace StrategyManagerProjetEtudiantNS
 
         Timer GhostTimer;
 
+        Timer configTimer;
+
+
         public StrategyEurobot(int robotId, int teamId, string multicastIpAddress) : base(robotId, teamId, multicastIpAddress)
         {
             taskDemoMove = new TaskDemoMove(this);
@@ -44,16 +47,35 @@ namespace StrategyManagerProjetEtudiantNS
 
         public override void InitStrategy()
         {
-            /// Obtenus directement à partir du script Matlab
-            OnOdometryPointToMeter(ConstVar.EUROBOT_ODOMETRY_POINT_TO_METER);
-            On2WheelsAngleSetup(- ConstVar.EUROBOT_WHEELS_ANGLE, ConstVar.EUROBOT_WHEELS_ANGLE);
-            On2WheelsToPolarMatrixSetup(ConstVar.EUROBOT_MATRIX_X_COEFF, - ConstVar.EUROBOT_MATRIX_X_COEFF, ConstVar.EUROBOT_MATRIX_THETA_COEFF, ConstVar.EUROBOT_MATRIX_THETA_COEFF);
+            configTimer = new System.Timers.Timer(1000);
+            configTimer.Elapsed += ConfigTimer_Elapsed; ;
+            configTimer.Start();
 
             /// Use only when the robot is disconnect
             GhostTimer.Start();
         }
 
+        private void ConfigTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            /// Obtenus directement à partir du script Matlab
+            OnOdometryPointToMeter(ConstVar.EUROBOT_ODOMETRY_POINT_TO_METER);
 
+            On2WheelsAngleSetup(
+                -ConstVar.EUROBOT_WHEELS_ANGLE,
+                ConstVar.EUROBOT_WHEELS_ANGLE
+            );
+
+            On2WheelsToPolarMatrixSetup(
+                ConstVar.EUROBOT_MATRIX_X_COEFF,
+                -ConstVar.EUROBOT_MATRIX_X_COEFF,
+                ConstVar.EUROBOT_MATRIX_THETA_COEFF,
+                ConstVar.EUROBOT_MATRIX_THETA_COEFF
+            );
+
+
+
+            OnSetAsservissementMode((byte)AsservissementMode.Independant);
+        }
 
 
         /*********************************** Events reçus **********************************************/

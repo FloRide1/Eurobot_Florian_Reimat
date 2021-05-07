@@ -21,7 +21,7 @@ using TrajectoryPlannerNs;
 using WpfMatchInterface;
 using LogRecorderNs;
 using LogReplayNs;
-
+using Positioning2WheelsNs;
 
 namespace RobotEurobot2Roues
 {
@@ -32,11 +32,15 @@ namespace RobotEurobot2Roues
         static MsgEncoder msgEncoder;
         static MsgGenerator msgGenerator;
         static MsgProcessor msgProcessor;
+
         static XBoxController xBoxManette;
         static StrategyGenerique strategyManager;
+
         static LidarDevice lidar;
         static LidarProcess lidarProcess;
+
         static LocalWorldMap localWorldMap;
+
         static TrajectoryPlanner trajectoryPlanner;
 
         static WpfRobot2RouesInterface interfaceRobot;
@@ -44,6 +48,8 @@ namespace RobotEurobot2Roues
 
         static LogRecorder logRecorder;
         static LogReplay logReplay;
+
+        static Positioning2Wheels positioning2Wheels;
 
         static GameMode competition = GameMode.Eurobot;
 
@@ -92,9 +98,9 @@ namespace RobotEurobot2Roues
             #region Console
             // Control:
             bool hex_viewer = false;
-            bool hex_sender = false;
+            bool hex_sender = true;
             bool hex_viewer_error = true;
-            bool hex_sender_error = false;
+            bool hex_sender_error = true;
             bool hex_processor = false;
             bool hex_generator = false;
             #region USB Vendor
@@ -145,6 +151,8 @@ namespace RobotEurobot2Roues
             #endregion
             #endregion
 
+            
+
             #region Lidar
             lidar = new SickLidar(17422959); // 18110177
             lidarProcess = new LidarProcess(robotId, teamId);
@@ -164,8 +172,8 @@ namespace RobotEurobot2Roues
             localWorldMap.OnUpdateRobotLocationEvent += lidarProcess.OnRobotLocation;
             
 
-            lidarProcess.OnRawLidarPointXYEvent += localWorldMap.OnLidarRawPointReceived;
-            lidarProcess.OnProcessLidarXYDataEvent += localWorldMap.OnLidarProcessedPointReceived;
+            lidarProcess.OnRawLidarPointPolarEvent += localWorldMap.OnLidarRawPointReceived;
+            lidarProcess.OnProcessLidarPolarDataEvent += localWorldMap.OnLidarProcessedPointReceived;
             lidarProcess.OnProcessLidarLineDataEvent += localWorldMap.OnLidarProcessedLineReceived;
             lidarProcess.OnProcessLidarCupDataEvent += localWorldMap.OnLidarProcessedCupReceived;
             //lidarProcess.OnProcessLidarObjectsDataEvent += localWorldMap.OnLidarProcesObjectsReceived;
@@ -173,6 +181,13 @@ namespace RobotEurobot2Roues
             localWorldMap.OnLocalWorldMapEvent += strategyManager.OnLocalWorldMapReceived;
             
             localWorldMap.Init();
+            #endregion
+
+            #region Position2Wheels
+            positioning2Wheels = new Positioning2Wheels(robotId);
+
+            msgProcessor.OnSpeedPolarOdometryFromRobotEvent += positioning2Wheels.OnOdometryRobotSpeedReceived;
+            positioning2Wheels.OnCalculatedLocationEvent += localWorldMap.OnRobotLocationArgs;
             #endregion
 
             #region TrajectoryPlanner
@@ -188,6 +203,7 @@ namespace RobotEurobot2Roues
             strategyManager.On2WheelsToPolarMatrixSetupEvent += msgGenerator.GenerateMessage2WheelsToPolarMatrixSet;   //Transmission des messages de set-up de la matrice de transformation moteurindepeandt -> polaire en embarqué
             strategyManager.On2WheelsAngleSetupEvent += msgGenerator.GenerateMessage2WheelsAngleSet;                   //Transmission des messages de set-up de la config angulaire des roues en embarqué
             strategyManager.OnOdometryPointToMeterSetupEvent += msgGenerator.GenerateMessageOdometryPointToMeter;      //Transmission des messages de set-up du coeff pointToMeter en embarqué
+            strategyManager.OnSetAsservissementModeEvent += msgGenerator.GenerateMessageSetAsservissementMode;
 
             strategyManager.OnDestinationReachedEvent += localWorldMap.OnDestinationReached;
             strategyManager.OnWaypointsReachedEvent += localWorldMap.OnWaypointReached;
@@ -350,20 +366,26 @@ namespace RobotEurobot2Roues
                 //On enable le Replay
                 /// On fait sauter le lidar et l'USB entrant
                 lidar.PointsAvailable -= lidarProcess.OnRawPointAvailable;
+                msgProcessor.OnSpeedPolarOdometryFromRobotEvent -= positioning2Wheels.OnOdometryRobotSpeedReceived;
+                msgProcessor.OnSpeedPolarOdometryFromRobotEvent -= interfaceRobot.UpdateSpeedPolarOdometryOnInterface;
                 usbDriver.OnUSBuffReceivedEvent -= msgDecoder.BuffReceived;
 
                 logReplay.OnLidarEvent += lidarProcess.OnRawLidarArgs;
-                //logReplay.OnSpeedPolarOdometryFromReplayEvent += kalmanPositioning.OnOdometryRobotSpeedReceived;
+                logReplay.OnSpeedPolarOdometryFromReplayEvent += interfaceRobot.UpdateSpeedPolarOdometryOnInterface;
+                logReplay.OnSpeedPolarOdometryFromReplayEvent += positioning2Wheels.OnOdometryRobotSpeedReceived;
             }
             else
             {
                 //On disable le Replay
                 /// On remet le lidar et l'USB entrant
                 lidar.PointsAvailable += lidarProcess.OnRawPointAvailable;
+                msgProcessor.OnSpeedPolarOdometryFromRobotEvent += positioning2Wheels.OnOdometryRobotSpeedReceived;
+                msgProcessor.OnSpeedPolarOdometryFromRobotEvent += interfaceRobot.UpdateSpeedPolarOdometryOnInterface;
                 usbDriver.OnUSBuffReceivedEvent += msgDecoder.BuffReceived;
 
                 logReplay.OnLidarEvent -= lidarProcess.OnRawLidarArgs;
-                //logReplay.OnSpeedPolarOdometryFromReplayEvent -= kalmanPositioning.OnOdometryRobotSpeedReceived;
+                logReplay.OnSpeedPolarOdometryFromReplayEvent -= interfaceRobot.UpdateSpeedPolarOdometryOnInterface;
+                logReplay.OnSpeedPolarOdometryFromReplayEvent -= positioning2Wheels.OnOdometryRobotSpeedReceived;
             }
         }
 
