@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Utilities;
 using System.Drawing;
 
-namespace LidarProcessor
+namespace LidarProcessNS
 {
     public static class LineDetection
     {

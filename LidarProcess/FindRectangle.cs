@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utilities;
 
-namespace LidarProcessor
+namespace LidarProcessNS
 {
 	// C# program to find largest rectangle
 	// with all 1s in a binary matrix

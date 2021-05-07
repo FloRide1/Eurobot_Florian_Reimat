@@ -380,7 +380,7 @@ namespace WpfWorldMapDisplay
             if (lwmdType == LocalWorldMapDisplayType.StrategyMap)
             {
                 UpdateLidarMap(robotId, localWorldMap.LidarMapRaw, LidarDataType.RawData);
-                // UpdateLidarMap(robotId, localWorldMap.LidarMapProcessed, LidarDataType.ProcessedData1);
+                UpdateLidarMap(robotId, localWorldMap.LidarMapProcessed, LidarDataType.ProcessedData1);
                 UpdateLidarSegment(robotId, localWorldMap.LidarSegment);
                 UpdateLidarCup(robotId, localWorldMap.LidarCup);
                 UpdateLidarObjects(robotId, localWorldMap.LidarObjectList);
@@ -466,7 +466,9 @@ namespace WpfWorldMapDisplay
         {
             XyDataSeries<double, double> lidarPts = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarProcessedPts = new XyDataSeries<double, double>();
+
             ObjectsPolygonSeries.Clear();
+            LidarPtExtendedSeries.Clear();
 
             foreach (var r in TeamMatesDisplayDictionary)
             {
@@ -498,6 +500,10 @@ namespace WpfWorldMapDisplay
                 /// Rendering des objets Lidar
                 foreach (var polygonObject in TeamMatesDisplayDictionary[r.Key].GetRobotLidarObjects())
                     ObjectsPolygonSeries.AddOrUpdatePolygonExtended(ObjectsPolygonSeries.Count(), polygonObject);
+
+                foreach (var pt in TeamMatesDisplayDictionary[r.Key].GetRobotLidarExtendedPoints())
+                    LidarPtExtendedSeries.AddPtExtended(pt);
+                
             }
 
             foreach (var r in OpponentDisplayDictionary)
@@ -511,7 +517,10 @@ namespace WpfWorldMapDisplay
             //Affichage des points lidar
 
             LidarPoints.DataSeries = lidarPts;
-            // LidarProcessedPoints.DataSeries = lidarProcessedPts;
+            //LidarProcessedPoints.DataSeries = lidarProcessedPts;
+
+            
+            
 
         }
 
@@ -523,7 +532,9 @@ namespace WpfWorldMapDisplay
             XyDataSeries<double, double> lidarLinePts       = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarRedCupPts     = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarGreenCupPts   = new XyDataSeries<double, double>();
-           
+
+            LidarPtExtendedSeries.Clear();
+
             foreach (var r in TeamMatesDisplayDictionary)
             {
                 ////Affichage des robots
@@ -541,11 +552,14 @@ namespace WpfWorldMapDisplay
                 lidarProcessedPts.AcceptsUnsortedData = true;
                 var lidarProcessedData = TeamMatesDisplayDictionary[r.Key].GetRobotLidarProcessedPoints();
                 lidarProcessedPts.Append(lidarProcessedData.XValues, lidarProcessedData.YValues);
-                LidarProcessedPoints.DataSeries = lidarProcessedPts;
+                //LidarProcessedPoints.DataSeries = lidarProcessedPts;
 
                 lidarObjectPts.AcceptsUnsortedData = true;
                 var lidarObjectData = TeamMatesDisplayDictionary[r.Key].GetRobotObjectsPoints();
                 lidarObjectPts.Append(lidarObjectData.Item1.XValues, lidarObjectData.Item1.YValues);
+
+                foreach (var pt in TeamMatesDisplayDictionary[r.Key].GetRobotLidarExtendedPoints())
+                    LidarPtExtendedSeries.AddPtExtended(pt);
 
                 SegmentSeries.Clear();
                 List<SegmentExtended> list_of_segments = TeamMatesDisplayDictionary[r.Key].GetRobotLidarSegments();

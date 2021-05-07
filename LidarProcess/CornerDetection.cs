@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Utilities;
 
-namespace LidarProcessor
+namespace LidarProcessNS
 {
     class CornerDetection
     {

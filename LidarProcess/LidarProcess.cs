@@ -97,12 +97,13 @@ namespace LidarProcessNS
 
             List<SegmentExtended> Lines = new List<SegmentExtended>();
             List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 0.035, 3);
-            List<PolarPointRssi> processedPoints = new List<PolarPointRssi>();
+
+            List<PolarPointRssiExtended> processedPoints =  ClustersDetection.SetColorsOfClustersObjects(clusterObjects);
             List<Cup> list_of_cups = new List<Cup>();
             List<LidarObjects> list_of_objects = new List<LidarObjects>();
             foreach (ClusterObjects c in clusterObjects)
             {
-                processedPoints.AddRange(c.points.Select(x => x.Pt).ToList());
+                //processedPoints.AddRange(c.points.Select(x => x.Pt).ToList());
 
                 Color color = Toolbox.ColorFromHSL((list_of_objects.Count * 0.20) % 1, 1, 0.5);
                 list_of_objects.Add(new LidarObjects(c.points.Select(x => Toolbox.ConvertPolarToPointD(x.Pt)).ToList(), color));
@@ -114,24 +115,36 @@ namespace LidarProcessNS
                 {
                     list_of_cups.Add(cup);
                 }
-
-                List<PolarCourbure> polarCourbures = ExtractCurvature(c.points.Select(x => x.Pt).ToList());
-                if (polarCourbures != null)
+                else
                 {
-                    List<PolarPointRssi> ptLineList = ExtractLinesFromCurvature(c.points.Select(x => x.Pt).ToList(), polarCourbures);
-                    List<PolarPointRssi> ptCornerList = ExtractCornersFromCurvature(c.points.Select(x => x.Pt).ToList(), polarCourbures);
-                    
-                    //if (ptLineList.Count() >= 1)
-                    //{
-                    //    Lines.Add(CreateLineSegment(ptLineList, 1));
-                    //}
+                    List<PolarCourbure> polarCourbures = ExtractCurvature(c.points.Select(x => x.Pt).ToList());
 
-                    //foreach (PolarPointRssi p in ptCornerList)
-                    //{
-                    //    processedPoints.Add(p);
-                    //}
-                }
+                    if (polarCourbures != null)
+                    {
+                        List<PolarPointRssi> ptLineList = ExtractLinesFromCurvature(c.points.Select(x => x.Pt).ToList(), polarCourbures, 1.05);
+
+                        if (ptLineList.Count >= 5)
+                        {
+                            List<PolarPointRssiExtended> iepf_points = LineDetection.IEPF_Algorithm(c.points, 0.07).Select(x => new PolarPointRssiExtended(x.Pt, 10, x.Color)).ToList();
+
+                            for (int i = 1; i < iepf_points.Count; i++)
+                            {
+                                Lines.Add(new SegmentExtended(Toolbox.ConvertPolarToPointD(iepf_points[i - 1].Pt), Toolbox.ConvertPolarToPointD(iepf_points[i].Pt), iepf_points[i].Color, 5));
+                            }
+
+                            // processedPoints.AddRange(iepf_points);
+
+                        }
+                    }
+                }                
             }
+
+            Lines = LineDetection.MergeSegmentWithLSM(Lines, 0.5, 4 * Math.PI / 180);
+            Lines = LineDetection.MergeSegment(Lines, 0.05);
+
+            List<List<SegmentExtended>> list_of_families = LineDetection.FindFamilyOfSegment(Lines, 0.2);
+            Lines = LineDetection.SetColorOfFamily(list_of_families);
+
 
             OnProcessLidarObjectsDataEvent?.Invoke(this, list_of_objects);
 
@@ -141,10 +154,10 @@ namespace LidarProcessNS
             OnProcessLidarCupDataEvent?.Invoke(this, list_of_cups);
 
 
-            RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints };
+            RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints.Select(x => x.Pt).ToList() };
             OnProcessLidarDataEvent?.Invoke(this, processLidar);
 
-            OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints.Select(x => new PolarPointRssiExtended(x, 3, Color.Purple)).ToList());
+            OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints);
             //OnProcessLidarXYDataEvent?.Invoke(this, processedPoints.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
         }
         #endregion
@@ -278,7 +291,7 @@ namespace LidarProcessNS
             }
             else
             {
-                return new Cup();
+                return null;
             }
 
         }

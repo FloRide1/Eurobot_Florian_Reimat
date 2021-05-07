@@ -330,6 +330,12 @@ namespace WpfWorldMapDisplay
             return dataSeries;
         }
 
+        public List<PointDExtended> GetRobotLidarExtendedPoints()
+        {
+
+            return (LidarProcessedPoints[0] == null)? new List<PointDExtended>():LidarProcessedPoints[0];
+        }
+
         public Tuple<XyDataSeries<double, double>, List<System.Drawing.Color>> GetRobotObjectsPoints()
         {
             var dataSeries = new XyDataSeries<double, double>();

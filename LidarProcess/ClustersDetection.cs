@@ -7,7 +7,7 @@ using Utilities;
 using System.Drawing;
 using EventArgsLibrary;
 
-namespace LidarProcessor
+namespace LidarProcessNS
 {
     public static class ClustersDetection
     {
@@ -306,7 +306,7 @@ namespace LidarProcessor
                 foreach (PolarPointRssiExtended points in clusterObjects[i].points)
                 {
                     points.Color = color;
-                    points.Width = 3.5;
+                    points.Width = 2;
 
                     array_of_points.Add(points);
                 }
