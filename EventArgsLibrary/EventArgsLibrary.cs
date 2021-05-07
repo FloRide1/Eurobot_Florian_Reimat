@@ -46,20 +46,6 @@ namespace EventArgsLibrary
         public int Line { get; set; }
     }
 
-    public class ClusterObjects : EventArgs
-    {
-        public List<PolarPointRssi> points { get; set; }
-
-        public ClusterObjects()
-        {
-            points = new List<PolarPointRssi>();
-        }
-        public ClusterObjects(List<PolarPointRssi> polarPointRssis)
-        {
-            points = polarPointRssis;
-        }
-
-    }
 
     public class LidarObjects : EventArgs
     {

@@ -102,13 +102,10 @@ namespace LidarProcessNS
             List<LidarObjects> list_of_objects = new List<LidarObjects>();
             foreach (ClusterObjects c in clusterObjects)
             {
-                foreach (PolarPointRssi p in c.points)
-                {
-                    processedPoints.Add(p);
-                }
+                processedPoints.AddRange(c.points.Select(x => x.Pt).ToList());
 
                 Color color = Toolbox.ColorFromHSL((list_of_objects.Count * 0.20) % 1, 1, 0.5);
-                list_of_objects.Add(new LidarObjects(c.points.Select(x => Toolbox.ConvertPolarToPointD(x)).ToList(), color));
+                list_of_objects.Add(new LidarObjects(c.points.Select(x => Toolbox.ConvertPolarToPointD(x.Pt)).ToList(), color));
 
 
                 Cup cup = DetectCup(c);
@@ -118,11 +115,11 @@ namespace LidarProcessNS
                     list_of_cups.Add(cup);
                 }
 
-                List<PolarCourbure> polarCourbures = ExtractCurvature(c.points);
+                List<PolarCourbure> polarCourbures = ExtractCurvature(c.points.Select(x => x.Pt).ToList());
                 if (polarCourbures != null)
                 {
-                    List<PolarPointRssi> ptLineList = ExtractLinesFromCurvature(c.points, polarCourbures);
-                    List<PolarPointRssi> ptCornerList = ExtractCornersFromCurvature(c.points, polarCourbures);
+                    List<PolarPointRssi> ptLineList = ExtractLinesFromCurvature(c.points.Select(x => x.Pt).ToList(), polarCourbures);
+                    List<PolarPointRssi> ptCornerList = ExtractCornersFromCurvature(c.points.Select(x => x.Pt).ToList(), polarCourbures);
                     
                     //if (ptLineList.Count() >= 1)
                     //{
@@ -173,7 +170,7 @@ namespace LidarProcessNS
                 double distance_between_point = Toolbox.Distance(point_n, point_n_minus_1);
                 if (distance_between_point < ABD_Thresold)
                 {
-                    cluster.points.Add(point_n);
+                    cluster.points.Add(new PolarPointRssiExtended(point_n, 3, Color.Purple));
                 }
                 else
                 {
@@ -194,199 +191,12 @@ namespace LidarProcessNS
             return listOfClusters;
         }
         #endregion
-
-        #region Global Line Detection
-        /// <summary>
-        /// Detect Line in a global frame: fast + resolution less
-        /// </summary>
-        /// <param name="pointsList"> The list of point by the Lidar</param>
-        /// <param name="thresold"> The distance error allowed </param>
-        /// <param name="angle_of_start"> Default: 0 degree </param>
-        /// <param name="angle_step"> Default: 5 degree </param>
-        /// <param name="error_max"> The max error countdown before stopping the segment </param>
-        /// <returns></returns>
-        public Segment DetectGlobalLine(List<PolarPointRssi> pointsList, double thresold, double angle_of_start = 0d,
-            double angle_step = 5d, int error_max = 3, double lenght_minimum = 1d)
-        {
-            /// Note: Remember to add Array Overflow Security
-            /// Note: Avoid 0 Angle (Infinite bug) or implement security
-
-            /// For faster seach of angle in array -> NEED TO EDIT
-            List<double> angle_array = new List<double>();
-            foreach (PolarPointRssi point in pointsList)
-            {
-                if (point.Distance != 0d)
-                {
-                    angle_array.Add(point.Angle);
-                }
-
-            }
-
-            /// Init
-            int i;
-            double angle = angle_of_start;
-
-
-            int center_index = GetIndexOfAngle(angle_array, angle);
-
-            /// Get First three Points
-            PointD center_point = Toolbox.ConvertPolarToPointD(pointsList[center_index]);
-            PointD left_center_point = Toolbox.ConvertPolarToPointD(pointsList[center_index - 1]);
-            PointD right_center_pointsList = Toolbox.ConvertPolarToPointD(pointsList[center_index + 1]);
-
-            /// Points for Linear Regression
-            List<double> xPoints = new List<double>() { left_center_point.X, center_point.X, right_center_pointsList.X };
-            List<double> yPoints = new List<double>() { left_center_point.Y, center_point.Y, right_center_pointsList.Y };
-
-            /// Get First Linear Regression
-            Tuple<double, double> line = Fit.Line(xPoints.ToArray(), yPoints.ToArray());
-            double slope = line.Item1;
-            double y_intercept = line.Item2;
-
-            /// Init Error
-            int error_count = 0;
-
-            /// Extremity of Segment
-            PointD[] extremity_of_segment = new PointD[2];
-            int side;
-            for (side = 0; side < 2; side++)
-            {
-                angle = Toolbox.DegToRad(angle_of_start);
-                /// This loop is only for making Right (0) + Left (1) Side
-                bool side_is_finish = false;
-                while (Math.Abs(angle) < Math.PI / 2 && !side_is_finish)
-                {
-                    /// If the side is Left (1) we invert the step
-                    angle += (side % 2 == 0 ? 1 : -1) * Toolbox.DegToRad(angle_step);
-
-                    /// Calculate estimated point
-                    double angle_slope = angle;
-                    double angle_y_intercept = 0;
-
-                    PointD estimated_point = Toolbox.GetCrossingPoint(slope, y_intercept, angle_slope, angle_y_intercept);
-
-                    /// Calculate Distance with measured point
-                    int angle_index = GetIndexOfAngle(angle_array, angle);
-                    PointD measured_point = Toolbox.ConvertPolarToPointD(pointsList[angle_index]);
-
-                    double delta = Toolbox.Distance(estimated_point, measured_point);
-
-                    if (delta <= thresold)
-                    {
-                        /// Enhance Linear Regression
-                        xPoints.Add(measured_point.X);
-                        yPoints.Add(measured_point.Y);
-
-                        line = Fit.Line(xPoints.ToArray(), yPoints.ToArray());
-                        slope = line.Item1;
-                        y_intercept = line.Item2;
-                    }
-                    else
-                    {
-                        /// Measured point does'nt coincide with Estimate point
-                        error_count++;
-                        if (error_count == error_max)
-                        {
-                            /// The line end 
-                            angle -= ((side % 2 == 0) ? 1 : -1) * error_max * Toolbox.DegToRad(angle_step);
-
-
-                            /// Try to find the end of the segment
-                            /// Make a for loop from the end valid angle and continue until the thresold is uncorrect
-                            int index_of_last_valid_point = 0;
-                            bool point_is_valid = true;
-                            int j = GetIndexOfAngle(angle_array, angle);
-
-                            while (point_is_valid)
-                            {
-                                j += (side % 2 == 0 ? 1 : -1);
-                                if (j < 0 || j >= pointsList.Count)
-                                {
-                                    point_is_valid = false;
-                                }
-                                else
-                                {
-                                    PolarPointRssi actual_point = pointsList[j];
-
-                                    double measured_angle = actual_point.Angle;
-                                    measured_point = Toolbox.ConvertPolarToPointD(actual_point);
-
-                                    estimated_point = Toolbox.GetCrossingPoint(slope, y_intercept, measured_angle, 0);
-
-                                    if (Toolbox.Distance(measured_point, estimated_point) > thresold)
-                                    {
-                                        point_is_valid = false;
-                                        j -= (side % 2 == 0 ? 2 : -2);
-                                        index_of_last_valid_point = j;
-                                    }
-                                    else
-                                    {
-                                        /// Enhance Linear Regression
-                                        xPoints.Add(measured_point.X);
-                                        yPoints.Add(measured_point.Y);
-
-                                        line = Fit.Line(xPoints.ToArray(), yPoints.ToArray());
-                                        slope = line.Item1;
-                                        y_intercept = line.Item2;
-                                    }
-                                }
-                            }
-                            /// Now that we have the last measured index of the segment end the line 
-                            /// with the parallel of the measured point and the estimated line 
-
-                            ///  Note: that line is useless but for safety i write it during Algorithm implementation
-                            measured_point = Toolbox.ConvertPolarToPointD(pointsList[index_of_last_valid_point]); /// Why Here it's relative | GO down a bit |
-                            extremity_of_segment[side] = Toolbox.GetPerpendicularPoint(measured_point, slope, y_intercept);
-
-                            /// Now Switch with the reverse side by ending the while loop
-                            side_is_finish = true;
-                        }
-                    }
-
-
-                    if (Math.Abs(angle) >= Math.PI / 2)
-                    {
-                        /// The loop end without finding the end of the line
-                        side_is_finish = true;
-                        angle_index = GetIndexOfAngle(angle_array, angle);
-                        measured_point = Toolbox.ConvertPolarToPointD(pointsList[angle_index]); /// And here it's absolute
-                        estimated_point = Toolbox.GetCrossingPoint(slope, y_intercept, pointsList[angle_index].Angle, 0);
-                        if (Toolbox.Distance(measured_point, estimated_point) <= thresold)
-                        {
-                            extremity_of_segment[side] = Toolbox.GetPerpendicularPoint(measured_point, slope, y_intercept);
-                        }
-
-
-
-                    }
-                }
-
-            }
-            if (extremity_of_segment[0] == null || extremity_of_segment[1] == null)
-            {
-                return new Segment();
-            }
-            /// Check the lenght of the segment and if it to small abort it 
-            if (Toolbox.Distance(extremity_of_segment[0], extremity_of_segment[1]) < lenght_minimum)
-            {
-                return new Segment();
-            }
-            if (xPoints.Count <= 3)
-            {
-                return new Segment();
-            }
-
-            Segment segment = new Segment(extremity_of_segment[0], extremity_of_segment[1]);
-            return segment;
-        }
-
-        
-        #endregion
+ 
 
         #region Small Line
         public Segment DetectLine(ClusterObjects blob, double thresold, double alignNbr, int moy = 5)
         {
-            List<PolarPointRssi> pointList = blob.points;
+            List<PolarPointRssi> pointList = blob.points.Select(x => x.Pt).ToList();
 
             List<double> derivate1 = new List<double>();
             List<double> derivate2 = new List<double>();
@@ -434,19 +244,19 @@ namespace LidarProcessNS
         {
             /// TEMPORARY NEED TO EDIT: ONLY FOR DEBUG PURPOSE
 
-            PolarPointRssi begin_point = cluster.points[0];
-            PolarPointRssi end_point = cluster.points[cluster.points.Count - 1];
+            PolarPointRssi begin_point = cluster.points[0].Pt;
+            PolarPointRssi end_point = cluster.points[cluster.points.Count - 1].Pt;
 
             double lenght_of_cluster = Toolbox.Distance(begin_point, end_point);
 
             if (lenght_of_cluster >= 0.040 && lenght_of_cluster <= 0.08)
             {
-                List<PointD> pointDs = cluster.points.Select(x => Toolbox.ConvertPolarToPointD(x)).ToList();
+                List<PointD> pointDs = cluster.points.Select(x => Toolbox.ConvertPolarToPointD(x.Pt)).ToList();
 
                 double median = 0.80;
 
-                double b = cluster.points[(int)(cluster.points.Count() * median)].Rssi;
-                double e = cluster.points[(int)(cluster.points.Count() * (1 - median))].Rssi;
+                double b = cluster.points[(int)(cluster.points.Count() * median)].Pt.Rssi;
+                double e = cluster.points[(int)(cluster.points.Count() * (1 - median))].Pt.Rssi;
 
                 double moyenne = (b + e) / 2;
                 Color color = Color.White;

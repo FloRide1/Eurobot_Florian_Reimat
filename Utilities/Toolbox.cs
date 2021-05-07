@@ -193,6 +193,34 @@ namespace Utilities
                 return null;
         }
 
+        static public PointDExtended GetCrossingPointBetweenSegment(SegmentExtended segment_a, SegmentExtended segment_b)
+        {
+            PointDExtended crossing_point = new PointDExtended(new PointD(0, 0), segment_a.Color, segment_a.Width);
+
+            if (segment_a.Segment.X1 == segment_a.Segment.X2 || segment_b.Segment.X1 == segment_b.Segment.X2)
+            {
+                return crossing_point;
+            }
+            double slope_a = (segment_a.Segment.Y2 - segment_a.Segment.Y1) / (segment_a.Segment.X2 - segment_a.Segment.X1);
+            double y_intercept_a = segment_a.Segment.Y1 - (segment_a.Segment.X1) * slope_a;
+
+            double slope_b = (segment_b.Segment.Y2 - segment_b.Segment.Y1) / (segment_b.Segment.X2 - segment_b.Segment.X1);
+            double y_intercept_b = segment_b.Segment.Y1 - (segment_b.Segment.X1) * slope_b;
+
+            if (slope_a == slope_b)
+            {
+                return crossing_point;
+            }
+
+            double x = (y_intercept_b - y_intercept_a) / (slope_a - slope_b);
+            double y = slope_a * x + y_intercept_a;
+
+            crossing_point.Pt = new PointD(x, y);
+
+            return crossing_point;
+
+        }
+
         [DllImport("shlwapi.dll")]
         public static extern int ColorHLSToRGB(int H, int L, int S);
 
