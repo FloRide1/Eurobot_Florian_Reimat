@@ -183,8 +183,8 @@ namespace WorldMap
             LidarMapRaw = lidarPoints.Select(
                 x => new PointDExtended(
                     new PointD( 
-                        RobotLocation.X + (x.Pt.Distance * Math.Cos(x.Pt.Angle - RobotLocation.Theta)),
-                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(x.Pt.Angle - RobotLocation.Theta))
+                        RobotLocation.X + (x.Pt.Distance * Math.Cos(RobotLocation.Theta - x.Pt.Angle)),
+                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(RobotLocation.Theta - x.Pt.Angle))
                     ),
                     x.Color,
                     x.Width
@@ -198,8 +198,8 @@ namespace WorldMap
             LidarMapProcessed = lidarPoints.Select(
                 x => new PointDExtended(
                     new PointD(
-                        RobotLocation.X + (x.Pt.Distance * Math.Cos(x.Pt.Angle - RobotLocation.Theta)),
-                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(x.Pt.Angle - RobotLocation.Theta))
+                        RobotLocation.X + (x.Pt.Distance * Math.Cos(RobotLocation.Theta - x.Pt.Angle)),
+                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(RobotLocation.Theta - x.Pt.Angle))
                     ),
                     x.Color,
                     x.Width
@@ -208,9 +208,29 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
-        public void OnLidarProcessedLineReceived(object sender, List<SegmentExtended> segments)
+        public void OnLidarProcessedLineReceived(object sender, List<SegmentExtended> list_of_segments)
         {
-            LidarSegment = segments;
+            List<SegmentExtended> corrected_list_segment = new List<SegmentExtended>();
+
+            foreach(SegmentExtended segment in list_of_segments)
+            {
+                PolarPointRssi point_a = Toolbox.ConvertPointDToPolar(new PointD(segment.Segment.X1, segment.Segment.Y1));
+                PolarPointRssi point_b = Toolbox.ConvertPointDToPolar(new PointD(segment.Segment.X2, segment.Segment.Y2));
+
+                PointD correct_point_a = new PointD(
+                        RobotLocation.X + (point_a.Distance * Math.Cos(RobotLocation.Theta - point_a.Angle)),
+                        RobotLocation.Y + (point_a.Distance * Math.Sin(RobotLocation.Theta - point_a.Angle))
+                    );
+
+                PointD correct_point_b = new PointD(
+                        RobotLocation.X + (point_b.Distance * Math.Cos(RobotLocation.Theta - point_b.Angle)),
+                        RobotLocation.Y + (point_b.Distance * Math.Sin(RobotLocation.Theta - point_b.Angle))
+                    );
+                corrected_list_segment.Add(new SegmentExtended(correct_point_a, correct_point_b, segment.Color, segment.Width));
+            }
+
+
+            LidarSegment = corrected_list_segment;
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 

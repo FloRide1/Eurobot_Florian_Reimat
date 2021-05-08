@@ -85,26 +85,122 @@ namespace LidarProcessNS
         #region Main
         public void ProcessLidarData(List<PolarPointRssi> polarPointRssi)
         {
-            List<PolarPointRssi> validPoint = new List<PolarPointRssi>();
-            foreach (PolarPointRssi p in polarPointRssi)
+            List<SegmentExtended> Lines = new List<SegmentExtended>();
+
+            List<PolarPointRssi> validPoint = polarPointRssi.Where(x => x.Distance <= Math.Sqrt(Math.Pow(3, 2) + Math.Pow(2, 2))).ToList();
+            List<PointD> validPointXY = validPoint.Select(x => Toolbox.ConvertPolarToPointD(x)).ToList();
+
+
+            RectangleOriented best_rectangle = FindRectangle.Rotating_Caliper(validPointXY);
+            List<PointD> border_points = FindRectangle.FindAllBorderPoints(validPointXY, best_rectangle, 0.05);
+
+            
+
+            List<ClusterObjects> clusterObjects = ClustersDetection.ExtractClusterByDBScan(validPointXY.Where(x => border_points.IndexOf(x) == -1).ToList(), 0.05, 3);
+
+            List<PolarPointRssiExtended> processedPoints = ClustersDetection.SetColorsOfClustersObjects(clusterObjects);
+
+            double thresold = 0.05;
+
+            double width = Math.Max(best_rectangle.Width, best_rectangle.Lenght);
+            double height = Math.Min(best_rectangle.Width, best_rectangle.Lenght);
+
+            Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(best_rectangle);
+
+            if (width > 2 + thresold)
             {
-                if (p.Distance <= Math.Sqrt(Math.Pow(3, 2) + Math.Pow(2, 2)))
+                if (width >= 3 - thresold && width <= 3 + thresold)
                 {
-                    validPoint.Add(p);
+                    /// We can see the long border
                 }
+                else if (width <= 3 - thresold)
+                {
+                    /// Special Case
+                }
+                else
+                {
+                    /// IMPOSSIBLE
+                } 
+            }
+            else if (width >= 2 - thresold && width <= 2 + thresold)
+            {
+
             }
 
+            
+            
+            
+            
+            processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(best_rectangle.Center), 10, Color.Black));
 
-            List<SegmentExtended> Lines = new List<SegmentExtended>();
-            List<ClusterObjects> clusterObjects = DetectClusterOfPoint(validPoint, 0.035, 3);
+            // Lines.AddRange(FindRectangle.DrawRectangle(best_rectangle, Color.Green));
 
-            List<PolarPointRssiExtended> processedPoints =  ClustersDetection.SetColorsOfClustersObjects(clusterObjects);
+            int number_of_visible_corner = 0;
+
+            
+
+            //processedPoints.AddRange(border_points.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(x), 3, Color.Black)).ToList());
+
+            double angle = 80;
+
+
+            //if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item1).Angle) <= angle * Math.PI / 180)
+            //{
+            //    number_of_visible_corner++;
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
+            //}
+            //else
+            //{
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Red));
+            //}
+
+            //if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item2).Angle) <= angle * Math.PI / 180)
+            //{
+            //    number_of_visible_corner++;
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
+            //}
+            //else
+            //{
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Red));
+            //}
+
+            //if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item3).Angle) <= angle * Math.PI / 180)
+            //{
+            //    number_of_visible_corner++;
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
+            //}
+            //else
+            //{
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Red));
+            //}
+
+            //if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item4).Angle) <= angle * Math.PI / 180)
+            //{
+            //    number_of_visible_corner++;
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Green));
+            //}
+            //else
+            //{
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Red));
+            //}
+
+
+            Console.WriteLine(number_of_visible_corner);
+
+
+
+
+
+
+
+
+
+
             List<Cup> list_of_cups = new List<Cup>();
             List<LidarObjects> list_of_objects = new List<LidarObjects>();
+
             foreach (ClusterObjects c in clusterObjects)
             {
-                //processedPoints.AddRange(c.points.Select(x => x.Pt).ToList());
-
                 Color color = Toolbox.ColorFromHSL((list_of_objects.Count * 0.20) % 1, 1, 0.5);
                 list_of_objects.Add(new LidarObjects(c.points.Select(x => Toolbox.ConvertPolarToPointD(x.Pt)).ToList(), color));
 
@@ -114,36 +210,14 @@ namespace LidarProcessNS
                 if (cup != null)
                 {
                     list_of_cups.Add(cup);
-                }
-                else
-                {
-                    List<PolarCourbure> polarCourbures = ExtractCurvature(c.points.Select(x => x.Pt).ToList());
-
-                    if (polarCourbures != null)
-                    {
-                        List<PolarPointRssi> ptLineList = ExtractLinesFromCurvature(c.points.Select(x => x.Pt).ToList(), polarCourbures, 1.05);
-
-                        if (ptLineList.Count >= 5)
-                        {
-                            List<PolarPointRssiExtended> iepf_points = LineDetection.IEPF_Algorithm(c.points, 0.07).Select(x => new PolarPointRssiExtended(x.Pt, 10, x.Color)).ToList();
-
-                            for (int i = 1; i < iepf_points.Count; i++)
-                            {
-                                Lines.Add(new SegmentExtended(Toolbox.ConvertPolarToPointD(iepf_points[i - 1].Pt), Toolbox.ConvertPolarToPointD(iepf_points[i].Pt), iepf_points[i].Color, 5));
-                            }
-
-                            // processedPoints.AddRange(iepf_points);
-
-                        }
-                    }
-                }                
+                }              
             }
 
-            Lines = LineDetection.MergeSegmentWithLSM(Lines, 0.5, 4 * Math.PI / 180);
-            Lines = LineDetection.MergeSegment(Lines, 0.05);
+            //Lines = LineDetection.MergeSegmentWithLSM(Lines, 0.5, 4 * Math.PI / 180);
+            //Lines = LineDetection.MergeSegment(Lines, 0.05);
 
-            List<List<SegmentExtended>> list_of_families = LineDetection.FindFamilyOfSegment(Lines, 0.2);
-            Lines = LineDetection.SetColorOfFamily(list_of_families);
+            //List<List<SegmentExtended>> list_of_families = LineDetection.FindFamilyOfSegment(Lines, 0.2);
+            //Lines = LineDetection.SetColorOfFamily(list_of_families);
 
 
             OnProcessLidarObjectsDataEvent?.Invoke(this, list_of_objects);

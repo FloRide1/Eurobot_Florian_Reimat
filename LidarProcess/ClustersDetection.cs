@@ -306,7 +306,7 @@ namespace LidarProcessNS
                 foreach (PolarPointRssiExtended points in clusterObjects[i].points)
                 {
                     points.Color = color;
-                    points.Width = 2;
+                    points.Width = 8;
 
                     array_of_points.Add(points);
                 }

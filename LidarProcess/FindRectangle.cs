@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Utilities;
 using MIConvexHull;
+using System.Drawing;
+using MathNet.Numerics;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace LidarProcessNS
 {
@@ -14,12 +18,120 @@ namespace LidarProcessNS
 	using System.Collections.Generic;
 
 	public static class FindRectangle
-    {
+	{
 
-		public static void Rotating_Caliper()
-        {
-			// ConvexHull.Create2D()
-        }
+		/// <summary>
+		/// Implementation of  Shamos's Algorithm for finding AntiPodalsPairs
+		/// </summary>
+		/// <param name="list_of_points"></param>
+		/// <returns></returns>
+		public static RectangleOriented Rotating_Caliper(List<PointD> list_of_points)
+		{
+			ConvexHullCreationResult<DefaultVertex2D> hull = ConvexHull.Create2D(list_of_points.Select(x => new double[2] { x.X, x.Y }).ToList());
+	
+			double[,] hull_array = new double[hull.Result.Count,2];
+			
+			for (int i = 0; i < hull.Result.Count; i++)
+            {
+				hull_array[i, 0] = hull.Result[i].X;
+				hull_array[i, 1] = hull.Result[i].Y;
+			}
+
+			Matrix<double> hull_matrix = DenseMatrix.OfArray(hull_array);
+
+			List<Tuple<PointD, PointD>> antipodalPairs = new List<Tuple<PointD, PointD>>();
+
+			List<Tuple<double, double>> edges = new List<Tuple<double, double>>();
+
+			/// Compute edges (x2 - x1, y2 - y1)
+			for (int i = 0; i < hull_array.Length / 2 - 1; i++)
+            {
+				double edge_x = hull_array[i + 1, 0] - hull_array[i, 0];
+				double edge_y = hull_array[i + 1, 1] - hull_array[i, 1];
+
+				edges.Add(new Tuple<double, double>(edge_x, edge_y));
+			}
+
+			/// Calculate Edges Angles
+			List<double> edge_angles = edges.Select(x => Math.Atan2(x.Item2, x.Item1)).ToList();
+
+			/// Check for angle in 1st quadrant
+			edge_angles.ForEach(x => Math.Abs(x % (Math.PI / 2)));
+
+
+			/// Remove Duplicates
+			edge_angles = edge_angles.Distinct().ToList();
+
+			double? min_area = null;
+			double min_angle = 0;
+			List<double> min_corners = null;
+			/// Test each angle to find bounding box with smallest area
+			foreach (double angle in edge_angles)
+            {
+				/// Create rotation matrix to shift points to baseline
+				/// R = [cos(theta)      , cos(theta-PI/2)]
+				///		[cos(theta+PI/2) , cos(theta)     ]
+				Matrix<double> rotation_matrix = DenseMatrix.OfArray(new double[,] {
+					{ Math.Cos(angle), Math.Cos(angle - Math.PI / 2) },
+					{ Math.Cos(angle + Math.PI / 2), Math.Cos(angle) }
+				});
+
+				Matrix<double> rotated_points = rotation_matrix * hull_matrix.Transpose();
+
+				double max_x = rotated_points[0, 0];
+				double max_y = rotated_points[1, 0];
+				double min_x = rotated_points[0, 0];
+				double min_y = rotated_points[1, 0];
+
+				for (int i = 0; i < rotated_points.ColumnCount; i ++)
+                {
+					double current_x = rotated_points[0, i];
+					double current_y = rotated_points[1, i];
+
+					if (max_x < current_x)
+						max_x = current_x;
+					if (min_x > current_x)
+						min_x = current_x;
+
+					if (max_y < current_y)
+						max_y = current_y;
+					if (min_y > current_y)
+						min_y = current_y;
+				}
+
+				double width = max_x - min_x;
+				double height = max_y - min_y;
+				double area = width * height;
+
+				if (area < min_area || min_area == null)
+                {
+					min_area = area;
+					min_angle = angle;
+					min_corners = new List<double>() { min_x, min_y, max_x, max_y };
+                }
+			}
+
+			double center_x = (min_corners[0] + min_corners[2]) / 2;
+			double center_y = (min_corners[1] + min_corners[3]) / 2;
+
+			double min_width = min_corners[2] - min_corners[0];
+			double min_height = min_corners[3] - min_corners[1];
+
+			Vector<double> center_point = Vector<double>.Build.DenseOfArray(new double[] { center_x, center_y });
+
+			Matrix<double> min_rotation_matrix = DenseMatrix.OfArray(new double[,] {
+				{ Math.Cos(min_angle), Math.Cos(min_angle - Math.PI / 2) },
+				{ Math.Cos(min_angle + Math.PI / 2), Math.Cos(min_angle) }
+			});
+
+			Vector<double> ref_center = center_point * min_rotation_matrix;
+
+
+			RectangleOriented best_rectangle = new RectangleOriented(new PointD(ref_center[0], ref_center[1]), min_width, min_height, min_angle);
+
+			return best_rectangle;
+
+		}
 
 		public static List<RectangleOriented> FindAllPossibleRectangle(List<List<PointDExtended>> list_of_family_corners, double thresold)
         {
@@ -81,7 +193,85 @@ namespace LidarProcessNS
 				}
 			}
             return list_of_rectangles;
-        } 
+        }
+
+		public static List<SegmentExtended> DrawRectangle(RectangleOriented rectangle, Color color, double width = 3)
+		{
+			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
+
+			List<SegmentExtended> list_of_segments = new List<SegmentExtended>()
+			{ 
+				new SegmentExtended(corners.Item1, corners.Item2, color, width),
+				new SegmentExtended(corners.Item1, corners.Item3, color, width),
+				new SegmentExtended(corners.Item4, corners.Item2, color, width),
+				new SegmentExtended(corners.Item4, corners.Item3, color, width),
+			};
+
+
+			return list_of_segments;
+
+		}
+
+		public static List<PointD> FindAllBorderPoints(List<PointD> list_of_points, RectangleOriented rectangle, double thresold)
+        {
+			double[,] point_array = new double[list_of_points.Count, 2];
+
+			for (int i = 0; i < list_of_points.Count; i++)
+			{
+				point_array[i, 0] = list_of_points[i].X;
+				point_array[i, 1] = list_of_points[i].Y;
+			}
+
+			Matrix<double> points_matrix = DenseMatrix.OfArray(point_array);
+
+			double angle = rectangle.Angle;
+
+			Matrix<double> rotation_matrix = DenseMatrix.OfArray(new double[,] {
+					{ Math.Cos(angle), Math.Cos(angle - Math.PI / 2) },
+					{ Math.Cos(angle + Math.PI / 2), Math.Cos(angle) }
+				});
+
+			Matrix<double> rotated_points = rotation_matrix * points_matrix.Transpose();
+
+			Vector<double> center_point = Vector<double>.Build.DenseOfArray(new double[] { rectangle.Center.X, rectangle.Center.Y });
+
+			Vector<double> rotated_center = rotation_matrix * center_point;
+
+			double min_x = rotated_center[0] - rectangle.Lenght / 2;
+			double max_x = rotated_center[0] + rectangle.Lenght / 2;
+
+			double min_y = rotated_center[1] - rectangle.Width / 2;
+			double max_y = rotated_center[1] + rectangle.Width / 2;
+
+			bool[] list_of_rotated_border_points = new bool[rotated_points.ColumnCount];
+
+			for (int i = 0; i < rotated_points.ColumnCount; i++)
+            {
+				double current_x = rotated_points[0, i];
+				double current_y = rotated_points[1, i];
+
+				if (Math.Abs(min_x - current_x) <= thresold || Math.Abs(max_x - current_x) <= thresold)
+                {
+					list_of_rotated_border_points[i] = true;
+                }
+
+				if (Math.Abs(min_y - current_y) <= thresold || Math.Abs(max_y - current_y) <= thresold)
+				{
+					list_of_rotated_border_points[i] = true;
+				}
+			}
+
+			List<PointD> list_of_border_points = new List<PointD>();
+			for (int i = 0; i < list_of_points.Count; i++)
+            {
+				if (list_of_rotated_border_points[i])
+                {
+					list_of_border_points.Add(list_of_points[i]);
+                }
+            }
+
+			return list_of_border_points;
+		}
     }
 
 

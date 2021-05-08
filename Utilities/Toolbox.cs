@@ -386,6 +386,11 @@ namespace Utilities
             return Math.Atan2(pt2.Y - pt1.Y, pt2.X - pt1.X);
         }
 
+        public static double ClockWiseAngle(PointD pt1, PointD pt2)
+        {
+            return Toolbox.Modulo2PiAngleRad(- Angle(pt1, pt2));
+        }
+
         public static void SwapNum(ref double x, ref double y)
         {
             x += y;
