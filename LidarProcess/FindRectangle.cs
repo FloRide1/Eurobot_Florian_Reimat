@@ -19,28 +19,88 @@ namespace LidarProcessNS
 
 	public static class FindRectangle
 	{
-
-		/// <summary>
-		/// Implementation of https://github.com/dbworth/minimum-area-bounding-rectangle/blob/master/python/min_bounding_rect.py
-		/// </summary>
-		/// <param name="list_of_points"></param>
-		/// <returns></returns>
-		public static RectangleOriented FindMbrWithRotating_Caliper(List<PointD> list_of_points)
+		public static RectangleOriented FindMbrBoxByArea(List<PointD> list_of_points)
 		{
 			ConvexHullCreationResult<DefaultVertex2D> hull = ConvexHull.Create2D(list_of_points.Select(x => new double[2] { x.X, x.Y }).ToList());
-	
-			double[,] hull_array = new double[hull.Result.Count,2];
-			
+
+			double[,] hull_array = new double[hull.Result.Count, 2];
+
 			for (int i = 0; i < hull.Result.Count; i++)
-            {
+			{
 				hull_array[i, 0] = hull.Result[i].X;
 				hull_array[i, 1] = hull.Result[i].Y;
 			}
 
 			Matrix<double> hull_matrix = DenseMatrix.OfArray(hull_array);
 
-			List<Tuple<PointD, PointD>> antipodalPairs = new List<Tuple<PointD, PointD>>();
+			List<double> edge_angles = Rotating_Caliper(hull_array);
 
+			double? min_area = null;
+			RectangleOriented best_rectangle = new RectangleOriented();
+			/// Test each angle to find bounding box with smallest area
+			foreach (double angle in edge_angles)
+			{
+				RectangleOriented rectangle = FindMinimumBoundingRectangle(hull_matrix, angle);
+
+
+				double area = rectangle.Lenght * rectangle.Width;
+
+				if (area < min_area || min_area == null)
+				{
+					min_area = area;
+					best_rectangle = rectangle;
+				}
+			}
+
+			return best_rectangle;
+		}
+
+
+		public static RectangleOriented FindMbrBoxByOverlap(List<PointD> list_of_points)
+        {
+			ConvexHullCreationResult<DefaultVertex2D> hull = ConvexHull.Create2D(list_of_points.Select(x => new double[2] { x.X, x.Y }).ToList());
+
+			double[,] hull_array = new double[hull.Result.Count, 2];
+
+			for (int i = 0; i < hull.Result.Count; i++)
+			{
+				hull_array[i, 0] = hull.Result[i].X;
+				hull_array[i, 1] = hull.Result[i].Y;
+			}
+
+			Matrix<double> hull_matrix = DenseMatrix.OfArray(hull_array);
+
+			List<double> edge_angles = Rotating_Caliper(hull_array);
+
+			int? max_overlap = null;
+			RectangleOriented best_rectangle = new RectangleOriented();
+			/// Test each angle to find bounding box with smallest area
+			foreach (double angle in edge_angles)
+			{
+				RectangleOriented rectangle = FindMinimumBoundingRectangle(hull_matrix, angle);
+
+
+				int overlap = FindAllBorderPoints(list_of_points, rectangle, 0.05).Count;
+
+				if (overlap > max_overlap || max_overlap == null)
+				{
+					max_overlap = overlap;
+					best_rectangle = rectangle;
+				}
+			}
+
+			return best_rectangle;
+		}
+
+
+
+		/// <summary>
+		/// Implementation of the Rotating Calipers Algorithm
+		/// </summary>
+		/// <param name="list_of_points"></param>
+		/// <returns></returns>
+		public static List<double> Rotating_Caliper(double[,] hull_array)
+		{
 			List<Tuple<double, double>> edges = new List<Tuple<double, double>>();
 
 			/// Compute edges (x2 - x1, y2 - y1)
@@ -60,29 +120,7 @@ namespace LidarProcessNS
 
 
 			/// Remove Duplicates
-			edge_angles = edge_angles.Distinct().ToList();
-
-			int? min_area = null;
-			RectangleOriented best_rectangle = new RectangleOriented();
-
-
-			/// Test each angle to find bounding box with smallest area
-			foreach (double angle in edge_angles)
-            {
-				RectangleOriented rectangle = FindMinimumBoundingRectangle(hull_matrix, angle);
-
-
-				int area = FindAllBorderPoints(list_of_points, rectangle, 0.05).Count;
-
-				if (area > min_area || min_area == null)
-                {
-					min_area = area;
-					best_rectangle = rectangle;
-                }
-			}
-
-			return best_rectangle;
-
+			return edge_angles.Distinct().ToList();
 		}
 
 		public static RectangleOriented FindMinimumBoundingRectangle(Matrix<double> hull_matrix, double angle)

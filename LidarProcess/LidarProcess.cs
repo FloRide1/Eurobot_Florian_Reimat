@@ -91,7 +91,7 @@ namespace LidarProcessNS
             List<PointD> validPointXY = validPoint.Select(x => Toolbox.ConvertPolarToPointD(x)).ToList();
 
 
-            RectangleOriented best_rectangle = FindRectangle.FindMbrWithRotating_Caliper(validPointXY);
+            RectangleOriented best_rectangle = FindRectangle.FindMbrBoxByOverlap(validPointXY);
             List<PointD> border_points = FindRectangle.FindAllBorderPoints(validPointXY, best_rectangle, 0.05);
 
             
@@ -133,7 +133,7 @@ namespace LidarProcessNS
             
             processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(best_rectangle.Center), 10, Color.Black));
 
-            Lines.AddRange(FindRectangle.DrawRectangle(best_rectangle, Color.Green));
+            Lines.AddRange(FindRectangle.DrawRectangle(best_rectangle, Color.Green, 1));
 
             int number_of_visible_corner = 0;
 
@@ -144,45 +144,45 @@ namespace LidarProcessNS
             double angle = 80;
 
 
-            //if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item1).Angle) <= angle * Math.PI / 180)
-            //{
-            //    number_of_visible_corner++;
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Red));
-            //}
+            if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item1).Angle) <= angle * Math.PI / 180)
+            {
+                number_of_visible_corner++;
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
+            }
+            else
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Red));
+            }
 
-            //if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item2).Angle) <= angle * Math.PI / 180)
-            //{
-            //    number_of_visible_corner++;
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Red));
-            //}
+            if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item2).Angle) <= angle * Math.PI / 180)
+            {
+                number_of_visible_corner++;
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
+            }
+            else
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Red));
+            }
 
-            //if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item3).Angle) <= angle * Math.PI / 180)
-            //{
-            //    number_of_visible_corner++;
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Red));
-            //}
+            if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item3).Angle) <= angle * Math.PI / 180)
+            {
+                number_of_visible_corner++;
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
+            }
+            else
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Red));
+            }
 
-            //if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item4).Angle) <= angle * Math.PI / 180)
-            //{
-            //    number_of_visible_corner++;
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Red));
-            //}
+            if (Math.Abs(Toolbox.ConvertPointDToPolar(corners.Item4).Angle) <= angle * Math.PI / 180)
+            {
+                number_of_visible_corner++;
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Green));
+            }
+            else
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Red));
+            }
 
 
             Console.WriteLine(number_of_visible_corner);
@@ -201,6 +201,12 @@ namespace LidarProcessNS
 
             foreach (ClusterObjects c in clusterObjects)
             {
+                RectangleOriented cluster_rectangle = FindRectangle.FindMbrBoxByArea(c.points.Select(x => Toolbox.ConvertPolarToPointD(x.Pt)).ToList());
+                cluster_rectangle.Lenght += 0.1;
+                cluster_rectangle.Width += 0.1;
+
+                Lines.AddRange(FindRectangle.DrawRectangle(cluster_rectangle, c.points[0].Color, 3));
+
                 Color color = Toolbox.ColorFromHSL((list_of_objects.Count * 0.20) % 1, 1, 0.5);
                 list_of_objects.Add(new LidarObjects(c.points.Select(x => Toolbox.ConvertPolarToPointD(x.Pt)).ToList(), color));
 
