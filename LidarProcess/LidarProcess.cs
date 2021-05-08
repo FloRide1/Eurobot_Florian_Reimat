@@ -91,7 +91,7 @@ namespace LidarProcessNS
             List<PointD> validPointXY = validPoint.Select(x => Toolbox.ConvertPolarToPointD(x)).ToList();
 
 
-            RectangleOriented best_rectangle = FindRectangle.Rotating_Caliper(validPointXY);
+            RectangleOriented best_rectangle = FindRectangle.FindMbrWithRotating_Caliper(validPointXY);
             List<PointD> border_points = FindRectangle.FindAllBorderPoints(validPointXY, best_rectangle, 0.05);
 
             
@@ -133,7 +133,7 @@ namespace LidarProcessNS
             
             processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(best_rectangle.Center), 10, Color.Black));
 
-            // Lines.AddRange(FindRectangle.DrawRectangle(best_rectangle, Color.Green));
+            Lines.AddRange(FindRectangle.DrawRectangle(best_rectangle, Color.Green));
 
             int number_of_visible_corner = 0;
 
