@@ -96,7 +96,7 @@ namespace LidarProcessNS
 
             
 
-            List<ClusterObjects> clusterObjects = ClustersDetection.ExtractClusterByDBScan(validPointXY.Where(x => border_points.IndexOf(x) == -1).ToList(), 0.05, 3);
+            List<ClusterObjects> clusterObjects = ClustersDetection.ExtractClusterByDBScan(validPointXY.Where(x => border_points.IndexOf(x) == -1).ToList(), 0.045, 3);
 
             List<PolarPointRssiExtended> processedPoints = ClustersDetection.SetColorsOfClustersObjects(clusterObjects);
 

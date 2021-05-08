@@ -159,11 +159,7 @@ namespace XBoxControllerNS
         public event EventHandler<PolarSpeedArgs> OnSpeedConsigneEvent;
         public virtual void OnSpeedConsigneToRobot(int id, double vx, double vy, double vtheta)
         {
-            var handler = OnSpeedConsigneEvent;
-            if (handler != null)
-            {
-                handler(this, new PolarSpeedArgs { RobotId = id, Vx = vx, Vy = vy, Vtheta = vtheta });
-            }
+            OnSpeedConsigneEvent?.Invoke(this, new PolarSpeedArgs { RobotId = id, Vx = vx, Vy = vy, Vtheta = vtheta });
         }
 
         public delegate void OnTirEventHandler(object sender, TirEventArgs e);
