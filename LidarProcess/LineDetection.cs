@@ -226,19 +226,19 @@ namespace LidarProcessNS
         /// </summary>
         /// <param name="list_of_points"></param>
         /// <param name="epsilon"></param>
-        public static List<PolarPointRssiExtended> IEPF_Algorithm(List<PolarPointRssiExtended> list_of_points, double epsilon)
+        public static List<PointD> IEPF_Algorithm(List<PointD> list_of_points, double epsilon)
         {
             double dmax = 0;
             int index = 0;
             int end = list_of_points.Count();
 
-            PointDExtended first_point = Toolbox.ConvertPolarToPointD(list_of_points[0]);
-            PointDExtended end_point = Toolbox.ConvertPolarToPointD(list_of_points[end - 1]);
-            double angle = Math.Atan2(first_point.Pt.Y - end_point.Pt.Y, first_point.Pt.X - end_point.Pt.X);
+            PointD first_point = list_of_points[0];
+            PointD end_point = list_of_points[end - 1];
+            double angle = Math.Atan2(first_point.Y - end_point.Y, first_point.X - end_point.X);
 
             for (int i = 1; i < end - 1; i++)
             {
-                double distance = Toolbox.DistancePointToLine(Toolbox.ConvertPolarToPointD(list_of_points[i]).Pt ,first_point.Pt , angle);
+                double distance = Toolbox.DistancePointToLine(list_of_points[i], first_point, angle);
                 if (distance > dmax)
                 {
                     index = i;
@@ -247,13 +247,13 @@ namespace LidarProcessNS
 
             }
 
-            List<PolarPointRssiExtended> ResultList = new List<PolarPointRssiExtended>();
+            List<PointD> ResultList = new List<PointD>();
 
             /// If max dist is greater than epsilon -> Recursively Simplify
             if (dmax > epsilon)
             {
-                List<PolarPointRssiExtended> recursiveResult1 = IEPF_Algorithm(list_of_points.GetRange(0, index), epsilon);
-                List<PolarPointRssiExtended> recursiveResult2 = IEPF_Algorithm(list_of_points.GetRange(index+1, end - 1 - index), epsilon);
+                List<PointD> recursiveResult1 = IEPF_Algorithm(list_of_points.GetRange(0, index), epsilon);
+                List<PointD> recursiveResult2 = IEPF_Algorithm(list_of_points.GetRange(index + 1, end - 1 - index), epsilon);
 
                 ResultList.AddRange(recursiveResult1);
                 ResultList.AddRange(recursiveResult2);

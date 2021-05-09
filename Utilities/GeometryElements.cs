@@ -228,6 +228,13 @@ namespace Utilities
             Color = color;
             Width = width;
         }
+
+        public SegmentExtended(Segment segment, System.Drawing.Color color, double width = 1)
+        {
+            Segment = segment;
+            Color = color;
+            Width = width;
+        }
     }
 
     [ZeroFormattable]
