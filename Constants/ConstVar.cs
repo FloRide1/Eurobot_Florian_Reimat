@@ -22,6 +22,8 @@ namespace Constants
         public const string PROJECT_NAME = "Eurobot_Florian_Reimat";
         public const string LOG_FOLDER_NAME = "LogFiles";
         public const long MAX_LOG_FILE_SIZE = 90000000;
-        
+
+        public const int WIDTH_BOXSIZE = 3;
+        public const int HEIGHT_BOXSIZE = 2;
     }
 }

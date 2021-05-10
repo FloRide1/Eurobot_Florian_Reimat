@@ -9,6 +9,7 @@ using System.Drawing;
 using MathNet.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Double;
+using Constants;
 
 namespace LidarProcessNS
 {
@@ -19,6 +20,61 @@ namespace LidarProcessNS
 
 	public static class FindRectangle
 	{
+		public static RectangleOriented ResizeRectangle(RectangleOriented rectangle, bool[] validCorners, double thresold)
+        {
+			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
+
+			PointD point_1 = corners.Item1;
+			PointD point_2 = corners.Item2;
+			PointD point_3 = corners.Item3;
+			PointD point_4 = corners.Item4;
+
+			double Width = Math.Max(rectangle.Width, rectangle.Lenght);
+			double Height = Math.Min(rectangle.Width, rectangle.Lenght);
+
+			PointD correct_center_point = new PointD(0,0);
+
+			List<PointD> choosen_point = new List<PointD>();
+			if (validCorners[0])
+				choosen_point.Add(point_1);
+			if (validCorners[1])
+				choosen_point.Add(point_2);
+			if (validCorners[2])
+				choosen_point.Add(point_3);
+			if (validCorners[3])
+				choosen_point.Add(point_4);
+
+
+
+
+			if (Width >= ConstVar.WIDTH_BOXSIZE - thresold)
+            {
+				if (Height >= ConstVar.HEIGHT_BOXSIZE - thresold)
+                {
+					/// Whe have the full box
+					correct_center_point = rectangle.Center;
+                }
+				else
+                {
+					return null;
+
+					/// We resize the Height of the box
+					//if (Toolbox.Distance(choosen_point[0], point_1) >= ConstVar.WIDTH_BOXSIZE - thresold)
+						
+
+
+					// correct_center_point = 	
+                }
+            }
+			else
+            {
+				return null;
+            }
+
+			return new RectangleOriented(correct_center_point, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, rectangle.Angle);
+		}
+
+
 		public static RectangleOriented FindMbrBoxByArea(List<PointD> list_of_points)
 		{
 			if (list_of_points.Count <= 1)

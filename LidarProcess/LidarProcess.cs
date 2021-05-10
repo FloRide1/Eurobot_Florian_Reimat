@@ -130,10 +130,22 @@ namespace LidarProcessNS
             double width = Math.Max(best_rectangle.Width, best_rectangle.Lenght);
             double height = Math.Min(best_rectangle.Width, best_rectangle.Lenght);
 
+            if (width >= 3 - thresold && height >= 2 - thresold)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+
+
+            }
+            else if (width >= 3 - thresold)
+                Console.ForegroundColor = ConsoleColor.Blue;
+            else
+                Console.ResetColor();
+            
             Console.WriteLine(width + " " + height);
 
             Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(best_rectangle);        
-                      
+            
+            
             
             processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(best_rectangle.Center), 10, Color.Black));
 
@@ -143,11 +155,14 @@ namespace LidarProcessNS
             double distance = 0.4;
             int number_of_visible_corner = 0;
 
+            bool[] validCorners = new bool[4] { false, false, false, false };
+
             if (corners_points.Count == 0)
                 corners_points.Add(new PointD(0, 0));
 
             if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item1, x)).FirstOrDefault(), corners.Item1) < distance)
             {
+                validCorners[0] = true;
                 number_of_visible_corner++;
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
             }
@@ -158,6 +173,7 @@ namespace LidarProcessNS
 
             if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item2, x)).FirstOrDefault(), corners.Item2) < distance)
             {
+                validCorners[1] = true;
                 number_of_visible_corner++;
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
             }
@@ -168,6 +184,7 @@ namespace LidarProcessNS
 
             if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item3, x)).FirstOrDefault(), corners.Item3) < distance)
             {
+                validCorners[2] = true;
                 number_of_visible_corner++;
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
             }
@@ -178,6 +195,7 @@ namespace LidarProcessNS
 
             if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item4, x)).FirstOrDefault(), corners.Item4) < distance)
             {
+                validCorners[3] = true;
                 number_of_visible_corner++;
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Green));
             }
@@ -186,8 +204,14 @@ namespace LidarProcessNS
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Red));
             }
 
+            RectangleOriented resized_rectangle = FindRectangle.ResizeRectangle(best_rectangle, validCorners, thresold);
 
-            Console.WriteLine("Corners: " + number_of_visible_corner);
+            if (resized_rectangle != null)
+            {
+                Lines.AddRange(FindRectangle.DrawRectangle(resized_rectangle, Color.LightGreen, 8));
+            }
+
+            //Console.WriteLine("Corners: " + number_of_visible_corner);
 
 
 
@@ -221,25 +245,18 @@ namespace LidarProcessNS
                 }              
             }
 
-            //Lines = LineDetection.MergeSegmentWithLSM(Lines, 0.5, 4 * Math.PI / 180);
-            //Lines = LineDetection.MergeSegment(Lines, 0.05);
+            OnProcessLidarObjectsDataEvent?.Invoke(this, list_of_objects);
 
-            //List<List<SegmentExtended>> list_of_families = LineDetection.FindFamilyOfSegment(Lines, 0.2);
-            //Lines = LineDetection.SetColorOfFamily(list_of_families);
+            // Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.2d));
+            OnProcessLidarLineDataEvent?.Invoke(this, Lines);
 
-
-            //OnProcessLidarObjectsDataEvent?.Invoke(this, list_of_objects);
-
-            //// Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.2d));
-            //OnProcessLidarLineDataEvent?.Invoke(this, Lines);
-
-            //OnProcessLidarCupDataEvent?.Invoke(this, list_of_cups);
+            OnProcessLidarCupDataEvent?.Invoke(this, list_of_cups);
 
 
-            //RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints.Select(x => x.Pt).ToList() };
-            //OnProcessLidarDataEvent?.Invoke(this, processLidar);
+            RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints.Select(x => x.Pt).ToList() };
+            OnProcessLidarDataEvent?.Invoke(this, processLidar);
 
-            //OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints);
+            OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints);
             //OnProcessLidarXYDataEvent?.Invoke(this, processedPoints.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
         }
         #endregion
