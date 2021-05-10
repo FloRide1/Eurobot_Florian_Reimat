@@ -116,8 +116,7 @@ namespace WpfWorldMapDisplay
                     break;
                 default:
                     break;
-            }
-            
+            }  
         }
 
         public void SetLidarSegment(List<SegmentExtended> segments)

@@ -164,7 +164,7 @@ namespace RobotEurobot2Roues
             lidar.Start();
             #endregion
 
-            lidarProcess.OnProcessLidarDataEvent += logRecorder.OnRawLidarDataReceived;
+            lidarProcess.OnRawLidarDataEvent += logRecorder.OnRawLidarDataReceived;
             msgProcessor.OnSpeedPolarOdometryFromRobotEvent += logRecorder.OnPolarSpeedDataReceived;
 
             #region Local World Map

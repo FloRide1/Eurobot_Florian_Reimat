@@ -90,6 +90,8 @@ namespace LidarProcessNS
             List<PolarPointRssi> validPoint = polarPointRssi.Where(x => x.Distance <= Math.Sqrt(Math.Pow(3, 2) + Math.Pow(2, 2))).ToList();
             List<PointD> validPointXY = validPoint.Select(x => Toolbox.ConvertPolarToPointD(x)).ToList();
 
+            validPointXY = ClustersDetection.ExtractClusterByDBScan(validPointXY, 0.05, 3).SelectMany(x => x.points).ToList().Select(x => Toolbox.ConvertPolarToPointD(x)).ToList().Select(x => x.Pt).ToList();
+
 
             RectangleOriented best_rectangle = FindRectangle.FindMbrBoxByOverlap(validPointXY);
             List<PointD> border_points = FindRectangle.FindAllBorderPoints(validPointXY, best_rectangle, 0.05);
@@ -226,18 +228,18 @@ namespace LidarProcessNS
             //Lines = LineDetection.SetColorOfFamily(list_of_families);
 
 
-            OnProcessLidarObjectsDataEvent?.Invoke(this, list_of_objects);
+            //OnProcessLidarObjectsDataEvent?.Invoke(this, list_of_objects);
 
-            // Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.2d));
-            OnProcessLidarLineDataEvent?.Invoke(this, Lines);
+            //// Lines.Add(DetectGlobalLine(polarPointRssi, 1d, 0d, 5d, 3, 0.2d));
+            //OnProcessLidarLineDataEvent?.Invoke(this, Lines);
 
-            OnProcessLidarCupDataEvent?.Invoke(this, list_of_cups);
+            //OnProcessLidarCupDataEvent?.Invoke(this, list_of_cups);
 
 
-            RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints.Select(x => x.Pt).ToList() };
-            OnProcessLidarDataEvent?.Invoke(this, processLidar);
+            //RawLidarArgs processLidar = new RawLidarArgs() { RobotId = robotId, LidarFrameNumber = LidarFrame, PtList = processedPoints.Select(x => x.Pt).ToList() };
+            //OnProcessLidarDataEvent?.Invoke(this, processLidar);
 
-            OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints);
+            //OnProcessLidarPolarDataEvent?.Invoke(this, processedPoints);
             //OnProcessLidarXYDataEvent?.Invoke(this, processedPoints.Select(x => new PointDExtended(Toolbox.ConvertPolarToPointD(x), Color.Blue, 2)).ToList());
         }
         #endregion
