@@ -95,8 +95,6 @@ namespace WpfWorldMapDisplay
         //Liste des obstacles vus par le robot à afficher
         List<ObstacleDisplay> ObstacleDisplayList = new List<ObstacleDisplay>();
 
-        string typeTerrain = "RoboCup";
-
         BindingClass imageBinding = new BindingClass();
         Thread tDisplayMap;
         AutoResetEvent waitForDisplayAuthorization = new AutoResetEvent(false);
@@ -136,7 +134,6 @@ namespace WpfWorldMapDisplay
             imageBinding.X2 = +LengthGameArea / 2;
             imageBinding.Y1 = -WidthGameArea / 2;
             imageBinding.Y2 = +WidthGameArea / 2;
-
         }
 
 
