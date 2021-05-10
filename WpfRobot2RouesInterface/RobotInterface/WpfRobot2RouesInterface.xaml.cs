@@ -186,11 +186,6 @@ namespace RobotInterface
             worldMapDisplayStrategy.UpdateRobotLocation(location.RobotId, location.Location);
         }
 
-        
-
-
-        
-
         public void OnLocalWorldMapStrategyEvent(object sender, LocalWorldMap e)
         {
             worldMapDisplayStrategy.UpdateLocalWorldMap(e);

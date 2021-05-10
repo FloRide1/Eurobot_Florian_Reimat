@@ -21,6 +21,9 @@ namespace LidarProcessNS
 	{
 		public static RectangleOriented FindMbrBoxByArea(List<PointD> list_of_points)
 		{
+			if (list_of_points.Count <= 1)
+				return new RectangleOriented(new PointD(0, 0), 0, 0, 0);
+
 			ConvexHullCreationResult<DefaultVertex2D> hull = ConvexHull.Create2D(list_of_points.Select(x => new double[2] { x.X, x.Y }).ToList());
 
 			double[,] hull_array = new double[hull.Result.Count, 2];

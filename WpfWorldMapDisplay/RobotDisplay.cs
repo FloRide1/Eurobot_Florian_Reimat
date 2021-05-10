@@ -283,23 +283,28 @@ namespace WpfWorldMapDisplay
             return polygonToDisplay;
         }
 
-        public XyDataSeries<double, double> GetRobotLidarPoints()
+        public XyDataSeries<double, double> GetRobotLidarPoints(LidarDataType type)
         {
             var dataSeries = new XyDataSeries<double, double>();
             if (LidarRawPoints == null)
                 return dataSeries;
 
+            IEnumerable<double> listX = new List<double>();
+            IEnumerable<double> listY = new List<double>();
 
-            lock (LidarRawPoints)
+            switch (type)
             {
-                var listX = LidarRawPoints.Select(e => e.Pt.X);
-                var listY = LidarRawPoints.Select(e => e.Pt.Y);
+                case LidarDataType.RawData:
+                    listX = LidarRawPoints.Select(e => e.Pt.X);
+                    listY = LidarRawPoints.Select(e => e.Pt.Y);
+                    break;
 
-                if (listX.Count() == listY.Count())
-                {
-                    dataSeries.AcceptsUnsortedData = true;
-                    dataSeries.Append(listX, listY);
-                }
+            }
+
+            if (listX.Count() == listY.Count())
+            {
+                dataSeries.AcceptsUnsortedData = true;
+                dataSeries.Append(listX, listY);
             }
             return dataSeries;
         }
@@ -336,6 +341,8 @@ namespace WpfWorldMapDisplay
             return (LidarProcessedPoints[0] == null)? new List<PointDExtended>():LidarProcessedPoints[0];
         }
 
+
+
         public Tuple<XyDataSeries<double, double>, List<System.Drawing.Color>> GetRobotObjectsPoints()
         {
             var dataSeries = new XyDataSeries<double, double>();
@@ -368,7 +375,7 @@ namespace WpfWorldMapDisplay
 
         public List<SegmentExtended> GetRobotLidarSegments()
         {
-            return LidarSegment;
+            return LidarSegment == null?new List<SegmentExtended>():LidarSegment;
         }
 
         public List<Cup> GetRobotLidarCup()
