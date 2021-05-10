@@ -93,10 +93,8 @@ namespace RobotInterface
             
             oscilloLidar.AddOrUpdateLine(0, 20000, "RSSI", false);
             oscilloLidar.AddOrUpdateLine(1, 20000, "Dist");
-            oscilloLidar.AddOrUpdateLine(2, 20000, "P Dist");
             oscilloLidar.ChangeLineColor(0, Colors.SeaGreen);
             oscilloLidar.ChangeLineColor(1, Colors.Blue);
-            oscilloLidar.ChangeLineColor(2, Colors.Red);
             #endregion
 
             #region Asserv Config
@@ -118,9 +116,9 @@ namespace RobotInterface
             if (gameMode == GameMode.Eurobot)
             {
                 worldMapDisplayStrategy.Init(gameMode, LocalWorldMapDisplayType.StrategyMap);
-                worldMapDisplayStrategy.SetFieldImageBackGround(imagePath + "Eurobot_Background.png");
+                worldMapDisplayStrategy.SetFieldImageBackGround(imagePath + "Eurobot_Background_Min.png");
                 worldMapDisplayWaypoint.Init(gameMode, LocalWorldMapDisplayType.WayPointMap);
-                worldMapDisplayWaypoint.SetFieldImageBackGround(imagePath + "Eurobot_Background.png");
+                worldMapDisplayWaypoint.SetFieldImageBackGround(imagePath + "Eurobot_Background_Min.png");
             }
             #endregion
 
@@ -215,9 +213,9 @@ namespace RobotInterface
 
         public void OnProcessLidarDataReceived(object sender, RawLidarArgs e)
         {
-            List<Point> ptListProcess = new List<Point>();
-            ptListProcess = e.PtList.Select(p => new Point(p.Angle, p.Distance)).ToList();
-            oscilloLidar.UpdatePointListOfLine(2, ptListProcess);
+            //List<Point> ptListProcess = new List<Point>();
+            //ptListProcess = e.PtList.Select(p => new Point(p.Angle, p.Distance)).ToList();
+            //oscilloLidar.UpdatePointListOfLine(2, ptListProcess);
         }
 
         public void OnMessageToDisplayPolarSpeedPidSetupReceived(object sender, PolarPIDSetupArgs e)

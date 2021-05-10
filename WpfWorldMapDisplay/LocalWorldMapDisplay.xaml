@@ -65,33 +65,6 @@
                 </s:XyScatterRenderableSeries>
                 <local:PolygonRenderableSeries x:Name="PolygonSeries" Opacity="0.5">
                 </local:PolygonRenderableSeries>
-                <s:XyScatterRenderableSeries x:Name="BallPoints" Opacity="0.5">
-                    <s:XyScatterRenderableSeries.PointMarker>
-                        <s:EllipsePointMarker Width="10" Height="10" Fill="Yellow" Stroke="White" StrokeThickness="1"/>
-                    </s:XyScatterRenderableSeries.PointMarker>
-                </s:XyScatterRenderableSeries>
-                <s:XyScatterRenderableSeries x:Name="GreenCup" Opacity="0.8">
-                    <s:XyScatterRenderableSeries.PointMarker>
-                        <s:EllipsePointMarker Width="14" Height="17" Fill="#00FF00" Stroke="DarkGreen" StrokeThickness="2"/>
-                    </s:XyScatterRenderableSeries.PointMarker>
-                </s:XyScatterRenderableSeries>
-                <s:XyScatterRenderableSeries x:Name="RedCup" Opacity="0.8">
-                    <s:XyScatterRenderableSeries.PointMarker>
-                        <s:EllipsePointMarker Width="14" Height="17" Fill="#FF0000" Stroke="DarkRed" StrokeThickness="2"/>
-                    </s:XyScatterRenderableSeries.PointMarker>
-                </s:XyScatterRenderableSeries>
-
-                <local:PolygonRenderableSeries x:Name="BallPolygon" Opacity="0.8" >
-                </local:PolygonRenderableSeries>
-                <local:PolygonRenderableSeries x:Name="ObjectsPolygonSeries" Opacity="0.8" >
-                </local:PolygonRenderableSeries>
-                <s:XyScatterRenderableSeries x:Name="ObstaclePoints" Opacity="0.5">
-                    <s:XyScatterRenderableSeries.PointMarker>
-                        <s:EllipsePointMarker Width="5" Height="5" Fill="Red" Stroke="White" StrokeThickness="1"/>
-                    </s:XyScatterRenderableSeries.PointMarker>
-                </s:XyScatterRenderableSeries>
-                
-                
             </s:SciChartSurface.RenderableSeries>
                 
 

@@ -107,7 +107,7 @@ namespace WpfWorldMapDisplay
             this.DataContext = imageBinding;
 
             tDisplayMap = new Thread(DisplayWorldMap);
-            tDisplayMap.ApartmentState = ApartmentState.STA;
+            tDisplayMap.SetApartmentState(ApartmentState.STA);
             tDisplayMap.Start();
             //sciChart.ChartModifier = new ModifierGroup(new ZoomExtentsModifier());
 
@@ -131,27 +131,11 @@ namespace WpfWorldMapDisplay
         public void SetFieldImageBackGround(string imagePath)
         {
 
-            var box = new BoxAnnotation()
-            {
-                BorderBrush = new SolidColorBrush(Color.FromArgb(0xFF, 0x27, 0x9B, 0x27)),
-                Background = new ImageBrush(new BitmapImage(new Uri(imagePath))),
-                AnnotationCanvas = AnnotationCanvas.BelowChart,
-                BorderThickness = new Thickness(1),
-                CornerRadius = new CornerRadius(1),
-                X1 = -LengthGameArea / 2,
-                X2 = +LengthGameArea / 2,
-                Y1 = -WidthGameArea / 2,
-                Y2 = +WidthGameArea / 2,
-                IsEditable = false
-            };
-
-            sciChartSurface.XAxis.AxisBandsFill = Colors.Transparent;
-            sciChartSurface.YAxis.AxisBandsFill = Colors.Transparent;
-
-            //SetterBase item = new Setter(VisibilityProperty, Visibility.Hidden);
-            //sciChart.XAxis.MajorGridLineStyle.Setters.Add(item);
-
-            sciChartSurface.Annotations.Add(box);
+            imageBinding.ImagePath = imagePath;
+            imageBinding.X1 = -LengthGameArea / 2;
+            imageBinding.X2 = +LengthGameArea / 2;
+            imageBinding.Y1 = -WidthGameArea / 2;
+            imageBinding.Y2 = +WidthGameArea / 2;
 
         }
 
@@ -220,8 +204,8 @@ namespace WpfWorldMapDisplay
 
                 Dispatcher.BeginInvoke(new Action(delegate ()
                 {
-                    UpdateBallPolygons();
-                    UpdateObstaclesPolygons();
+                    //UpdateBallPolygons();
+                    //UpdateObstaclesPolygons();
                     if (TeamMatesDisplayDictionary.Count == 1) //Cas d'un affichage de robot unique (localWorldMap)
                 {
                         AnnotRobotRole.Text = TeamMatesDisplayDictionary.First().Value.robotRole.ToString();
@@ -234,8 +218,6 @@ namespace WpfWorldMapDisplay
                     PolygonSeries.RedrawAll();
                     SegmentSeries.RedrawAll();
                     LidarPtExtendedSeries.RedrawAll();
-                    ObjectsPolygonSeries.RedrawAll();
-                    BallPolygon.RedrawAll();
                     DrawTeam();
                 }));
                 Thread.Sleep(10);
@@ -428,46 +410,47 @@ namespace WpfWorldMapDisplay
             }
         }
 
-        public void UpdateBallPolygons()
-        {
-            lock (BallDisplayList)
-            {
-                int indexBall = 0;
-                foreach (var ball in BallDisplayList)
-                {
-                    //Affichage de la balle
-                    BallPolygon.AddOrUpdatePolygonExtended((int)BallId.Ball + indexBall, ball.GetBallPolygon());
-                    BallPolygon.AddOrUpdatePolygonExtended((int)BallId.Ball + indexBall + (int)Caracteristique.Speed, ball.GetBallSpeedArrow());
-                    indexBall++;
-                }
-            }
-        }
-        public void UpdateObstaclesPolygons()
-        {
-            lock (ObstacleDisplayList)
-            {
-                int indexObstacle = 0;
-                //ObstaclePolygons = new PolygonRenderableSeries();
-                var obstaclesPointsList = ObstacleDisplayList.Select(x => new PointD(x.location.X, x.location.Y));
-                var obstaclesPoints = GetXYDataSeriesFromPoints(obstaclesPointsList.ToList());
-                ObstaclePoints.DataSeries = obstaclesPoints;
+        //public void UpdateBallPolygons()
+        //{
+        //    lock (BallDisplayList)
+        //    {
+        //        int indexBall = 0;
+        //        foreach (var ball in BallDisplayList)
+        //        {
+        //            //Affichage de la balle
+        //            BallPolygon.AddOrUpdatePolygonExtended((int)BallId.Ball + indexBall, ball.GetBallPolygon());
+        //            BallPolygon.AddOrUpdatePolygonExtended((int)BallId.Ball + indexBall + (int)Caracteristique.Speed, ball.GetBallSpeedArrow());
+        //            indexBall++;
+        //        }
+        //    }
+        //}
 
-                //foreach (var obstacle in ObstacleDisplayList)
-                //{
-                //    //Affichage des obstacles
-                //    ObstaclePolygons.AddOrUpdatePolygonExtended((int)ObstacleId.Obstacle + indexObstacle, obstacle.GetObstaclePolygon());
-                //    //ObstaclePolygons.AddOrUpdatePolygonExtended((int)ObstacleId.Obstacle + indexBall + (int)Caracteristique.Speed, obstacle.GetObstacleSpeedArrow());
-                //    indexObstacle++;
-                //}
-            }
-        }
+        //public void UpdateObstaclesPolygons()
+        //{
+        //    lock (ObstacleDisplayList)
+        //    {
+        //        int indexObstacle = 0;
+        //        //ObstaclePolygons = new PolygonRenderableSeries();
+        //        var obstaclesPointsList = ObstacleDisplayList.Select(x => new PointD(x.location.X, x.location.Y));
+        //        var obstaclesPoints = GetXYDataSeriesFromPoints(obstaclesPointsList.ToList());
+        //        ObstaclePoints.DataSeries = obstaclesPoints;
+
+        //        //foreach (var obstacle in ObstacleDisplayList)
+        //        //{
+        //        //    //Affichage des obstacles
+        //        //    ObstaclePolygons.AddOrUpdatePolygonExtended((int)ObstacleId.Obstacle + indexObstacle, obstacle.GetObstaclePolygon());
+        //        //    //ObstaclePolygons.AddOrUpdatePolygonExtended((int)ObstacleId.Obstacle + indexBall + (int)Caracteristique.Speed, obstacle.GetObstacleSpeedArrow());
+        //        //    indexObstacle++;
+        //        //}
+        //    }
+        //}
 
         public void DrawTeam()
         {
             XyDataSeries<double, double> lidarPts = new XyDataSeries<double, double>();
             XyDataSeries<double, double> lidarProcessedPts = new XyDataSeries<double, double>();
 
-            ObjectsPolygonSeries.Clear();
+            //ObjectsPolygonSeries.Clear();
             LidarPtExtendedSeries.Clear();
 
             foreach (var r in TeamMatesDisplayDictionary)
@@ -498,8 +481,8 @@ namespace WpfWorldMapDisplay
                 lidarProcessedPts.Append(lidarProcessedData.XValues, lidarProcessedData.YValues);
 
                 /// Rendering des objets Lidar
-                foreach (var polygonObject in TeamMatesDisplayDictionary[r.Key].GetRobotLidarObjects())
-                    ObjectsPolygonSeries.AddOrUpdatePolygonExtended(ObjectsPolygonSeries.Count(), polygonObject);
+                //foreach (var polygonObject in TeamMatesDisplayDictionary[r.Key].GetRobotLidarObjects())
+                //    ObjectsPolygonSeries.AddOrUpdatePolygonExtended(ObjectsPolygonSeries.Count(), polygonObject);
 
                 foreach (var pt in TeamMatesDisplayDictionary[r.Key].GetRobotLidarExtendedPoints())
                     LidarPtExtendedSeries.AddPtExtended(pt);
@@ -573,28 +556,28 @@ namespace WpfWorldMapDisplay
                 }
 
 
-                var lidarCups = TeamMatesDisplayDictionary[r.Key].GetRobotLidarCup();
-                if (lidarCups != null)
-                {
-                    lidarRedCupPts.AcceptsUnsortedData = true;
-                    lidarGreenCupPts.AcceptsUnsortedData = true;
-                    foreach (Cup cup in lidarCups)
-                    {
-                        if (cup.color == System.Drawing.Color.Red)
-                        {
-                            lidarRedCupPts.Append(cup.center.X, cup.center.Y);
-                        }
+                //var lidarCups = TeamMatesDisplayDictionary[r.Key].GetRobotLidarCup();
+                //if (lidarCups != null)
+                //{
+                //    lidarRedCupPts.AcceptsUnsortedData = true;
+                //    lidarGreenCupPts.AcceptsUnsortedData = true;
+                //    foreach (Cup cup in lidarCups)
+                //    {
+                //        if (cup.color == System.Drawing.Color.Red)
+                //        {
+                //            lidarRedCupPts.Append(cup.center.X, cup.center.Y);
+                //        }
 
-                        if (cup.color == System.Drawing.Color.Green)
-                        {
-                            lidarGreenCupPts.Append(cup.center.X, cup.center.Y);
-                        }
-                    }
-                }
+                //        if (cup.color == System.Drawing.Color.Green)
+                //        {
+                //            lidarGreenCupPts.Append(cup.center.X, cup.center.Y);
+                //        }
+                //    }
+                //}
                 
 
-                RedCup.DataSeries = lidarRedCupPts;
-                GreenCup.DataSeries = lidarGreenCupPts;
+                //RedCup.DataSeries = lidarRedCupPts;
+                //GreenCup.DataSeries = lidarGreenCupPts;
             
             }            
         }
