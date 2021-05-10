@@ -63,12 +63,14 @@ namespace MessageEncoder
 
         private static byte CalculateChecksum(ushort msgFunction, ushort msgPayloadLength, byte[] msgPayload)
         {
-            byte[] msg = EncodeWithoutChecksum(msgFunction, msgPayloadLength, msgPayload);
-
-            byte checksum = msg[0];
-            for (int i = 1; i < msg.Length; i++)
+            byte checksum = 0;
+            checksum ^= (byte)(msgFunction >> 8);
+            checksum ^= (byte)(msgFunction >> 0);
+            checksum ^= (byte)(msgPayloadLength >> 8);
+            checksum ^= (byte)(msgPayloadLength >> 0);
+            for (int i = 0; i < msgPayloadLength; i++)
             {
-                checksum ^= msg[i];
+                checksum ^= msgPayload[i];
             }
             return checksum;
         }

@@ -196,7 +196,6 @@ namespace USBVendorNS
             {
                 UInt32 LengthTransferred = 0;
                 Boolean success = false;
-
                 if (e.MsgTotal.Length <= 128 && cmv8DeviceListeFound.Count > 0)
                     RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.MsgTotal.Length, e.MsgTotal, ref LengthTransferred, ref success);
                 else
