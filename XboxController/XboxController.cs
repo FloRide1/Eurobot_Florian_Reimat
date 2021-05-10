@@ -19,7 +19,7 @@ namespace XBoxControllerNS
         double VthetaRampe = 0;
         bool stopped = false;
 
-        Timer timerGamepad = new Timer(100);
+        Timer timerGamepad = new Timer(200);
 
         public XBoxController(int id)
         {
