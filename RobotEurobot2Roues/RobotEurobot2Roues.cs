@@ -98,7 +98,7 @@ namespace RobotEurobot2Roues
             #region Console
             // Control:
             bool hex_viewer = false;
-            bool hex_sender = false;
+            bool hex_sender = true;
             bool hex_viewer_error = true;
             bool hex_sender_error = true;
             bool hex_processor = false;
@@ -136,7 +136,7 @@ namespace RobotEurobot2Roues
             #region Hex Sender
             if (hex_sender)
             {
-                msgEncoder.OnSendMessageEvent += ConsoleFormat.PrintSendMsg;
+                msgEncoder.OnSendMessageByteEvent += ConsoleFormat.PrintSendMsg;
             }
             
             #endregion

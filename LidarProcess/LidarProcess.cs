@@ -104,15 +104,12 @@ namespace LidarProcessNS
 
             foreach(ClusterObjects c in border_clusters)
             {
-                
                 var iepf_border_points = LineDetection.IEPF_Algorithm(c.points.Select(x => Toolbox.ConvertPolarToPointD(x).Pt).ToList(), 0.05);
 
                 for (int i = 1; i < iepf_border_points.Count; i++)
                 {
                     iepfs_lines.Add(new SegmentExtended(iepf_border_points[i - 1], iepf_border_points[i], Color.Black, 2));
                 }
-                //processedPoints.AddRange(iepf_border_points.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(x), 15, Color.Purple)).ToList());
-
             }
 
 
@@ -125,18 +122,6 @@ namespace LidarProcessNS
 
             List<PointD> corners_points = CornerDetection.FindAllValidCrossingPoints(list_of_family).SelectMany(x => x).ToList().Select(x => x.Pt).ToList();
 
-            
-
-            //processedPoints.AddRange(corners_points.Select(x => Toolbox.ConvertPointDToPolar(x)).ToList().Select(x => new PolarPointRssiExtended(x, 10, Color.Purple)).ToList());
-
-
-            
-
-            
-
-
-
-
 
             double thresold = 0.05;
 
@@ -145,31 +130,8 @@ namespace LidarProcessNS
 
             Console.WriteLine(width + " " + height);
 
-            Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(best_rectangle);
-
-            if (width > 2 + thresold)
-            {
-                if (width >= 3 - thresold && width <= 3 + thresold)
-                {
-                    /// We can see the long border
-                }
-                else if (width <= 3 - thresold)
-                {
-                    /// Special Case
-                }
-                else
-                {
-                    /// IMPOSSIBLE
-                } 
-            }
-            else if (width >= 2 - thresold && width <= 2 + thresold)
-            {
-
-            }
-
-            
-            
-            
+            Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(best_rectangle);        
+                      
             
             processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(best_rectangle.Center), 10, Color.Black));
 

@@ -190,27 +190,28 @@ namespace USBVendorNS
         }
 
         //Input events
-        public void SendUSBMessage(object sender, MessageByteArgs e)
+        public void SendUSBMessage(object sender, EventArgsLibrary.MessageEncodedArgs e)
         {
             if (_deviceDetected && _deviceReady)
             {
                 UInt32 LengthTransferred = 0;
                 Boolean success = false;
-                if (e.MsgTotal.Length <= 128 && cmv8DeviceListeFound.Count > 0)
-                    RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.MsgTotal.Length, e.MsgTotal, ref LengthTransferred, ref success);
+                if (e.Msg.Length <= 128 && cmv8DeviceListeFound.Count > 0)
+                    RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.Msg.Length, e.Msg, ref LengthTransferred, ref success);
                 else
                 {
-                    Int32 bytesToSend = e.MsgTotal.Length;
+                    Int32 bytesToSend = e.Msg.Length;
                     while (bytesToSend > 0)
                     {
-                        RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.MsgTotal.Length, e.MsgTotal, ref LengthTransferred, ref success);
+                        /**/
+                        RequestToSendDataViaBulkTransfer(cmv8DeviceListeFound[0], (uint)e.Msg.Length, e.Msg, ref LengthTransferred, ref success);
                         bytesToSend -= (Int32)LengthTransferred;
                     }
                 }
             }
         }
         //public delegate void DataReceivedEventHandler(object sender, DataReceivedArgs e);
-        
+
 
         public virtual void OnUSBByteReceived(byte[] buff)
         {

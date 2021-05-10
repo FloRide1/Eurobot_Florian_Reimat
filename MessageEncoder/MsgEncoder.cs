@@ -76,7 +76,8 @@ namespace MessageEncoder
         }
 
         public event EventHandler<EventArgs> OnMessageEncoderCreatedEvent;
-        public event EventHandler<MessageByteArgs> OnSendMessageEvent;
+        public event EventHandler<MessageEncodedArgs> OnSendMessageEvent;
+        public event EventHandler<MessageByteArgs> OnSendMessageByteEvent;
         public event EventHandler<EventArgs> OnSetResetPositionEvent;
         public event EventHandler<EventArgs> OnSerialDisconnectedEvent;
         public event EventHandler<EventArgs> OnWrongPayloadSentEvent;
@@ -88,7 +89,21 @@ namespace MessageEncoder
         }
         public virtual void OnSendMessage(ushort msgFunction, ushort msgPayloadLenght, byte[] msgPayload, byte checksum)
         {
-            OnSendMessageEvent?.Invoke(this, new MessageByteArgs(msgFunction, msgPayloadLenght, msgPayload, checksum));
+            byte[] message = new byte[msgPayloadLenght + 6];
+            int pos = 0;
+            message[pos++] = 0xFE;
+            message[pos++] = (byte)(msgFunction >> 8);
+            message[pos++] = (byte)(msgFunction >> 0);
+            message[pos++] = (byte)(msgPayloadLenght >> 8);
+            message[pos++] = (byte)(msgPayloadLenght >> 0);
+            for (int i = 0; i < msgPayloadLenght; i++)
+            {
+                message[pos++] = msgPayload[i];
+            }
+            message[pos++] = checksum;
+
+            OnSendMessageEvent?.Invoke(this, new MessageEncodedArgs { Msg = message });
+            OnSendMessageByteEvent?.Invoke(this, new MessageByteArgs(msgFunction, msgPayloadLenght, msgPayload, checksum));
         }
 
         public virtual void OnSetResetPosition()

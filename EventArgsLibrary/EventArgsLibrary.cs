@@ -126,12 +126,17 @@ namespace EventArgsLibrary
 
         private void GetTotalMessage()
         {
-            MsgTotal = new byte[] { (byte)MsgFunction, (byte)MsgPayloadLength };
-            foreach (byte element in MsgPayload)
+            MsgTotal = new byte[6 + MsgPayloadLength];
+            MsgTotal[0] = (byte)SOF;
+            MsgTotal[1] = (byte)functionMsb;
+            MsgTotal[2] = (byte)functionLsb;
+            MsgTotal[3] = (byte)lenghtMsb;
+            MsgTotal[4] = (byte)lenghtLsb;
+            for (int i = 0; i < MsgPayloadLength; i++)
             {
-                MsgTotal.Append(element);
+                MsgTotal[6 + i] = MsgPayload[i];
             }
-            MsgTotal.Append(checksum);
+            MsgTotal[MsgTotal.Length - 1] = (byte) checksum;
         }
     }
     public class DecodePayloadArgs : EventArgs
