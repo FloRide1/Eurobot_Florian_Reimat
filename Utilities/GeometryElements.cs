@@ -69,24 +69,37 @@ namespace Utilities
     public class RectangleOriented
     {
         public PointD Center { get; set; }
-        public double Lenght { get; set; }
         public double Width { get; set; }
+        public double Lenght { get; set; }
         public double Angle { get; set; }
 
         public RectangleOriented()
         {
             Center = new PointD(0, 0);
-            Lenght = 0;
             Width = 0;
+            Lenght = 0;
             Angle = 0;
         }
 
-        public RectangleOriented(PointD center, double lenght, double width, double angle)
+        public RectangleOriented(PointD center, double width, double lenght, double angle)
         {
             Center = center;
-            Lenght = lenght;
-            Width = width;
-            Angle = angle;
+
+            if (width > lenght)
+            {
+                Width = width;
+                Lenght = lenght;
+                Angle = Toolbox.ModuloPiAngleRadian(angle);
+            }
+            else
+            {
+                Width = lenght;
+                Lenght = width;
+                Angle = Toolbox.ModuloPiAngleRadian(angle + Math.PI / 2);
+            }
+            
+
+            
         }
     }
 

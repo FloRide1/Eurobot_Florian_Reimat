@@ -183,8 +183,8 @@ namespace WorldMap
             LidarMapRaw = lidarPoints.Select(
                 x => new PointDExtended(
                     new PointD( 
-                        RobotLocation.X + (x.Pt.Distance * Math.Cos(RobotLocation.Theta - x.Pt.Angle)),
-                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(RobotLocation.Theta - x.Pt.Angle))
+                        RobotLocation.X + (x.Pt.Distance * Math.Cos(RobotLocation.Theta + x.Pt.Angle)),
+                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(RobotLocation.Theta + x.Pt.Angle))
                     ),
                     x.Color,
                     x.Width
@@ -198,8 +198,8 @@ namespace WorldMap
             LidarMapProcessed = lidarPoints.Select(
                 x => new PointDExtended(
                     new PointD(
-                        RobotLocation.X + (x.Pt.Distance * Math.Cos(RobotLocation.Theta - x.Pt.Angle)),
-                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(RobotLocation.Theta - x.Pt.Angle))
+                        RobotLocation.X + (x.Pt.Distance * Math.Cos(RobotLocation.Theta + x.Pt.Angle)),
+                        RobotLocation.Y + (x.Pt.Distance * Math.Sin(RobotLocation.Theta + x.Pt.Angle))
                     ),
                     x.Color,
                     x.Width
@@ -218,13 +218,13 @@ namespace WorldMap
                 PolarPointRssi point_b = Toolbox.ConvertPointDToPolar(new PointD(segment.Segment.X2, segment.Segment.Y2));
 
                 PointD correct_point_a = new PointD(
-                        RobotLocation.X + (point_a.Distance * Math.Cos(RobotLocation.Theta - point_a.Angle)),
-                        RobotLocation.Y + (point_a.Distance * Math.Sin(RobotLocation.Theta - point_a.Angle))
+                        RobotLocation.X + (point_a.Distance * Math.Cos(RobotLocation.Theta + point_a.Angle)),
+                        RobotLocation.Y + (point_a.Distance * Math.Sin(RobotLocation.Theta + point_a.Angle))
                     );
 
                 PointD correct_point_b = new PointD(
-                        RobotLocation.X + (point_b.Distance * Math.Cos(RobotLocation.Theta - point_b.Angle)),
-                        RobotLocation.Y + (point_b.Distance * Math.Sin(RobotLocation.Theta - point_b.Angle))
+                        RobotLocation.X + (point_b.Distance * Math.Cos(RobotLocation.Theta + point_b.Angle)),
+                        RobotLocation.Y + (point_b.Distance * Math.Sin(RobotLocation.Theta + point_b.Angle))
                     );
                 corrected_list_segment.Add(new SegmentExtended(correct_point_a, correct_point_b, segment.Color, segment.Width));
             }

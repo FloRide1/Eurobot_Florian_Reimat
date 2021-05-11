@@ -326,16 +326,19 @@ namespace Utilities
 
         public static Tuple<PointD, PointD, PointD, PointD> GetCornerOfAnOrientedRectangle(RectangleOriented rectangle)
         {
-            double radius_of_the_circle = Math.Sqrt(Math.Pow(rectangle.Lenght, 2) + Math.Pow(rectangle.Width, 2)) / 2;
-            double a_1_angle = Modulo2PiAngleRad(Math.Atan2(rectangle.Width, rectangle.Lenght) + rectangle.Angle);
-            double a_3_angle = Modulo2PiAngleRad(Math.Atan2(rectangle.Width, -rectangle.Lenght) + rectangle.Angle);
-            double a_2_angle = Modulo2PiAngleRad(Math.Atan2(-rectangle.Width, rectangle.Lenght) + rectangle.Angle);
-            double a_4_angle = Modulo2PiAngleRad(Math.Atan2(-rectangle.Width, -rectangle.Lenght) + rectangle.Angle);
+            double radius_of_the_circle = Math.Sqrt(Math.Pow(rectangle.Width, 2) + Math.Pow(rectangle.Lenght, 2)) / 2;
+
+
+            double a_1_angle = ModuloPiAngleRadian(Math.Atan2(rectangle.Lenght, rectangle.Width) + rectangle.Angle);
+            double a_2_angle = ModuloPiAngleRadian(Math.Atan2(- rectangle.Lenght, rectangle.Width) + rectangle.Angle);
+
+            if (a_1_angle < 0)
+                SwapNum(ref a_1_angle, ref a_2_angle);
 
             PointD polar_a_1 = ConvertPolarToPointD(new PolarPointRssi(a_1_angle, radius_of_the_circle, 0));
             PointD polar_a_2 = ConvertPolarToPointD(new PolarPointRssi(a_2_angle, radius_of_the_circle, 0));
-            PointD polar_a_3 = ConvertPolarToPointD(new PolarPointRssi(a_3_angle, radius_of_the_circle, 0));
-            PointD polar_a_4 = ConvertPolarToPointD(new PolarPointRssi(a_4_angle, radius_of_the_circle, 0));
+            PointD polar_a_3 = ConvertPolarToPointD(new PolarPointRssi(a_2_angle, - radius_of_the_circle, 0));
+            PointD polar_a_4 = ConvertPolarToPointD(new PolarPointRssi(a_1_angle, - radius_of_the_circle, 0));
 
             PointD a1 = new PointD(polar_a_1.X + rectangle.Center.X, polar_a_1.Y + rectangle.Center.Y);
             PointD a2 = new PointD(polar_a_2.X + rectangle.Center.X, polar_a_2.Y + rectangle.Center.Y);
