@@ -142,16 +142,12 @@ namespace LidarProcessNS
 
                 
             }
-            //else if (width > 2 + thresold)
-            //{
-            //    Console.ForegroundColor = ConsoleColor.Yellow;
-            //    if (Toolbox.Distance(corners.Item1, corners.Item2) > 2 + thresold)
-            //        rectangle_segments[0] = new SegmentExtended(rectangle_segments[0].Segment, Color.Yellow, 10);
-            //    else if (Toolbox.Distance(corners.Item1, corners.Item3) > 2 + thresold)
-            //        rectangle_segments[0] = new SegmentExtended(rectangle_segments[3].Segment, Color.Yellow, 10);
-            //    else if (Toolbox.Distance(corners.Item2, corners.Item4) > 2 + thresold)
-            //        rectangle_segments[0] = new SegmentExtended(rectangle_segments[2].Segment, Color.Yellow, 10);
-            //}
+            else if (width > 2 + thresold)
+            {
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                if (height > 2 - thresold)
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
+            }
             else
                 Console.ResetColor();
             

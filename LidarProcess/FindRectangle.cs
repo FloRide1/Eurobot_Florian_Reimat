@@ -34,11 +34,6 @@ namespace LidarProcessNS
 
 			PointD correct_center_point = new PointD(0,0);
 
-
-
-
-
-
 			if (Width >= ConstVar.WIDTH_BOXSIZE - thresold)
             {
 				if (Height >= ConstVar.HEIGHT_BOXSIZE - thresold)
@@ -55,11 +50,11 @@ namespace LidarProcessNS
 
 					if (Toolbox.Distance(point_1, point_2) > ConstVar.HEIGHT_BOXSIZE - thresold)
 						correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
-					else if (Toolbox.ConvertPointDToPolar(point_1).Angle > Toolbox.ConvertPointDToPolar(point_2).Angle)
-						correction_angle = Toolbox.Angle(point_1, point_3) - Math.PI / 2;
 					else
-						correction_angle = Toolbox.Angle(point_2, point_4) - Math.PI / 2;
+						correction_angle = Toolbox.Angle(point_1, point_2);
 
+					if (Toolbox.ModuloPiAngleRadian(correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(correction_angle) > -Math.PI / 2)
+						correction_angle = Toolbox.ModuloPiAngleRadian(correction_angle) + Math.PI;
 
 					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
 
@@ -76,10 +71,11 @@ namespace LidarProcessNS
 
 					if (Toolbox.Distance(point_1, point_2) <= ConstVar.HEIGHT_BOXSIZE + thresold)
 						correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
-					else if (Toolbox.ConvertPointDToPolar(point_1).Angle > Toolbox.ConvertPointDToPolar(point_2).Angle)
-						correction_angle = Toolbox.Angle(point_1, point_3) - Math.PI / 2;
 					else
-						correction_angle = Toolbox.Angle(point_2, point_4) - Math.PI / 2;
+						correction_angle = Toolbox.Angle(point_1, point_2);
+
+					if (Toolbox.ModuloPiAngleRadian(correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(correction_angle) > -Math.PI / 2)
+						correction_angle = Toolbox.ModuloPiAngleRadian(correction_angle) + Math.PI;
 
 
 					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
@@ -88,8 +84,35 @@ namespace LidarProcessNS
 				}
 				else
                 {
-					return null;
-                }
+					/// Whe resize the Width
+					double width_correction_angle, height_correction_angle;
+					double width_correction_distance = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
+					double height_correction_distance = (ConstVar.HEIGHT_BOXSIZE - Height) / 2;
+
+					bool farthest_is_1 = Toolbox.ConvertPointDToPolar(point_1).Angle > Toolbox.ConvertPointDToPolar(point_2).Angle;
+
+					if (Toolbox.Distance(point_1, point_2) <= ConstVar.HEIGHT_BOXSIZE + thresold)
+                    {
+						width_correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+						height_correction_angle = Toolbox.Angle(point_1, point_2);
+					}						
+					else
+                    {
+						width_correction_angle = Toolbox.Angle(point_1, point_2);
+						height_correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+					}
+
+					if (Toolbox.ModuloPiAngleRadian(width_correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle) > - Math.PI / 2)
+						width_correction_angle = Toolbox.ModuloPiAngleRadian(width_correction_angle) + Math.PI;
+
+					if (Toolbox.ModuloPiAngleRadian(height_correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle) > -Math.PI / 2)
+						height_correction_angle = Toolbox.ModuloPiAngleRadian(height_correction_angle) + Math.PI;
+
+					PointD width_correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle, width_correction_distance, 0));
+					PointD height_correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle, height_correction_distance, 0));
+
+					correct_center_point = new PointD(rectangle.Center.X + width_correction_point.X + height_correction_point.X, rectangle.Center.Y + width_correction_point.Y + height_correction_point.Y);
+				}
 			}
 			else
             {
