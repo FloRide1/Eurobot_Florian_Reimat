@@ -20,8 +20,74 @@ namespace LidarProcessNS
 
 	public static class FindRectangle
 	{
-		public static RectangleOriented ResizeRectangle(RectangleOriented rectangle, double thresold)
+		public static Tuple<RectangleOriented, RectangleOriented> ListResisableRectangle(RectangleOriented rectangle, double thresold)
         {
+			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
+			double width_correction_angle_1, height_correction_angle_1, width_correction_angle_2, height_correction_angle_2, width_correction_distance_1, height_correction_distance_1, width_correction_distance_2, height_correction_distance_2;
+
+			PointD point_1 = corners.Item1;
+			PointD point_2 = corners.Item2;
+			PointD point_3 = corners.Item3;
+			PointD point_4 = corners.Item4;
+
+			double Width = Math.Max(rectangle.Lenght, rectangle.Width);
+			double Height = Math.Min(rectangle.Lenght, rectangle.Width);
+			double Angle = rectangle.Angle;
+
+			/// We check if point 1 is the fartest point
+			bool farthest_is_1 = point_1.X > point_2.X;
+
+
+			width_correction_distance_1 = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
+			height_correction_distance_1 = (ConstVar.HEIGHT_BOXSIZE - Height) / 2;
+			width_correction_distance_2 = (ConstVar.WIDTH_BOXSIZE - Height) / 2;
+			height_correction_distance_2 = (ConstVar.HEIGHT_BOXSIZE - Width) / 2;
+
+			/// 1st
+			width_correction_angle_1 = farthest_is_1 ? Toolbox.Angle(point_1, point_3) + Math.PI / 2 : Toolbox.Angle(point_2, point_4) - Math.PI / 2;
+			height_correction_angle_1 = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+
+            if (Toolbox.ModuloPiAngleRadian(width_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_1) > -Math.PI / 2)
+                width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(width_correction_angle_1) + Math.PI;
+
+            if (Toolbox.ModuloPiAngleRadian(height_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle_1) > -Math.PI / 2)
+                height_correction_angle_1 = Toolbox.ModuloPiAngleRadian(height_correction_angle_1) + Math.PI;
+
+            PointD width_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_1, width_correction_distance_1, 0));
+			PointD height_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_1, height_correction_distance_1, 0));
+
+			PointD correct_center_point_1 = new PointD(rectangle.Center.X + width_correction_point_1.X + height_correction_point_1.X, rectangle.Center.Y + width_correction_point_1.Y + height_correction_point_1.Y);
+
+			/// 2st
+			width_correction_angle_2 = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+			height_correction_angle_2 = farthest_is_1 ? Toolbox.Angle(point_1, point_3) + Math.PI / 2 : Toolbox.Angle(point_2, point_4) - Math.PI / 2;
+
+			if (Toolbox.ModuloPiAngleRadian(width_correction_angle_2) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_2) > -Math.PI / 2)
+				width_correction_angle_2 = Toolbox.ModuloPiAngleRadian(width_correction_angle_2) + Math.PI;
+
+			//if (Toolbox.ModuloPiAngleRadian(height_correction_angle_2) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle_2) > -Math.PI / 2)
+			//	height_correction_angle_2 = Toolbox.ModuloPiAngleRadian(height_correction_angle_2) + Math.PI;
+
+			PointD width_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_2, width_correction_distance_2, 0));
+			PointD height_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_2, height_correction_distance_2, 0));
+
+			if (Toolbox.ModuloPiAngleRadian(height_correction_angle_2) == Angle)
+            {
+				Console.WriteLine("YES!!!!!!!!!!!");
+            }
+
+			PointD correct_center_point_2 = new PointD(rectangle.Center.X + width_correction_point_2.X + height_correction_point_2.X, rectangle.Center.Y + width_correction_point_2.Y + height_correction_point_2.Y);
+
+
+
+			RectangleOriented rectangle1 = new RectangleOriented(correct_center_point_1, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle);
+			RectangleOriented rectangle2 = new RectangleOriented(correct_center_point_2, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle + Math.PI / 2);
+
+			return new Tuple<RectangleOriented, RectangleOriented>(rectangle1, rectangle2);
+		}
+
+		public static RectangleOriented ResizeRectangle(RectangleOriented rectangle, double thresold)
+		{
 			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
 
 			PointD point_1 = corners.Item1;
@@ -31,18 +97,19 @@ namespace LidarProcessNS
 
 			double Width = Math.Max(rectangle.Lenght, rectangle.Width);
 			double Height = Math.Min(rectangle.Lenght, rectangle.Width);
+			double Angle = rectangle.Angle;
 
-			PointD correct_center_point = new PointD(0,0);
+			PointD correct_center_point = new PointD(0, 0);
 
 			if (Width >= ConstVar.WIDTH_BOXSIZE - thresold)
-            {
+			{
 				if (Height >= ConstVar.HEIGHT_BOXSIZE - thresold)
-                {
+				{
 					/// Whe have the full box
 					correct_center_point = rectangle.Center;
-                }
+				}
 				else
-                {
+				{
 
 					/// We resize the Height of the box
 					double correction_angle;
@@ -58,13 +125,13 @@ namespace LidarProcessNS
 
 					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
 
-					correct_center_point = new PointD(rectangle.Center.X + correction_point.X, rectangle.Center.Y + correction_point.Y); 	
+					correct_center_point = new PointD(rectangle.Center.X + correction_point.X, rectangle.Center.Y + correction_point.Y);
 				}
-            }
+			}
 			else if (Width >= ConstVar.HEIGHT_BOXSIZE + thresold)
 			{
 				if (Height >= ConstVar.HEIGHT_BOXSIZE - thresold)
-                {
+				{
 					/// Whe only resize the Width
 					double correction_angle;
 					double correction_distance = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
@@ -83,26 +150,24 @@ namespace LidarProcessNS
 					correct_center_point = new PointD(rectangle.Center.X + correction_point.X, rectangle.Center.Y + correction_point.Y);
 				}
 				else
-                {
+				{
 					/// Whe resize the Width
 					double width_correction_angle, height_correction_angle;
 					double width_correction_distance = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
 					double height_correction_distance = (ConstVar.HEIGHT_BOXSIZE - Height) / 2;
 
-					bool farthest_is_1 = Toolbox.ConvertPointDToPolar(point_1).Angle > Toolbox.ConvertPointDToPolar(point_2).Angle;
-
 					if (Toolbox.Distance(point_1, point_2) <= ConstVar.HEIGHT_BOXSIZE + thresold)
-                    {
+					{
 						width_correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
 						height_correction_angle = Toolbox.Angle(point_1, point_2);
-					}						
+					}
 					else
-                    {
+					{
 						width_correction_angle = Toolbox.Angle(point_1, point_2);
 						height_correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
 					}
 
-					if (Toolbox.ModuloPiAngleRadian(width_correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle) > - Math.PI / 2)
+					if (Toolbox.ModuloPiAngleRadian(width_correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle) > -Math.PI / 2)
 						width_correction_angle = Toolbox.ModuloPiAngleRadian(width_correction_angle) + Math.PI;
 
 					if (Toolbox.ModuloPiAngleRadian(height_correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle) > -Math.PI / 2)
@@ -115,13 +180,93 @@ namespace LidarProcessNS
 				}
 			}
 			else
-            {
-				return null;
-            }
+			{
+				if (Width >= ConstVar.HEIGHT_BOXSIZE - thresold && Width <= ConstVar.HEIGHT_BOXSIZE + thresold)
+                {
+					return null; // Not Safe Need Improvement
+					if (Toolbox.Distance(point_1, point_2) < ConstVar.HEIGHT_BOXSIZE - thresold || Toolbox.Distance(point_1, point_2) > ConstVar.HEIGHT_BOXSIZE + thresold) // Not Good -> False Positive + False Negative
+						return null;
 
-			return new RectangleOriented(correct_center_point, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, rectangle.Angle);
+
+					/// Whe only resize the Width
+					double correction_angle = Toolbox.Angle(point_1, point_2) + Math.PI / 2;
+					double correction_distance = (ConstVar.WIDTH_BOXSIZE - Height) / 2;
+
+					if (Toolbox.ModuloPiAngleRadian(correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(correction_angle) > -Math.PI / 2)
+						correction_angle = Toolbox.ModuloPiAngleRadian(correction_angle) + Math.PI;
+
+					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
+
+					Angle += Math.PI / 2;
+
+					correct_center_point = new PointD(rectangle.Center.X + correction_point.X, rectangle.Center.Y + correction_point.Y);
+				}
+				else
+					return null;
+			}
+
+			return new RectangleOriented(correct_center_point, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle);
 		}
 
+
+		public static List<PointD> FindValidCorners(RectangleOriented rectangle, List<PointD> list_of_points, double thresold, double min_points)
+        {
+			List<PointD> list_of_valid_corners = new List<PointD>();
+			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
+			double angle = Math.Abs(Toolbox.ModuloPiAngleRadian(rectangle.Angle));
+
+			double[,] point_array = new double[list_of_points.Count, 2];
+			for (int i = 0; i < list_of_points.Count; i++)
+			{
+				point_array[i, 0] = list_of_points[i].X;
+				point_array[i, 1] = list_of_points[i].Y;
+			}
+			Matrix<double> points_matrix = DenseMatrix.OfArray(point_array);
+
+			
+
+			Matrix<double> rotation_matrix = DenseMatrix.OfArray(new double[,] {
+					{ Math.Cos(angle), Math.Cos(angle - Math.PI / 2) },
+					{ Math.Cos(angle + Math.PI / 2), Math.Cos(angle) }
+			});
+
+			Matrix<double> rotated_points = rotation_matrix * points_matrix.Transpose();
+			Vector<double> rotated_center = rotation_matrix * Vector<double>.Build.DenseOfArray(new double[] { rectangle.Center.X, rectangle.Center.Y });
+
+			double min_x = rotated_center[0] - rectangle.Width / 2;
+			double max_x = rotated_center[0] + rectangle.Width / 2;
+
+			double min_y = rotated_center[1] - rectangle.Lenght / 2;
+			double max_y = rotated_center[1] + rectangle.Lenght / 2;
+
+			int right_border = 0, left_border = 0, top_border = 0, bottom_border = 0;
+
+			for (int i = 0; i < rotated_points.ColumnCount; i++)
+			{
+				double current_x = rotated_points[0, i];
+				double current_y = rotated_points[1, i];
+
+				if (Math.Abs(min_x - current_x) <= thresold)
+					left_border++;
+				if (Math.Abs(max_x - current_x) <= thresold)
+					right_border++;
+				if (Math.Abs(min_y - current_y) <= thresold)
+					top_border++;
+				if (Math.Abs(max_y - current_y) <= thresold)
+					bottom_border++;
+			}
+
+			if (top_border >= min_points && right_border >= min_points)
+				list_of_valid_corners.Add(corners.Item2);
+			if (bottom_border >= min_points && right_border >= min_points)
+				list_of_valid_corners.Add(corners.Item4);
+			if (top_border >= min_points && left_border >= min_points)
+				list_of_valid_corners.Add(corners.Item1);
+			if (bottom_border >= min_points && left_border >= min_points)
+				list_of_valid_corners.Add(corners.Item4);
+
+			return list_of_valid_corners;
+		}
 
 		public static RectangleOriented FindMbrBoxByArea(List<PointD> list_of_points)
 		{

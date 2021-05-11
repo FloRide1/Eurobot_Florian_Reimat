@@ -140,7 +140,7 @@ namespace LidarProcessNS
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
 
-                
+
             }
             else if (width > 2 + thresold)
             {
@@ -148,6 +148,8 @@ namespace LidarProcessNS
                 if (height > 2 - thresold)
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
             }
+            else if (width >= 2 - thresold && width <= 2 + thresold)
+                Console.ForegroundColor = ConsoleColor.Red;
             else
                 Console.ResetColor();
             
@@ -184,23 +186,23 @@ namespace LidarProcessNS
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Red));
             }
 
-            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item3, x)).FirstOrDefault(), corners.Item3) < distance)
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Red));
-            //}
+            if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item3, x)).FirstOrDefault(), corners.Item3) < distance)
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
+            }
+            else
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Red));
+            }
 
-            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item4, x)).FirstOrDefault(), corners.Item4) < distance)
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Red));
-            //}
+            if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item4, x)).FirstOrDefault(), corners.Item4) < distance)
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Green));
+            }
+            else
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Red));
+            }
 
             RectangleOriented resized_rectangle = FindRectangle.ResizeRectangle(best_rectangle, thresold);
 
@@ -208,6 +210,14 @@ namespace LidarProcessNS
             {
                 Lines.AddRange(FindRectangle.DrawRectangle(resized_rectangle, Color.LightGreen, 8));
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(resized_rectangle.Center), 10, Color.Green));
+            }
+            else
+            {
+                Tuple<RectangleOriented, RectangleOriented> list_of_possible_rectangles = FindRectangle.ListResisableRectangle(best_rectangle, thresold);
+                //Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item1, Color.GreenYellow, 4));
+                Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item2, Color.YellowGreen, 4));
+
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(list_of_possible_rectangles.Item2.Center), 10, Color.Cyan));
             }
 
             //Console.WriteLine("Corners: " + number_of_visible_corner);
