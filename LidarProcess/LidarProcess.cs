@@ -140,18 +140,18 @@ namespace LidarProcessNS
             {
                 Console.ForegroundColor = ConsoleColor.Blue;
 
-                rectangle_segments[0] = new SegmentExtended(rectangle_segments[0].Segment, Color.LightGreen, 5);
+                
             }
-            else if (width > 2 + thresold)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                if (Toolbox.Distance(corners.Item1, corners.Item2) > 2 + thresold)
-                    rectangle_segments[0] = new SegmentExtended(rectangle_segments[0].Segment, Color.Yellow, 10);
-                else if (Toolbox.Distance(corners.Item1, corners.Item3) > 2 + thresold)
-                    rectangle_segments[0] = new SegmentExtended(rectangle_segments[3].Segment, Color.Yellow, 10);
-                else if (Toolbox.Distance(corners.Item2, corners.Item4) > 2 + thresold)
-                    rectangle_segments[0] = new SegmentExtended(rectangle_segments[2].Segment, Color.Yellow, 10);
-            }
+            //else if (width > 2 + thresold)
+            //{
+            //    Console.ForegroundColor = ConsoleColor.Yellow;
+            //    if (Toolbox.Distance(corners.Item1, corners.Item2) > 2 + thresold)
+            //        rectangle_segments[0] = new SegmentExtended(rectangle_segments[0].Segment, Color.Yellow, 10);
+            //    else if (Toolbox.Distance(corners.Item1, corners.Item3) > 2 + thresold)
+            //        rectangle_segments[0] = new SegmentExtended(rectangle_segments[3].Segment, Color.Yellow, 10);
+            //    else if (Toolbox.Distance(corners.Item2, corners.Item4) > 2 + thresold)
+            //        rectangle_segments[0] = new SegmentExtended(rectangle_segments[2].Segment, Color.Yellow, 10);
+            //}
             else
                 Console.ResetColor();
             
@@ -170,32 +170,32 @@ namespace LidarProcessNS
             if (corners_points.Count == 0)
                 corners_points.Add(new PointD(0, 0));
 
-            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item1, x)).FirstOrDefault(), corners.Item1) < distance)
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Red));
-            //}
-
-            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item2, x)).FirstOrDefault(), corners.Item2) < distance)
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Red));
-            //}
-
-            if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item3, x)).FirstOrDefault(), corners.Item3) < distance)
+            if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item1, x)).FirstOrDefault(), corners.Item1) < distance)
             {
-                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
             }
             else
             {
-                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Red));
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Red));
             }
+
+            if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item2, x)).FirstOrDefault(), corners.Item2) < distance)
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
+            }
+            else
+            {
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Red));
+            }
+
+            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item3, x)).FirstOrDefault(), corners.Item3) < distance)
+            //{
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
+            //}
+            //else
+            //{
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Red));
+            //}
 
             //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item4, x)).FirstOrDefault(), corners.Item4) < distance)
             //{

@@ -50,8 +50,16 @@ namespace LidarProcessNS
                 {
 
 					/// We resize the Height of the box
-					double correction_angle = Toolbox.Angle(point_1, point_2) + Math.PI / 2;
+					double correction_angle;
 					double correction_distance = (ConstVar.HEIGHT_BOXSIZE - Height) / 2;
+
+					if (Toolbox.Distance(point_1, point_2) > ConstVar.HEIGHT_BOXSIZE - thresold)
+						correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+					else if (Toolbox.ConvertPointDToPolar(point_1).Angle > Toolbox.ConvertPointDToPolar(point_2).Angle)
+						correction_angle = Toolbox.Angle(point_1, point_3) - Math.PI / 2;
+					else
+						correction_angle = Toolbox.Angle(point_2, point_4) - Math.PI / 2;
+
 
 					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
 
@@ -60,57 +68,28 @@ namespace LidarProcessNS
             }
 			else if (Width >= ConstVar.HEIGHT_BOXSIZE + thresold)
 			{
-				return null;
-
-				/// We resize the Height of the box
-				double height_correction_angle = Toolbox.Angle(point_1, point_2) + Math.PI / 2;
-				double height_correction_distance = (ConstVar.HEIGHT_BOXSIZE - Height) / 2;
-
-				PointD height_correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle, height_correction_distance, 0));
-
-				/// Now we need to correct the Width
-				double width_correction_angle;
-				double width_correction_distance = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
-
-				/// First we find the correct corner
-				if (Toolbox.Distance(point_1, point_2) >= ConstVar.HEIGHT_BOXSIZE + thresold)
+				if (Height >= ConstVar.HEIGHT_BOXSIZE - thresold)
                 {
-					if (point_1.X > point_2.X)
-                    {
-                        width_correction_angle = Toolbox.Angle(point_1, point_2) + Math.PI / 2;
-						Console.ForegroundColor = ConsoleColor.Red;
-						Console.WriteLine("Case 1");
-						Console.ResetColor();
-					}
+					/// Whe only resize the Width
+					double correction_angle;
+					double correction_distance = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
+
+					if (Toolbox.Distance(point_1, point_2) <= ConstVar.HEIGHT_BOXSIZE + thresold)
+						correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+					else if (Toolbox.ConvertPointDToPolar(point_1).Angle > Toolbox.ConvertPointDToPolar(point_2).Angle)
+						correction_angle = Toolbox.Angle(point_1, point_3) - Math.PI / 2;
 					else
-                    {
-						width_correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
-						Console.ForegroundColor = ConsoleColor.Magenta;
-						Console.WriteLine("Case 2");
-						Console.ResetColor();
-					}
-						
-				}
-				else if (Toolbox.Distance(point_2, point_4) >= ConstVar.HEIGHT_BOXSIZE + thresold)
-                {
-					width_correction_angle = Toolbox.Angle(point_2, point_4) - Math.PI / 2;
-					Console.ForegroundColor = ConsoleColor.DarkCyan;
-					Console.WriteLine("Case 3");
-					Console.ResetColor();
-				}
-					
-				else // if (Toolbox.Distance(point_1, point_3) >= ConstVar.HEIGHT_BOXSIZE + thresold)
-                {
-					width_correction_angle = Toolbox.Angle(point_1, point_3) + Math.PI / 2;
-					Console.ForegroundColor = ConsoleColor.Gray;
-					Console.WriteLine("Case 4");
-					Console.ResetColor();
-				}
-					
+						correction_angle = Toolbox.Angle(point_2, point_4) - Math.PI / 2;
 
-				PointD width_correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle, width_correction_distance, 0));
 
-				correct_center_point = new PointD(rectangle.Center.X + height_correction_point.X + width_correction_point.X, rectangle.Center.Y + height_correction_point.Y + width_correction_point.Y);
+					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
+
+					correct_center_point = new PointD(rectangle.Center.X + correction_point.X, rectangle.Center.Y + correction_point.Y);
+				}
+				else
+                {
+					return null;
+                }
 			}
 			else
             {
