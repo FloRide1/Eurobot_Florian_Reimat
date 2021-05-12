@@ -80,6 +80,7 @@ namespace LidarProcessNS
         public event EventHandler<List<SegmentExtended>> OnProcessLidarLineDataEvent;
         public event EventHandler<List<LidarObjects>> OnProcessLidarObjectsDataEvent;
         public event EventHandler<List<Cup>> OnProcessLidarCupDataEvent;
+        public event EventHandler<Location> OnLidarSetupRobotLocationEvent;
         #endregion
 
         #region Main
@@ -160,87 +161,39 @@ namespace LidarProcessNS
 
             Lines.AddRange(rectangle_segments);
 
-            
-            double distance = 0.4;
-
-            
-
-            if (corners_points.Count == 0)
-                corners_points.Add(new PointD(0, 0));
-
-            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item1, x)).FirstOrDefault(), corners.Item1) < distance)
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Red));
-            //}
-
-            ////if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item2, x)).FirstOrDefault(), corners.Item2) < distance)
-            ////{
-            ////    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
-            ////}
-            ////else
-            ////{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Red));
-            //}
-
-            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item3, x)).FirstOrDefault(), corners.Item3) < distance)
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item3), 10, Color.Red));
-            //}
-
-            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item4, x)).FirstOrDefault(), corners.Item4) < distance)
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Green));
-            //}
-            //else
-            //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item4), 10, Color.Red));
-            //}
 
             RectangleOriented resized_rectangle = FindRectangle.ResizeRectangle(best_rectangle, thresold);
+            List<Location> list_of_possible_locations;
 
             if (resized_rectangle != null) 
             {
                 Lines.AddRange(FindRectangle.DrawRectangle(resized_rectangle, Color.LightGreen, 8));
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(resized_rectangle.Center), 10, Color.Green));
 
-                Tuple<Location, Location, Location, Location> list_of_possible_locations = FindRectangle.ListAllPossibleLocation(resized_rectangle);
-
-                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item1.X, list_of_possible_locations.Item1.Y)), 10, Color.Red));
-                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item2.X, list_of_possible_locations.Item2.Y)), 10, Color.Red));
-                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item3.X, list_of_possible_locations.Item3.Y)), 10, Color.Red));
-                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item4.X, list_of_possible_locations.Item4.Y)), 10, Color.Red));
-
+                list_of_possible_locations = FindRectangle.ListAllPossibleLocation(resized_rectangle);
+                
             }
             else
             {
-                //Tuple<RectangleOriented, RectangleOriented> list_of_possible_rectangles = FindRectangle.ListResisableRectangle(best_rectangle, thresold);
+                Tuple<RectangleOriented, RectangleOriented> list_of_possible_rectangles = FindRectangle.ListResisableRectangle(best_rectangle, thresold);
+
+                list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item1);
+                list_of_possible_locations.AddRange(FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item2));
+
+
                 //Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item2, Color.YellowGreen, 4));
-                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(list_of_possible_rectangles.Item2.Center), 10, Color.Cyan));
-
-                //Tuple<Location, Location, Location, Location> list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item2);
-
-
-                //Console.WriteLine(Math.Abs(list_of_possible_locations.Item1.X) + " " + Math.Abs(list_of_possible_locations.Item1.Y));
-                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item1.X, list_of_possible_locations.Item1.Y)), 10, Color.Red));
-                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item2.X, list_of_possible_locations.Item2.Y)), 10, Color.Red));
-                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item3.X, list_of_possible_locations.Item3.Y)), 10, Color.Red));
-                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item4.X, list_of_possible_locations.Item4.Y)), 10, Color.Red));
-
-
                 //if (width <= 2 - thresold || width >= 2 + thresold)
                 //{
                 //    Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item1, Color.GreenYellow, 4)); 
                 //}
             }
+            processedPoints.AddRange(list_of_possible_locations.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(x.X, x.Y)), 10, (x.Theta != 1) ? Color.Red: Color.DarkBlue)).ToList());
 
+
+            Location best_location = FindRectangle.GetBestLocation(list_of_possible_locations, robotLocation);
+
+            //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(best_location.X, best_location.Y)), 10, Color.DarkGreen));
+            //OnLidarSetupRobotLocationEvent?.Invoke(this, best_location);
             //Console.WriteLine("Corners: " + number_of_visible_corner);
 
 

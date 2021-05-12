@@ -20,12 +20,17 @@ namespace LidarProcessNS
 
 	public static class FindRectangle
 	{
-		public static Tuple<Location, Location, Location, Location> ListAllPossibleLocation(RectangleOriented rectangle)
+		public static Location GetBestLocation(List<Location> list_of_locations, Location actual_location)
         {
+			return list_of_locations.OrderBy(x => Math.Abs(Toolbox.Modulo2PiAngleRad(x.Theta) - Toolbox.Modulo2PiAngleRad(actual_location.Theta))).ToList()[0];
+        }
+
+		public static List<Location> ListAllPossibleLocation(RectangleOriented rectangle)
+		{
 			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
 			double rotation_angle = Toolbox.ModuloPiAngleRadian(rectangle.Angle);
-			Console.WriteLine("Angle: " + rectangle.Angle * 180 / Math.PI);
-		
+
+			
 
 			Matrix<double> rotation_matrix = DenseMatrix.OfArray(new double[,] {
 					{ Math.Cos(rotation_angle), - Math.Sin(rotation_angle) },
@@ -40,24 +45,33 @@ namespace LidarProcessNS
 			Vector<double> ref_pt4 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item4.X, corners.Item4.Y }) * rotation_matrix;
 
 
-			Vector<double> ref_robot = Vector<double>.Build.DenseOfArray(new double[] { 0, 0 }) * rotation_matrix;
+			PointD ref_robot_point = new PointD(-ref_center[0], -ref_center[1]);
 
+			//Location location_1 = new Location(ref_robot_point.X, ref_robot_point.Y, -rotation_angle, 0, 0, 0);
+			//Location location_2 = new Location(ref_robot_point.X, -ref_robot_point.Y, rotation_angle, 0, 0, 0);
+			//Location location_3 = new Location(-ref_robot_point.X, -ref_robot_point.Y, -rotation_angle + Math.PI, 0, 0, 0);
+			//Location location_4 = new Location(-ref_robot_point.X, ref_robot_point.Y, rotation_angle + Math.PI, 0, 0, 0);
 
+			
 
-			PointD ref_robot_point = new PointD(- ref_center[0], - ref_center[1]);
+			Location location_1 = new Location(ref_pt1[0] - ref_center[0], ref_pt1[1] - ref_center[1], 1, 0, 0, 0);
+			Location location_2 = new Location(ref_pt2[0] - ref_center[0], ref_pt2[1] - ref_center[1], 0, 0, 0, 0);
+			Location location_3 = new Location(ref_pt3[0] - ref_center[0], ref_pt3[1] - ref_center[1], 0, 0, 0, 0);
+			Location location_4 = new Location(ref_pt4[0] - ref_center[0], ref_pt4[1] - ref_center[1], 0, 0, 0, 0);
 
-			Location location_1 = new Location(ref_robot_point.X, ref_robot_point.Y, 0, 0, 0, 0);
-			Location location_2 = new Location(ref_robot_point.X,   - ref_robot_point.Y, 0, 0, 0, 0);
-			Location location_3 = new Location(- ref_robot_point.X, - ref_robot_point.Y, 0, 0, 0, 0);
-			Location location_4 = new Location(- ref_robot_point.X, ref_robot_point.Y, 0, 0, 0, 0);
+			if (location_1.X >= 0 && location_1.Y >= 0)
+				Console.WriteLine("Juste: " + rectangle.Angle * 180 / Math.PI);
+			else if (location_1.X < 0 && location_1.Y >= 0)
+				Console.WriteLine("Faux X: "); // + rectangle.Angle * 180 / Math.PI);
+			else if (location_1.X >= 0 && location_1.Y < 0)
+				Console.WriteLine("Faux Y: "); // + rectangle.Angle * 180 / Math.PI);
+			else
+				Console.WriteLine("Tout Faux: " + rectangle.Angle * 180 / Math.PI);
 
-			//Location location_1 = new Location(ref_pt1[0] - ref_center[0], ref_pt1[1] - ref_center[1], 0, 0, 0, 0);
-			//Location location_2 = new Location(ref_pt2[0] - ref_center[0], ref_pt2[1] - ref_center[1], 0, 0, 0, 0);
-			//Location location_3 = new Location(ref_pt3[0] - ref_center[0], ref_pt3[1] - ref_center[1], 0, 0, 0, 0);
-			//Location location_4 = new Location(ref_pt4[0] - ref_center[0], ref_pt4[1] - ref_center[1], 0, 0, 0, 0);
+			if (Math.Abs(rotation_angle) > Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
+				Console.WriteLine(Math.Sign(rotation_angle));
 
-
-			return new Tuple<Location, Location, Location, Location>(location_1, location_2, location_3, location_4);
+			return new List<Location>() { location_1, location_2, location_3, location_4 };
 
 		}
 
