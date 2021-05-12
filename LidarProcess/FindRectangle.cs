@@ -29,6 +29,18 @@ namespace LidarProcessNS
 		public static List<Location> ListAllPossibleLocation(RectangleOriented rectangle)
 		{
 			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
+
+			PointD corner_1 = corners.Item1;
+			PointD corner_2 = corners.Item2;
+			PointD corner_3 = corners.Item3;
+			PointD corner_4 = corners.Item4;
+
+
+			bool farthest_point_is_1 = corner_1.X > corner_2.X; // We check the fartesht point
+			bool corner_1_and_2_is_height = Toolbox.Distance(corner_1, corner_2) == ConstVar.HEIGHT_BOXSIZE;
+            
+
+
 			double rotation_angle = Toolbox.ModuloPiAngleRadian(rectangle.Angle);
 
 			Matrix<double> rotation_matrix = DenseMatrix.OfArray(new double[,] {
@@ -46,35 +58,26 @@ namespace LidarProcessNS
 			Vector<double> ref_pt4 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item4.X, corners.Item4.Y }) * rotation_matrix;
 
             PointD pt1 = new PointD(ref_robot_point.X, ref_robot_point.Y);
-            PointD pt2 = new PointD(ref_robot_point.X, - ref_robot_point.Y);
-            PointD pt3 = new PointD(- ref_robot_point.X, - ref_robot_point.Y);
-            PointD pt4 = new PointD(- ref_robot_point.X, ref_robot_point.Y);
+            PointD pt2 = new PointD(- ref_robot_point.X, - ref_robot_point.Y);
 
             //PointD pt1 = new PointD(ref_pt1[0], ref_pt1[1]);
             //PointD pt2 = new PointD(ref_pt2[0], ref_pt2[1]);
             //PointD pt3 = new PointD(ref_pt3[0], ref_pt3[1]);
             //PointD pt4 = new PointD(ref_pt4[0], ref_pt4[1]);
 
-            if (Math.Abs(rotation_angle) > Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
-            {
-                if (Math.Sign(rotation_angle) != 1)
-                {
-                    Toolbox.SwapNum(ref pt1, ref pt2);
-                    Toolbox.SwapNum(ref pt3, ref pt4);
-                }
-                else
-                {
-					Toolbox.SwapNum(ref pt1, ref pt3);
-					Toolbox.SwapNum(ref pt2, ref pt4);
-				}
+			if (Math.Abs(rotation_angle) > Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
+			{
+			    if (Math.Sign(rotation_angle) != 1)
+			    {
+			        Toolbox.SwapNum(ref pt1, ref pt2);
+			    }
 			}
 
 
 
             Location location_1 = new Location(pt1.X, pt1.Y, -rotation_angle, 0, 0, 0);
             Location location_2 = new Location(pt2.X, pt2.Y, rotation_angle, 0, 0, 0);
-            Location location_3 = new Location(pt3.X, pt3.Y, -rotation_angle + Math.PI, 0, 0, 0);
-            Location location_4 = new Location(pt4.X, pt4.Y, rotation_angle + Math.PI, 0, 0, 0);
+
 
 
 
@@ -101,7 +104,7 @@ namespace LidarProcessNS
 
 
 
-            return new List<Location>() { location_1, location_2, location_3, location_4 };
+            return new List<Location>() { location_1, location_2};
 
 		}
 
