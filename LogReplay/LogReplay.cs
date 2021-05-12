@@ -28,7 +28,7 @@ namespace LogReplayNs
         
         DateTime initialDateTime;
         double? LogDateTimeOffsetInMs = null;
-        double speedFactor = 0.75;
+        double speedFactor = 1;
 
         bool replayModeActivated = false;
 

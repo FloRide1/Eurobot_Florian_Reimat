@@ -329,16 +329,23 @@ namespace Utilities
             double radius_of_the_circle = Math.Sqrt(Math.Pow(rectangle.Width, 2) + Math.Pow(rectangle.Lenght, 2)) / 2;
 
 
-            double a_1_angle = ModuloPiAngleRadian(Math.Atan2(rectangle.Lenght, rectangle.Width) + rectangle.Angle);
-            double a_2_angle = ModuloPiAngleRadian(Math.Atan2(- rectangle.Lenght, rectangle.Width) + rectangle.Angle);
+            double angle_1 = ModuloPiAngleRadian(Math.Atan2(rectangle.Lenght, rectangle.Width) + rectangle.Angle);
+            double angle_2 = ModuloPiAngleRadian(Math.Atan2(- rectangle.Lenght, rectangle.Width) + rectangle.Angle);
 
-            if (a_1_angle < 0)
-                SwapNum(ref a_1_angle, ref a_2_angle);
+            if (angle_1 < 0)
+                SwapNum(ref angle_1, ref angle_2);
 
-            PointD polar_a_1 = ConvertPolarToPointD(new PolarPointRssi(a_1_angle, radius_of_the_circle, 0));
-            PointD polar_a_2 = ConvertPolarToPointD(new PolarPointRssi(a_2_angle, radius_of_the_circle, 0));
-            PointD polar_a_3 = ConvertPolarToPointD(new PolarPointRssi(a_2_angle, - radius_of_the_circle, 0));
-            PointD polar_a_4 = ConvertPolarToPointD(new PolarPointRssi(a_1_angle, - radius_of_the_circle, 0));
+            PointD polar_a_1 = ConvertPolarToPointD(new PolarPointRssi(angle_1, radius_of_the_circle, 0));
+            PointD polar_a_2 = ConvertPolarToPointD(new PolarPointRssi(angle_2, radius_of_the_circle, 0));
+            PointD polar_a_3 = ConvertPolarToPointD(new PolarPointRssi(angle_2, - radius_of_the_circle, 0));
+            PointD polar_a_4 = ConvertPolarToPointD(new PolarPointRssi(angle_1, - radius_of_the_circle, 0));
+
+            if (polar_a_1.Y < 0)
+            {
+                SwapNum(ref polar_a_1, ref polar_a_2);
+                SwapNum(ref polar_a_3, ref polar_a_4);
+            }
+                
 
             PointD a1 = new PointD(polar_a_1.X + rectangle.Center.X, polar_a_1.Y + rectangle.Center.Y);
             PointD a2 = new PointD(polar_a_2.X + rectangle.Center.X, polar_a_2.Y + rectangle.Center.Y);
@@ -406,6 +413,13 @@ namespace Utilities
             SegmentExtended temporary_segment = s1;
             s1 = s2;
             s2 = temporary_segment;
+        }
+
+        public static void SwapNum(ref PointD p1, ref PointD p2)
+        {
+            PointD temporary_point = p1;
+            p1 = p2;
+            p2 = temporary_point;
         }
 
         public static Color ColorFromHSL(double h, double s, double l)
