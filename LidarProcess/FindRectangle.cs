@@ -37,6 +37,11 @@ namespace LidarProcessNS
 			/// We check if point 1 is the fartest point
 			bool farthest_is_1 = point_1.X > point_2.X;
 
+			if (Math.Sign(Angle) == 1)
+				Console.WriteLine("Bug ?");
+			else
+				Console.WriteLine(Math.Sign(Angle));
+				
 
 			width_correction_distance_1 = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
 			height_correction_distance_1 = (ConstVar.HEIGHT_BOXSIZE - Height) / 2;
@@ -44,10 +49,10 @@ namespace LidarProcessNS
 			height_correction_distance_2 = (ConstVar.HEIGHT_BOXSIZE - Width) / 2;
 
 			/// 1st
-			width_correction_angle_1 = farthest_is_1 ? Toolbox.Angle(point_1, point_3) + Math.PI / 2 : Toolbox.Angle(point_2, point_4) - Math.PI / 2;
-			height_correction_angle_1 = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+			width_correction_angle_1 = Angle;
+			height_correction_angle_1 = Angle - Math.PI / 2;
 
-            if (Toolbox.ModuloPiAngleRadian(width_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_1) > -Math.PI / 2)
+			if (Toolbox.ModuloPiAngleRadian(width_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_1) > -Math.PI / 2)
                 width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(width_correction_angle_1) + Math.PI;
 
             if (Toolbox.ModuloPiAngleRadian(height_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle_1) > -Math.PI / 2)
@@ -59,8 +64,8 @@ namespace LidarProcessNS
 			PointD correct_center_point_1 = new PointD(rectangle.Center.X + width_correction_point_1.X + height_correction_point_1.X, rectangle.Center.Y + width_correction_point_1.Y + height_correction_point_1.Y);
 
 			/// 2st
-			width_correction_angle_2 = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
-			height_correction_angle_2 = farthest_is_1 ? Toolbox.Angle(point_1, point_3) + Math.PI / 2 : Toolbox.Angle(point_1, point_3) - Math.PI / 2;
+			width_correction_angle_2 = Angle - Math.PI / 2;
+			height_correction_angle_2 = Angle;
 
 			if (Toolbox.ModuloPiAngleRadian(width_correction_angle_2) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_2) > -Math.PI / 2)
 				width_correction_angle_2 = Toolbox.ModuloPiAngleRadian(width_correction_angle_2) + Math.PI;
