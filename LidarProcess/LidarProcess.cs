@@ -168,21 +168,21 @@ namespace LidarProcessNS
             if (corners_points.Count == 0)
                 corners_points.Add(new PointD(0, 0));
 
-            if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item1, x)).FirstOrDefault(), corners.Item1) < distance)
-            {
-                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
-            }
-            else
-            {
-                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Red));
-            }
-
-            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item2, x)).FirstOrDefault(), corners.Item2) < distance)
+            //if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item1, x)).FirstOrDefault(), corners.Item1) < distance)
             //{
-            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Green));
             //}
             //else
             //{
+            //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item1), 10, Color.Red));
+            //}
+
+            ////if (Toolbox.Distance(corners_points.OrderBy(x => Toolbox.Distance(corners.Item2, x)).FirstOrDefault(), corners.Item2) < distance)
+            ////{
+            ////    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Green));
+            ////}
+            ////else
+            ////{
             //    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(corners.Item2), 10, Color.Red));
             //}
 
@@ -210,19 +210,35 @@ namespace LidarProcessNS
             {
                 Lines.AddRange(FindRectangle.DrawRectangle(resized_rectangle, Color.LightGreen, 8));
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(resized_rectangle.Center), 10, Color.Green));
+
+                Tuple<Location, Location, Location, Location> list_of_possible_locations = FindRectangle.ListAllPossibleLocation(resized_rectangle);
+
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item1.X, list_of_possible_locations.Item1.Y)), 10, Color.Red));
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item2.X, list_of_possible_locations.Item2.Y)), 10, Color.Red));
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item3.X, list_of_possible_locations.Item3.Y)), 10, Color.Red));
+                processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item4.X, list_of_possible_locations.Item4.Y)), 10, Color.Red));
+
             }
             else
             {
-                if (width >= 2 - thresold && width <= 2 + thresold)
-                {
-                    Tuple<RectangleOriented, RectangleOriented> list_of_possible_rectangles = FindRectangle.ListResisableRectangle(best_rectangle, thresold);
-                    Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item1, Color.GreenYellow, 4));
-                    Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item2, Color.YellowGreen, 4));
-                    processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(list_of_possible_rectangles.Item2.Center), 10, Color.Cyan));
-                }
-                    
+                //Tuple<RectangleOriented, RectangleOriented> list_of_possible_rectangles = FindRectangle.ListResisableRectangle(best_rectangle, thresold);
+                //Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item2, Color.YellowGreen, 4));
+                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(list_of_possible_rectangles.Item2.Center), 10, Color.Cyan));
 
-               
+                //Tuple<Location, Location, Location, Location> list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item2);
+
+
+                //Console.WriteLine(Math.Abs(list_of_possible_locations.Item1.X) + " " + Math.Abs(list_of_possible_locations.Item1.Y));
+                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item1.X, list_of_possible_locations.Item1.Y)), 10, Color.Red));
+                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item2.X, list_of_possible_locations.Item2.Y)), 10, Color.Red));
+                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item3.X, list_of_possible_locations.Item3.Y)), 10, Color.Red));
+                //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(list_of_possible_locations.Item4.X, list_of_possible_locations.Item4.Y)), 10, Color.Red));
+
+
+                //if (width <= 2 - thresold || width >= 2 + thresold)
+                //{
+                //    Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item1, Color.GreenYellow, 4)); 
+                //}
             }
 
             //Console.WriteLine("Corners: " + number_of_visible_corner);
