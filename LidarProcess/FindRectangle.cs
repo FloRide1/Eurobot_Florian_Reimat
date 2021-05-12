@@ -22,7 +22,8 @@ namespace LidarProcessNS
 	{
 		public static Location GetBestLocation(List<Location> list_of_locations, Location actual_location)
         {
-			return list_of_locations.OrderBy(x => Math.Abs(Toolbox.Modulo2PiAngleRad(x.Theta) - Toolbox.Modulo2PiAngleRad(actual_location.Theta))).ToList()[0];
+            return list_of_locations.OrderBy(x => Math.Abs(Toolbox.Modulo2PiAngleRad(x.Theta) - Toolbox.Modulo2PiAngleRad(actual_location.Theta))).ToList()[0];
+            //return list_of_locations.OrderBy(x => Toolbox.Distance(new PointD(x.X, x.Y), new PointD(actual_location.X, actual_location.Y))).ToList()[0];
         }
 
 		public static List<Location> ListAllPossibleLocation(RectangleOriented rectangle)
@@ -30,48 +31,77 @@ namespace LidarProcessNS
 			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
 			double rotation_angle = Toolbox.ModuloPiAngleRadian(rectangle.Angle);
 
-			
-
 			Matrix<double> rotation_matrix = DenseMatrix.OfArray(new double[,] {
 					{ Math.Cos(rotation_angle), - Math.Sin(rotation_angle) },
 					{ Math.Sin(rotation_angle), Math.Cos(rotation_angle) }
 			});
 
+
 			Vector<double> ref_center = Vector<double>.Build.DenseOfArray(new double[] { rectangle.Center.X, rectangle.Center.Y }) * rotation_matrix;
+			PointD ref_robot_point = new PointD(-ref_center[0], -ref_center[1]);
 
 			Vector<double> ref_pt1 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item1.X, corners.Item1.Y }) * rotation_matrix;
 			Vector<double> ref_pt2 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item2.X, corners.Item2.Y }) * rotation_matrix;
 			Vector<double> ref_pt3 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item3.X, corners.Item3.Y }) * rotation_matrix;
 			Vector<double> ref_pt4 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item4.X, corners.Item4.Y }) * rotation_matrix;
 
+            PointD pt1 = new PointD(ref_robot_point.X, ref_robot_point.Y);
+            PointD pt2 = new PointD(ref_robot_point.X, - ref_robot_point.Y);
+            PointD pt3 = new PointD(- ref_robot_point.X, - ref_robot_point.Y);
+            PointD pt4 = new PointD(- ref_robot_point.X, ref_robot_point.Y);
 
-			PointD ref_robot_point = new PointD(-ref_center[0], -ref_center[1]);
+            //PointD pt1 = new PointD(ref_pt1[0], ref_pt1[1]);
+            //PointD pt2 = new PointD(ref_pt2[0], ref_pt2[1]);
+            //PointD pt3 = new PointD(ref_pt3[0], ref_pt3[1]);
+            //PointD pt4 = new PointD(ref_pt4[0], ref_pt4[1]);
 
-			//Location location_1 = new Location(ref_robot_point.X, ref_robot_point.Y, -rotation_angle, 0, 0, 0);
-			//Location location_2 = new Location(ref_robot_point.X, -ref_robot_point.Y, rotation_angle, 0, 0, 0);
-			//Location location_3 = new Location(-ref_robot_point.X, -ref_robot_point.Y, -rotation_angle + Math.PI, 0, 0, 0);
-			//Location location_4 = new Location(-ref_robot_point.X, ref_robot_point.Y, rotation_angle + Math.PI, 0, 0, 0);
+            if (Math.Abs(rotation_angle) > Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
+            {
+                if (Math.Sign(rotation_angle) != 1)
+                {
+                    Toolbox.SwapNum(ref pt1, ref pt2);
+                    Toolbox.SwapNum(ref pt3, ref pt4);
+                }
+                else
+                {
+					Toolbox.SwapNum(ref pt1, ref pt3);
+					Toolbox.SwapNum(ref pt2, ref pt4);
+				}
+			}
 
-			
 
-			Location location_1 = new Location(ref_pt1[0] - ref_center[0], ref_pt1[1] - ref_center[1], 1, 0, 0, 0);
-			Location location_2 = new Location(ref_pt2[0] - ref_center[0], ref_pt2[1] - ref_center[1], 0, 0, 0, 0);
-			Location location_3 = new Location(ref_pt3[0] - ref_center[0], ref_pt3[1] - ref_center[1], 0, 0, 0, 0);
-			Location location_4 = new Location(ref_pt4[0] - ref_center[0], ref_pt4[1] - ref_center[1], 0, 0, 0, 0);
 
-			if (location_1.X >= 0 && location_1.Y >= 0)
-				Console.WriteLine("Juste: " + rectangle.Angle * 180 / Math.PI);
-			else if (location_1.X < 0 && location_1.Y >= 0)
-				Console.WriteLine("Faux X: "); // + rectangle.Angle * 180 / Math.PI);
-			else if (location_1.X >= 0 && location_1.Y < 0)
-				Console.WriteLine("Faux Y: "); // + rectangle.Angle * 180 / Math.PI);
-			else
-				Console.WriteLine("Tout Faux: " + rectangle.Angle * 180 / Math.PI);
+            Location location_1 = new Location(pt1.X, pt1.Y, -rotation_angle, 0, 0, 0);
+            Location location_2 = new Location(pt2.X, pt2.Y, rotation_angle, 0, 0, 0);
+            Location location_3 = new Location(pt3.X, pt3.Y, -rotation_angle + Math.PI, 0, 0, 0);
+            Location location_4 = new Location(pt4.X, pt4.Y, rotation_angle + Math.PI, 0, 0, 0);
 
-			if (Math.Abs(rotation_angle) > Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
-				Console.WriteLine(Math.Sign(rotation_angle));
 
-			return new List<Location>() { location_1, location_2, location_3, location_4 };
+
+
+
+
+
+
+
+
+            //Location location_1 = new Location(pt1.X - ref_center[0], pt1.Y - ref_center[1], 1, 0, 0, 0);
+            //Location location_2 = new Location(pt2.X - ref_center[0], pt2.Y - ref_center[1], 0, 0, 0, 0);
+            //Location location_3 = new Location(pt3.X - ref_center[0], pt3.Y - ref_center[1], 0, 0, 0, 0);
+            //Location location_4 = new Location(pt4.X - ref_center[0], pt4.Y - ref_center[1], 0, 0, 0, 0);
+
+            //if (location_1.X >= 0 && location_1.Y >= 0)
+            //	Console.WriteLine("Juste: " + rectangle.Angle * 180 / Math.PI);
+            //else if (location_1.X < 0 && location_1.Y >= 0)
+            //	Console.WriteLine("Faux X: "); // + rectangle.Angle * 180 / Math.PI);
+            //else if (location_1.X >= 0 && location_1.Y < 0)
+            //	Console.WriteLine("Faux Y: "); // + rectangle.Angle * 180 / Math.PI);
+            //else
+            //	Console.WriteLine("Tout Faux: " + rectangle.Angle * 180 / Math.PI);
+
+
+
+            return new List<Location>() { location_1, location_2, location_3, location_4 };
 
 		}
 

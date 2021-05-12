@@ -192,9 +192,9 @@ namespace LidarProcessNS
 
             Location best_location = FindRectangle.GetBestLocation(list_of_possible_locations, robotLocation);
 
-            //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(best_location.X, best_location.Y)), 10, Color.DarkGreen));
-            //OnLidarSetupRobotLocationEvent?.Invoke(this, best_location);
-            //Console.WriteLine("Corners: " + number_of_visible_corner);
+            processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(best_location.X, best_location.Y)), 10, Color.DarkGreen));
+            OnLidarSetupRobotLocationEvent?.Invoke(this, best_location);
+
 
 
 
