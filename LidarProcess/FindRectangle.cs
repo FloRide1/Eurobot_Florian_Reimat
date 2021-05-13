@@ -36,7 +36,7 @@ namespace LidarProcessNS
 			PointD corner_4 = corners.Item4;
 
 
-			bool farthest_point_is_1 = corner_1.X > corner_2.X; // We check the fartesht point
+			bool farthest_point_is_1 = corner_1.X > corner_2.X;
 			bool corner_1_and_2_is_height = Toolbox.Distance(corner_1, corner_2) == ConstVar.HEIGHT_BOXSIZE;
             
 
@@ -57,26 +57,21 @@ namespace LidarProcessNS
 			Vector<double> ref_pt3 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item3.X, corners.Item3.Y }) * rotation_matrix;
 			Vector<double> ref_pt4 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item4.X, corners.Item4.Y }) * rotation_matrix;
 
-            PointD pt1 = new PointD(ref_robot_point.X, ref_robot_point.Y);
-            PointD pt2 = new PointD(- ref_robot_point.X, - ref_robot_point.Y);
+            //PointD pt1 = new PointD(ref_robot_point.X, ref_robot_point.Y);
+            //PointD pt2 = new PointD(- ref_robot_point.X, - ref_robot_point.Y);
 
-            //PointD pt1 = new PointD(ref_pt1[0], ref_pt1[1]);
-            //PointD pt2 = new PointD(ref_pt2[0], ref_pt2[1]);
-            //PointD pt3 = new PointD(ref_pt3[0], ref_pt3[1]);
-            //PointD pt4 = new PointD(ref_pt4[0], ref_pt4[1]);
+            PointD pt1 = new PointD(ref_pt1[0], ref_pt1[1]);
+            PointD pt2 = new PointD(- ref_pt1[0], - ref_pt1[1]);
 
 			if (Math.Abs(rotation_angle) > Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
 			{
-			    if (Math.Sign(rotation_angle) != 1)
-			    {
-			        Toolbox.SwapNum(ref pt1, ref pt2);
-			    }
+				Toolbox.SwapNum(ref pt1, ref pt2);
 			}
 
 
 
-            Location location_1 = new Location(pt1.X, pt1.Y, -rotation_angle, 0, 0, 0);
-            Location location_2 = new Location(pt2.X, pt2.Y, rotation_angle, 0, 0, 0);
+            Location location_1 = new Location(pt1.X - ref_robot_point.X, pt1.Y - ref_robot_point.Y, -rotation_angle, 0, 0, 0);
+            Location location_2 = new Location(pt2.X - ref_robot_point.X, pt2.Y - ref_robot_point.Y, rotation_angle, 0, 0, 0);
 
 
 
