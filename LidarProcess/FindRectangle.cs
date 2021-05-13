@@ -50,7 +50,7 @@ namespace LidarProcessNS
 
 
 			Vector<double> ref_center = Vector<double>.Build.DenseOfArray(new double[] { rectangle.Center.X, rectangle.Center.Y }) * rotation_matrix;
-			PointD ref_robot_point = new PointD(-ref_center[0], -ref_center[1]);
+			PointD ref_robot_point = new PointD(- ref_center[0], - ref_center[1]);
 
 			Vector<double> ref_pt1 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item1.X, corners.Item1.Y }) * rotation_matrix;
 			Vector<double> ref_pt2 = Vector<double>.Build.DenseOfArray(new double[] { corners.Item2.X, corners.Item2.Y }) * rotation_matrix;
@@ -74,7 +74,8 @@ namespace LidarProcessNS
             Location location_2 = new Location(pt2.X - ref_robot_point.X, pt2.Y - ref_robot_point.Y, rotation_angle, 0, 0, 0);
 
 
-
+			if (location_1.X < 0)
+				Console.WriteLine("Angle X: " + rotation_angle * 180 / Math.PI);
 
 
 
