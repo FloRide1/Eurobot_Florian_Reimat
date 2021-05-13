@@ -145,35 +145,16 @@ namespace LidarProcessNS
 
 			/// 1st
 			width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle) + Math.PI;
-			height_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle);
+			height_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle - Math.PI / 2) + Math.PI;
 
-			//if (Toolbox.ModuloPiAngleRadian(width_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_1) > -Math.PI / 2)
-   //             width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(width_correction_angle_1) + Math.PI;
-
-   //         if (Toolbox.ModuloPiAngleRadian(height_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle_1) > -Math.PI / 2)
-   //             height_correction_angle_1 = Toolbox.ModuloPiAngleRadian(height_correction_angle_1) + Math.PI;
-
-            PointD width_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_1, width_correction_distance_1, 0));
+			PointD width_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_1, width_correction_distance_1, 0));
 			PointD height_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_1, height_correction_distance_1, 0));
 
 			PointD correct_center_point_1 = new PointD(rectangle.Center.X + width_correction_point_1.X + height_correction_point_1.X, rectangle.Center.Y + width_correction_point_1.Y + height_correction_point_1.Y);
 
 			/// 2st
-			width_correction_angle_2 = Angle - Math.PI / 2;
-			
-			height_correction_angle_2 = Angle;
-
-
-			if (Toolbox.ModuloPiAngleRadian(width_correction_angle_2) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_2) > -Math.PI / 2)
-				width_correction_angle_2 = Toolbox.ModuloPiAngleRadian(width_correction_angle_2) + Math.PI;
-			else
-				Console.WriteLine("WIDTH NO");
-
-			if (Toolbox.ModuloPiAngleRadian(height_correction_angle_2) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle_2) > -Math.PI / 2)
-				height_correction_angle_2 = Toolbox.ModuloPiAngleRadian(height_correction_angle_2) + Math.PI;
-			else
-				Console.WriteLine("HEIGHT NO");
-
+			width_correction_angle_2 = Toolbox.ModuloPiAngleRadian(Angle - Math.PI / 2) + Math.PI;
+			height_correction_angle_2 = Toolbox.ModuloPiAngleRadian(Angle) + Math.PI;
 
 			PointD width_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_2, width_correction_distance_2, 0));
 			PointD height_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_2, height_correction_distance_2, 0));
@@ -220,12 +201,9 @@ namespace LidarProcessNS
 					double correction_distance = (ConstVar.HEIGHT_BOXSIZE - Height) / 2;
 
 					if (Toolbox.Distance(point_1, point_2) > ConstVar.HEIGHT_BOXSIZE - thresold)
-						correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+						correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2) - Math.PI / 2) + Math.PI;
 					else
-						correction_angle = Toolbox.Angle(point_1, point_2);
-
-					if (Toolbox.ModuloPiAngleRadian(correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(correction_angle) > -Math.PI / 2)
-						correction_angle = Toolbox.ModuloPiAngleRadian(correction_angle) + Math.PI;
+						correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2)) + Math.PI;
 
 					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
 
@@ -241,13 +219,9 @@ namespace LidarProcessNS
 					double correction_distance = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
 
 					if (Toolbox.Distance(point_1, point_2) <= ConstVar.HEIGHT_BOXSIZE + thresold)
-						correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+						correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2) - Math.PI / 2) + Math.PI;
 					else
-						correction_angle = Toolbox.Angle(point_1, point_2);
-
-					if (Toolbox.ModuloPiAngleRadian(correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(correction_angle) > -Math.PI / 2)
-						correction_angle = Toolbox.ModuloPiAngleRadian(correction_angle) + Math.PI;
-
+						correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2)) + Math.PI;
 
 					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
 
@@ -262,20 +236,14 @@ namespace LidarProcessNS
 
 					if (Toolbox.Distance(point_1, point_2) <= ConstVar.HEIGHT_BOXSIZE + thresold)
 					{
-						width_correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
-						height_correction_angle = Toolbox.Angle(point_1, point_2);
+						width_correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2) - Math.PI / 2) + Math.PI;
+						height_correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2)) + Math.PI;
 					}
 					else
 					{
-						width_correction_angle = Toolbox.Angle(point_1, point_2);
-						height_correction_angle = Toolbox.Angle(point_1, point_2) - Math.PI / 2;
+						width_correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2)) + Math.PI;
+						height_correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2) - Math.PI / 2) + Math.PI;
 					}
-
-					if (Toolbox.ModuloPiAngleRadian(width_correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle) > -Math.PI / 2)
-						width_correction_angle = Toolbox.ModuloPiAngleRadian(width_correction_angle) + Math.PI;
-
-					if (Toolbox.ModuloPiAngleRadian(height_correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle) > -Math.PI / 2)
-						height_correction_angle = Toolbox.ModuloPiAngleRadian(height_correction_angle) + Math.PI;
 
 					PointD width_correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle, width_correction_distance, 0));
 					PointD height_correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle, height_correction_distance, 0));
@@ -293,11 +261,8 @@ namespace LidarProcessNS
 
 
 					/// Whe only resize the Width
-					double correction_angle = Toolbox.Angle(point_1, point_2) + Math.PI / 2;
+					double correction_angle = Toolbox.ModuloPiAngleRadian(Toolbox.Angle(point_1, point_2) - Math.PI / 2) + Math.PI;
 					double correction_distance = (ConstVar.WIDTH_BOXSIZE - Height) / 2;
-
-					if (Toolbox.ModuloPiAngleRadian(correction_angle) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(correction_angle) > -Math.PI / 2)
-						correction_angle = Toolbox.ModuloPiAngleRadian(correction_angle) + Math.PI;
 
 					PointD correction_point = Toolbox.ConvertPolarToPointD(new PolarPointRssi(correction_angle, correction_distance, 0));
 
