@@ -42,7 +42,11 @@ namespace LidarProcessNS
 
 			double rotation_angle = Toolbox.ModuloPiAngleRadian(rectangle.Angle);
 
-			
+			if (Math.Sign(rotation_angle) != 1)
+			{
+				//ref_center_point = new PointD(ref_center_point.X, - ref_center_point.Y);
+
+			}
 
 			Matrix<double> rotation_matrix = DenseMatrix.OfArray(new double[,] {
 					{ Math.Cos(rotation_angle), - Math.Sin(rotation_angle) },
@@ -68,7 +72,9 @@ namespace LidarProcessNS
 			//PointD pt4 = new PointD(ref_center[0], -ref_center[1]);
 
 			PointD pt1 = new PointD(0, 0);
-            if (Math.Abs(rotation_angle) > Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
+			
+
+			if (Math.Abs(rotation_angle) > Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
             {
 
 				//ref_center_point = new PointD(- ref_center_point.X, ref_center_point.Y);
@@ -83,9 +89,9 @@ namespace LidarProcessNS
             {
 				//ref_center_point = new PointD(-ref_center_point.X, ref_center_point.Y);
 			}
-            Console.WriteLine(farthest_point_is_1 + " " + corner_1_and_2_is_height);
-			
-            PointD ref_robot_point = new PointD(-ref_center[0], -ref_center[1]);
+            Console.WriteLine(farthest_point_is_1 + " " + corner_1_and_2_is_height + " " + (Math.Sign(rotation_angle) == 1) + " " + (pt1.X - ref_center_point.X) + ":" + (pt1.Y - ref_center_point.Y) + " " + (rectangle.Center.X) + ":" + (rectangle.Center.Y));
+
+			PointD ref_robot_point = new PointD(-ref_center[0], -ref_center[1]);
 
 			//Location location_1 = new Location(ref_robot_point.X, ref_robot_point.Y, -rotation_angle, 0, 0, 0);
 			//Location location_2 = new Location(ref_robot_point.X, -ref_robot_point.Y, rotation_angle, 0, 0, 0);
@@ -94,7 +100,7 @@ namespace LidarProcessNS
 
 			
 
-			Location location_1 = new Location(pt1.X - ref_center_point.X, pt1.Y - ref_center_point.Y, 0, 0, 0, 0);
+			Location location_1 = new Location(pt1.X - ref_center_point.X, pt1.Y - ref_center_point.Y, 1, 0, 0, 0);
 			Location location_4 = new Location(pt1.X + ref_center_point.X, pt1.Y + ref_center_point.Y, 0, 0, 0, 0);
 
             //if (location_1.X >= 0 && location_1.Y >= 0)
@@ -125,7 +131,12 @@ namespace LidarProcessNS
 
 			double Width = Math.Max(rectangle.Lenght, rectangle.Width);
 			double Height = Math.Min(rectangle.Lenght, rectangle.Width);
-			double Angle = rectangle.Angle;	
+			double Angle = rectangle.Angle;
+
+			if (rectangle.Angle > 0)
+				Console.WriteLine("?");
+			else
+				Console.WriteLine("!");
 
 			width_correction_distance_1 = (ConstVar.WIDTH_BOXSIZE - Width) / 2;
 			height_correction_distance_1 = (ConstVar.HEIGHT_BOXSIZE - Height) / 2;
@@ -133,14 +144,14 @@ namespace LidarProcessNS
 			height_correction_distance_2 = (ConstVar.HEIGHT_BOXSIZE - Width) / 2;
 
 			/// 1st
-			width_correction_angle_1 = Angle;
-			height_correction_angle_1 = Angle - Math.PI / 2;
+			width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle) + Math.PI;
+			height_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle);
 
-			if (Toolbox.ModuloPiAngleRadian(width_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_1) > -Math.PI / 2)
-                width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(width_correction_angle_1) + Math.PI;
+			//if (Toolbox.ModuloPiAngleRadian(width_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_1) > -Math.PI / 2)
+   //             width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(width_correction_angle_1) + Math.PI;
 
-            if (Toolbox.ModuloPiAngleRadian(height_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle_1) > -Math.PI / 2)
-                height_correction_angle_1 = Toolbox.ModuloPiAngleRadian(height_correction_angle_1) + Math.PI;
+   //         if (Toolbox.ModuloPiAngleRadian(height_correction_angle_1) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle_1) > -Math.PI / 2)
+   //             height_correction_angle_1 = Toolbox.ModuloPiAngleRadian(height_correction_angle_1) + Math.PI;
 
             PointD width_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_1, width_correction_distance_1, 0));
 			PointD height_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_1, height_correction_distance_1, 0));
@@ -150,14 +161,19 @@ namespace LidarProcessNS
 			/// 2st
 			width_correction_angle_2 = Angle - Math.PI / 2;
 			
-			height_correction_angle_2 = Angle;;
+			height_correction_angle_2 = Angle;
 
 
 			if (Toolbox.ModuloPiAngleRadian(width_correction_angle_2) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(width_correction_angle_2) > -Math.PI / 2)
 				width_correction_angle_2 = Toolbox.ModuloPiAngleRadian(width_correction_angle_2) + Math.PI;
+			else
+				Console.WriteLine("WIDTH NO");
 
 			if (Toolbox.ModuloPiAngleRadian(height_correction_angle_2) < Math.PI / 2 && Toolbox.ModuloPiAngleRadian(height_correction_angle_2) > -Math.PI / 2)
 				height_correction_angle_2 = Toolbox.ModuloPiAngleRadian(height_correction_angle_2) + Math.PI;
+			else
+				Console.WriteLine("HEIGHT NO");
+
 
 			PointD width_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_2, width_correction_distance_2, 0));
 			PointD height_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_2, height_correction_distance_2, 0));

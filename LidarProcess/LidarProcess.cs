@@ -133,26 +133,26 @@ namespace LidarProcessNS
 
             List<SegmentExtended> rectangle_segments = FindRectangle.DrawRectangle(best_rectangle, Color.Green, 1);
 
-            if (width >= 3 - thresold && height >= 2 - thresold)
-            {
-                Console.ForegroundColor = ConsoleColor.Green;
-            }
-            else if (width >= 3 - thresold)
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
+            //if (width >= 3 - thresold && height >= 2 - thresold)
+            //{
+            //    Console.ForegroundColor = ConsoleColor.Green;
+            //}
+            //else if (width >= 3 - thresold)
+            //{
+            //    Console.ForegroundColor = ConsoleColor.Blue;
 
 
-            }
-            else if (width > 2 + thresold)
-            {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                if (height > 2 - thresold)
-                    Console.ForegroundColor = ConsoleColor.DarkYellow;
-            }
-            else if (width >= 2 - thresold && width <= 2 + thresold)
-                Console.ForegroundColor = ConsoleColor.Red;
-            else
-                Console.ResetColor();
+            //}
+            //else if (width > 2 + thresold)
+            //{
+            //    Console.ForegroundColor = ConsoleColor.Yellow;
+            //    if (height > 2 - thresold)
+            //        Console.ForegroundColor = ConsoleColor.DarkYellow;
+            //}
+            //else if (width >= 2 - thresold && width <= 2 + thresold)
+            //    Console.ForegroundColor = ConsoleColor.Red;
+            //else
+            //    Console.ResetColor();
             
             //Console.WriteLine(width + " " + height);
 
@@ -167,6 +167,7 @@ namespace LidarProcessNS
 
             if (resized_rectangle != null) 
             {
+                Console.ForegroundColor = ConsoleColor.Green;
                 Lines.AddRange(FindRectangle.DrawRectangle(resized_rectangle, Color.LightGreen, 8));
                 processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(resized_rectangle.Center), 10, Color.Green));
 
@@ -176,14 +177,17 @@ namespace LidarProcessNS
             else
             {
                 Tuple<RectangleOriented, RectangleOriented> list_of_possible_rectangles = FindRectangle.ListResisableRectangle(best_rectangle, thresold);
-                Console.WriteLine("1 ------");
-                list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item1);
-                processedPoints.AddRange(list_of_possible_locations.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(x.X, x.Y)), 10, (x.Theta != 1) ? Color.Red : Color.DarkBlue)).ToList());
-                Console.WriteLine("2 ------");
-                list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item2);
-                processedPoints.AddRange(list_of_possible_locations.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(x.X, x.Y)), 10, (x.Theta != 1) ? Color.Yellow : Color.DarkBlue)).ToList());
+                Console.ForegroundColor = ConsoleColor.Red;
+                //Console.WriteLine("1 ------");
+                //list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item1);
+                //processedPoints.AddRange(list_of_possible_locations.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(x.X, x.Y)), 10, (x.Theta != 1) ? Color.Red : Color.DarkBlue)).ToList());
 
-                //Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item2, Color.YellowGreen, 4));
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                //Console.WriteLine("2 ------");
+                list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item2);
+                processedPoints.AddRange(list_of_possible_locations.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(x.X, x.Y)), 10, (x.Theta != 1) ? Color.Yellow : Color.DarkCyan)).ToList());
+
+                Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item2, Color.YellowGreen, 4));
                 //if (width <= 2 - thresold || width >= 2 + thresold)
                 //{
                 //    Lines.AddRange(FindRectangle.DrawRectangle(list_of_possible_rectangles.Item1, Color.GreenYellow, 4)); 
