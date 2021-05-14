@@ -179,8 +179,8 @@ namespace LidarProcessNS
                 Tuple<RectangleOriented, RectangleOriented> list_of_possible_rectangles = FindRectangle.ListResisableRectangle(best_rectangle, thresold);
                 Console.ForegroundColor = ConsoleColor.Red;
                 //Console.WriteLine("1 ------");
-                //list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item1);
-                //processedPoints.AddRange(list_of_possible_locations.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(x.X, x.Y)), 10, (x.Theta != 1) ? Color.Red : Color.DarkBlue)).ToList());
+                list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item1);
+                processedPoints.AddRange(list_of_possible_locations.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(x.X, x.Y)), 10, (x.Theta != 1) ? Color.Red : Color.DarkBlue)).ToList());
 
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 //Console.WriteLine("2 ------");
