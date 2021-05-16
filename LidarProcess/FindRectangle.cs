@@ -22,7 +22,8 @@ namespace LidarProcessNS
 	{
 		public static Location GetBestLocation(List<Location> list_of_locations, Location actual_location)
         {
-			return list_of_locations.OrderBy(x => Math.Abs(Toolbox.Modulo2PiAngleRad(x.Theta) - Toolbox.Modulo2PiAngleRad(actual_location.Theta))).ToList()[0];
+            return list_of_locations.OrderBy(x => Toolbox.Distance(new PointD(x.X, x.Y), new PointD(actual_location.X, actual_location.Y))).FirstOrDefault(); // list_of_locations.OrderBy(x => Math.Abs(Toolbox.Modulo2PiAngleRad(x.Theta) - Toolbox.Modulo2PiAngleRad(actual_location.Theta))).ToList()[0];
+
         }
 
 		public static List<Location> ListAllPossibleLocation(RectangleOriented rectangle)
@@ -100,8 +101,8 @@ namespace LidarProcessNS
 
 			
 
-			Location location_1 = new Location(pt1.X - ref_center_point.X, pt1.Y - ref_center_point.Y, 1, 0, 0, 0);
-			Location location_4 = new Location(pt1.X + ref_center_point.X, pt1.Y + ref_center_point.Y, 0, 0, 0, 0);
+			Location location_1 = new Location(pt1.X - ref_center_point.X, pt1.Y - ref_center_point.Y, -rotation_angle, 0, 0, 0);
+			Location location_4 = new Location(pt1.X + ref_center_point.X, pt1.Y + ref_center_point.Y, rotation_angle, 0, 0, 0);
 
             //if (location_1.X >= 0 && location_1.Y >= 0)
             //    Console.WriteLine("Juste: " + rectangle.Angle * 180 / Math.PI);
@@ -141,13 +142,29 @@ namespace LidarProcessNS
 			width_correction_distance_2 = (ConstVar.WIDTH_BOXSIZE - Height) / 2;
 			height_correction_distance_2 = (ConstVar.HEIGHT_BOXSIZE - Width) / 2;
 
-			if (rectangle.Angle > 0)
-			{
-
-				Console.WriteLine("?");
+			if (Width >= ConstVar.HEIGHT_BOXSIZE - thresold)
+            {
+				//width_correction_distance_1 = 0;
+				height_correction_distance_2 = 0;
 			}
-			else
-				Console.WriteLine("!");
+
+			if (Height >= ConstVar.HEIGHT_BOXSIZE - thresold)
+			{
+				height_correction_distance_1 = 0;
+				//width_correction_distance_2 = 0;
+			}
+
+			//if (Math.Abs(Toolbox.ModuloPiAngleRadian(Angle)) <= Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
+			//Console.WriteLine("OUI");
+
+
+			//if (rectangle.Angle > 0)
+			//{
+
+			//	Console.WriteLine("?");
+			//}
+			//else
+			//	Console.WriteLine("!");
 
 			/// 1st
 			width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle) + Math.PI;
@@ -161,7 +178,9 @@ namespace LidarProcessNS
 			/// 2st
 			width_correction_angle_2 = Toolbox.ModuloPiAngleRadian(Angle - Math.PI / 2) + Math.PI;
 			height_correction_angle_2 = Toolbox.ModuloPiAngleRadian(Angle) + Math.PI;
-			height_correction_angle_2 += (rectangle.Angle > 0) ? Math.PI : 0;
+
+			
+			//height_correction_angle_2 += (rectangle.Angle > 0) ? Math.PI : 0;
 
 			PointD width_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_2, width_correction_distance_2, 0));
 			PointD height_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_2, height_correction_distance_2, 0));
@@ -170,7 +189,14 @@ namespace LidarProcessNS
 
 			PointD correct_center_point_2 = new PointD(rectangle.Center.X + width_correction_point_2.X + height_correction_point_2.X, rectangle.Center.Y + width_correction_point_2.Y + height_correction_point_2.Y);
 
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			Console.WriteLine("1 - " + (correct_center_point_1.X * 1000) + " : " + (correct_center_point_1.Y * 1000) + " - Angle: " + (rectangle.Angle * 180 / Math.PI));
 
+			Console.ForegroundColor = ConsoleColor.Blue;
+			Console.WriteLine("2 - " + (correct_center_point_2.X * 1000) + " : " + (correct_center_point_2.Y * 1000) + " - Angle: " + (rectangle.Angle * 180 / Math.PI));
+
+			Console.ResetColor();
+			Console.WriteLine("");
 
 			RectangleOriented rectangle1 = new RectangleOriented(correct_center_point_1, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle);
 			RectangleOriented rectangle2 = new RectangleOriented(correct_center_point_2, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle + Math.PI / 2);
@@ -260,11 +286,16 @@ namespace LidarProcessNS
 			}
 			else
 			{
-				if (Width >= ConstVar.HEIGHT_BOXSIZE - thresold && Width <= ConstVar.HEIGHT_BOXSIZE + thresold)
+				if (Width >= ConstVar.HEIGHT_BOXSIZE - thresold && Math.Abs(Angle) > 45 * Math.PI / 180)
+					//if (Width >= ConstVar.HEIGHT_BOXSIZE - thresold && Width <= ConstVar.HEIGHT_BOXSIZE + thresold)
                 {
-					return null; // Not Safe Need Improvement
-					if (Toolbox.Distance(point_1, point_2) < ConstVar.HEIGHT_BOXSIZE - thresold || Toolbox.Distance(point_1, point_2) > ConstVar.HEIGHT_BOXSIZE + thresold) // Not Good -> False Positive + False Negative
-						return null;
+					return null;
+					//if (Width <= ConstVar.HEIGHT_BOXSIZE - thresold)
+					//	Console.WriteLine("Fuck");
+
+					//return null; // Not Safe Need Improvement
+					//if (Toolbox.Distance(point_1, point_2) < ConstVar.HEIGHT_BOXSIZE - thresold || Toolbox.Distance(point_1, point_2) > ConstVar.HEIGHT_BOXSIZE + thresold) // Not Good -> False Positive + False Negative
+					//	return null;
 
 
 					/// Whe only resize the Width
