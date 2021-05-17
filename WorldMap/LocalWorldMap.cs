@@ -234,6 +234,14 @@ namespace WorldMap
             OnLocalWorldMapEvent?.Invoke(this, this);
         }
 
+        public void OnProcessLidarAbsoluteLineReceived(object sender, List<PointDExtended> list_of_points)
+        {
+            if (LidarMapProcessed != null)
+                LidarMapProcessed.AddRange(list_of_points);
+            else
+                LidarMapProcessed = list_of_points.ToList();
+        }
+
 
         public void OnLidarProcessedCupReceived(object sender, List<Cup> cups)
         {

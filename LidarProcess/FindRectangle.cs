@@ -120,7 +120,7 @@ namespace LidarProcessNS
 
 		}
 
-		public static Tuple<RectangleOriented, RectangleOriented> ListResisableRectangle(RectangleOriented rectangle, double thresold)
+		public static Tuple<RectangleOriented, RectangleOriented, RectangleOriented> ListResisableRectangle(RectangleOriented rectangle, double thresold)
         {
 			Tuple<PointD, PointD, PointD, PointD> corners = Toolbox.GetCornerOfAnOrientedRectangle(rectangle);
 			double width_correction_angle_1, height_correction_angle_1, width_correction_angle_2, height_correction_angle_2, width_correction_distance_1, height_correction_distance_1, width_correction_distance_2, height_correction_distance_2;
@@ -148,32 +148,22 @@ namespace LidarProcessNS
 				height_correction_distance_2 = 0;
 			}
 
-			if (Height >= ConstVar.HEIGHT_BOXSIZE - thresold)
-			{
-				height_correction_distance_1 = 0;
-				//width_correction_distance_2 = 0;
-			}
-
-			//if (Math.Abs(Toolbox.ModuloPiAngleRadian(Angle)) <= Math.Acos(ConstVar.HEIGHT_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2) + Math.Pow(ConstVar.WIDTH_BOXSIZE, 2))))
-			//Console.WriteLine("OUI");
+            if (Height >= ConstVar.HEIGHT_BOXSIZE - thresold)
+            {
+                height_correction_distance_1 = 0;
+                //width_correction_distance_2 = 0;
+            }
 
 
-			//if (rectangle.Angle > 0)
-			//{
-
-			//	Console.WriteLine("?");
-			//}
-			//else
-			//	Console.WriteLine("!");
-
-			/// 1st
-			width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle) + Math.PI;
+            /// 1st
+            width_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle) + Math.PI;
 			height_correction_angle_1 = Toolbox.ModuloPiAngleRadian(Angle - Math.PI / 2) + Math.PI;
 
 			PointD width_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_1, width_correction_distance_1, 0));
 			PointD height_correction_point_1 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_1, height_correction_distance_1, 0));
 
 			PointD correct_center_point_1 = new PointD(rectangle.Center.X + width_correction_point_1.X + height_correction_point_1.X, rectangle.Center.Y + width_correction_point_1.Y + height_correction_point_1.Y);
+			PointD correct_center_point_3 = new PointD(rectangle.Center.X - width_correction_point_1.X + height_correction_point_1.X, rectangle.Center.Y - width_correction_point_1.Y + height_correction_point_1.Y);
 
 			/// 2st
 			width_correction_angle_2 = Toolbox.ModuloPiAngleRadian(Angle - Math.PI / 2) + Math.PI;
@@ -200,8 +190,9 @@ namespace LidarProcessNS
 
             RectangleOriented rectangle1 = new RectangleOriented(correct_center_point_1, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle);
 			RectangleOriented rectangle2 = new RectangleOriented(correct_center_point_2, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle + Math.PI / 2);
+			RectangleOriented rectangle3 = new RectangleOriented(correct_center_point_3, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle);
 
-			return new Tuple<RectangleOriented, RectangleOriented>(rectangle1, rectangle2);
+			return new Tuple<RectangleOriented, RectangleOriented, RectangleOriented>(rectangle1, rectangle2, rectangle3);
 		}
 
 		public static RectangleOriented ResizeRectangle(RectangleOriented rectangle, double thresold)
@@ -288,6 +279,7 @@ namespace LidarProcessNS
 			{
 				if (Math.Abs(Toolbox.ModuloPiAngleRadian(Angle + Math.PI / 2)) <= Math.Acos(ConstVar.WIDTH_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.WIDTH_BOXSIZE, 2) + Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2))) && Width >= ConstVar.HEIGHT_BOXSIZE - thresold)
                 {
+					return null;
 					Console.ResetColor();
 					Console.WriteLine("YES: " + Toolbox.ModuloPiAngleRadian(Angle + Math.PI / 2) * 180 / Math.PI + " - " + Width + " + " + Height);
 

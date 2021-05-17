@@ -174,6 +174,7 @@ namespace RobotEurobot2Roues
 
             lidarProcess.OnRawLidarPointPolarEvent += localWorldMap.OnLidarRawPointReceived;
             lidarProcess.OnProcessLidarPolarDataEvent += localWorldMap.OnLidarProcessedPointReceived;
+            lidarProcess.OnProcessLidarAbsoluteDataEvent += localWorldMap.OnProcessLidarAbsoluteLineReceived;
             lidarProcess.OnProcessLidarLineDataEvent += localWorldMap.OnLidarProcessedLineReceived;
             lidarProcess.OnProcessLidarCupDataEvent += localWorldMap.OnLidarProcessedCupReceived;
             lidarProcess.OnLidarSetupRobotLocationEvent += localWorldMap.OnRobotLocation;
