@@ -89,7 +89,7 @@ namespace RobotEurobot2Roues
 
             #region Communication to Low Lvl
             /// Création des liens entre module, sauf depuis et vers l'interface graphique           
-            usbDriver.OnUSBuffReceivedEvent += msgDecoder.BuffReceived;                                    // Transmission des messages reçus par l'USB au Message Decoder
+            usbDriver.OnUSBuffReceivedEvent += msgDecoder.BuffReceived;                                     // Transmission des messages reçus par l'USB au Message Decoder
             msgDecoder.OnCorrectMessageReceivedEvent += msgProcessor.ProcessRobotDecodedMessage;            // Transmission les messages décodés par le Message Decoder au Message Processor
             msgGenerator.OnMessageToRobotGeneratedEvent += msgEncoder.EncodeAndSendMessage;                 // Envoi des messages du générateur de message à l'encoder
             msgEncoder.OnSendMessageEvent += usbDriver.SendUSBMessage;                                      // Envoi des messages en USB depuis le message encoder
