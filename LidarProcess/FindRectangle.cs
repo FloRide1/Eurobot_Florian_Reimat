@@ -90,7 +90,7 @@ namespace LidarProcessNS
             {
 				//ref_center_point = new PointD(-ref_center_point.X, ref_center_point.Y);
 			}
-            Console.WriteLine(farthest_point_is_1 + " " + corner_1_and_2_is_height + " " + (Math.Sign(rotation_angle) == 1) + " " + (pt1.X - ref_center_point.X) + ":" + (pt1.Y - ref_center_point.Y) + " " + (rectangle.Center.X) + ":" + (rectangle.Center.Y));
+            //Console.WriteLine(farthest_point_is_1 + " " + corner_1_and_2_is_height + " " + (Math.Sign(rotation_angle) == 1) + " " + (pt1.X - ref_center_point.X) + ":" + (pt1.Y - ref_center_point.Y) + " " + (rectangle.Center.X) + ":" + (rectangle.Center.Y));
 
 			PointD ref_robot_point = new PointD(-ref_center[0], -ref_center[1]);
 
@@ -185,20 +185,20 @@ namespace LidarProcessNS
 			PointD width_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(width_correction_angle_2, width_correction_distance_2, 0));
 			PointD height_correction_point_2 = Toolbox.ConvertPolarToPointD(new PolarPointRssi(height_correction_angle_2, height_correction_distance_2, 0));
 
-			
 
-			PointD correct_center_point_2 = new PointD(rectangle.Center.X + width_correction_point_2.X + height_correction_point_2.X, rectangle.Center.Y + width_correction_point_2.Y + height_correction_point_2.Y);
 
-			Console.ForegroundColor = ConsoleColor.Yellow;
-			Console.WriteLine("1 - " + (correct_center_point_1.X * 1000) + " : " + (correct_center_point_1.Y * 1000) + " - Angle: " + (rectangle.Angle * 180 / Math.PI));
+            PointD correct_center_point_2 = new PointD(rectangle.Center.X + width_correction_point_2.X + height_correction_point_2.X, rectangle.Center.Y + width_correction_point_2.Y + height_correction_point_2.Y);
 
-			Console.ForegroundColor = ConsoleColor.Blue;
-			Console.WriteLine("2 - " + (correct_center_point_2.X * 1000) + " : " + (correct_center_point_2.Y * 1000) + " - Angle: " + (rectangle.Angle * 180 / Math.PI));
+            //Console.ForegroundColor = ConsoleColor.Yellow;
+            //Console.WriteLine("1 - " + (correct_center_point_1.X * 1000) + " : " + (correct_center_point_1.Y * 1000) + " - Angle: " + (rectangle.Angle * 180 / Math.PI));
 
-			Console.ResetColor();
-			Console.WriteLine("");
+            //Console.ForegroundColor = ConsoleColor.Blue;
+            //Console.WriteLine("2 - " + (correct_center_point_2.X * 1000) + " : " + (correct_center_point_2.Y * 1000) + " - Angle: " + (rectangle.Angle * 180 / Math.PI));
 
-			RectangleOriented rectangle1 = new RectangleOriented(correct_center_point_1, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle);
+            //Console.ResetColor();
+            //Console.WriteLine("");
+
+            RectangleOriented rectangle1 = new RectangleOriented(correct_center_point_1, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle);
 			RectangleOriented rectangle2 = new RectangleOriented(correct_center_point_2, ConstVar.WIDTH_BOXSIZE, ConstVar.HEIGHT_BOXSIZE, Angle + Math.PI / 2);
 
 			return new Tuple<RectangleOriented, RectangleOriented>(rectangle1, rectangle2);
@@ -286,10 +286,11 @@ namespace LidarProcessNS
 			}
 			else
 			{
-				if (Width >= ConstVar.HEIGHT_BOXSIZE - thresold && Math.Abs(Angle) > 45 * Math.PI / 180)
-					//if (Width >= ConstVar.HEIGHT_BOXSIZE - thresold && Width <= ConstVar.HEIGHT_BOXSIZE + thresold)
+				if (Math.Abs(Toolbox.ModuloPiAngleRadian(Angle + Math.PI / 2)) <= Math.Acos(ConstVar.WIDTH_BOXSIZE / Math.Sqrt(Math.Pow(ConstVar.WIDTH_BOXSIZE, 2) + Math.Pow(ConstVar.HEIGHT_BOXSIZE, 2))) && Width >= ConstVar.HEIGHT_BOXSIZE - thresold)
                 {
-					return null;
+					Console.ResetColor();
+					Console.WriteLine("YES: " + Toolbox.ModuloPiAngleRadian(Angle + Math.PI / 2) * 180 / Math.PI + " - " + Width + " + " + Height);
+
 					//if (Width <= ConstVar.HEIGHT_BOXSIZE - thresold)
 					//	Console.WriteLine("Fuck");
 
