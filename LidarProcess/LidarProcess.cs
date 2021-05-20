@@ -183,9 +183,14 @@ namespace LidarProcessNS
             else
             {
                 Tuple<RectangleOriented, RectangleOriented, RectangleOriented> list_of_possible_rectangles = FindRectangle.ListResisableRectangle(best_rectangle, thresold);
-                list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item1);
-                list_of_possible_locations.AddRange(FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item2));
-                list_of_possible_locations.AddRange(FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item3));
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                list_of_possible_locations = FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item2);
+
+                //Console.ForegroundColor = ConsoleColor.Blue;
+                //list_of_possible_locations.AddRange(FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item2));
+
+                //Console.ForegroundColor = ConsoleColor.Red;
+                //list_of_possible_locations.AddRange(FindRectangle.ListAllPossibleLocation(list_of_possible_rectangles.Item3));
 
 
                 //Console.ForegroundColor = ConsoleColor.Red;
@@ -207,12 +212,12 @@ namespace LidarProcessNS
             }
             //processedPoints.AddRange(list_of_possible_locations.Select(x => new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(x.X, x.Y)), 10, (x.Theta != 1) ? Color.Red: Color.DarkBlue)).ToList());
 
-            absolutePoints = list_of_possible_locations.Select(x => new PointDExtended(new PointD(x.X, x.Y), Color.Red, 10)).ToList();
+            absolutePoints = list_of_possible_locations.Select(x => new PointDExtended(new PointD(x.X, x.Y), x.Theta > 0 ? Color.Red : Color.Blue, 10)).ToList();
             Location best_location = FindRectangle.GetBestLocation(list_of_possible_locations, robotLocation);
 
             //processedPoints.Add(new PolarPointRssiExtended(Toolbox.ConvertPointDToPolar(new PointD(best_location.X, best_location.Y)), 10, Color.DarkGreen));
             OnLidarSetupRobotLocationEvent?.Invoke(this, best_location);
-
+            Console.ResetColor();
 
 
 
