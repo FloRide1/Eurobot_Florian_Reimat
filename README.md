@@ -1,9 +1,9 @@
 # Eurobot Project by Florian Reimat
 ## About 
-This repo is fork from @iutgeiitoulon project, it's a minimal project for Robot Club Toulon's Robots, unless there are many editions architecture
-of this project is  pretty similar to the source.
+This repo is the main code for Robot Club Toulon 2nd team robot during Eurobot 2021.
 
-## Useful Links  
+## Useful Links
+- [RCT Official Repo](https://github.com/iutgeiitoulon/Eurobot2021TwoWheels)
 - [Valentin Gies](https://www.vgies.com/)
 - [RCT Website](https://rct.univ-tln.fr/)
 
@@ -15,24 +15,24 @@ of this project is  pretty similar to the source.
 	- [x] MsgGenerator
 	- [x] MsgProcessor
 	- [x] UsbVendor
-- [ ] Make the Trajectory Planner
+- [x] Make the Trajectory Planner
 	- [x] Ghost Rotation
 	- [x] Ghost Shifting
-	- [ ] PID Controller
-	- [ ] Robot Enslavement
-- [ ] Improve WPF interface 
+	- [x] PID Controller
+	- [x] Robot Enslavement
+- [x] Improve WPF interface 
 	- [x] Handle Multiple Waypoints 
 	- [ ] Preview Trajectory Planner before applying
 	- [x] Improve Ghost Preview
-	- [ ] Add Rack State Wpf Controller
-	- [ ] Add Points Estimation Wpf Controller
-	- [ ] Make an only Match Wpf Controller
-- [ ] Make an Strategy Manager
-- [ ] Make Lidar Processing
+	- [x] Add Rack State Wpf Controller
+	- [x] Add Points Estimation Wpf Controller
+	- [x] Make an only Match Wpf Controller
+- [x] Make an Strategy Manager
+- [x] Make Lidar Processing
 	- [x] Make Clusters Detection
 	- [x] Make Cup Detection
 	- [x] Make Line Detection
-	- [ ] Make Rectangle Fitting
+	- [x] Make Rectangle Fitting
 - [x] Others
 	- [x] Implementing Protocol Security
 
