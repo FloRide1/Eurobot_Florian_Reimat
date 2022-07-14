@@ -2,6 +2,10 @@
 ## About 
 This repo is the main code for Robot Club Toulon 2nd team robot during Eurobot 2021.
 
+## Demo
+I'm sorry i don't have a full view demo, check [RCT Instagram](https://www.instagram.com/robotclubtoulon/) for other demo
+![Demo](misc/demo.gif)
+
 ## Useful Links
 - [RCT Official Repo](https://github.com/iutgeiitoulon/Eurobot2021TwoWheels)
 - [Valentin Gies](https://www.vgies.com/)
