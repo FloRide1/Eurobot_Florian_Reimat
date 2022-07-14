@@ -2,7 +2,7 @@
 ## About 
 This repo is the main code for Robot Club Toulon 2nd team robot during Eurobot 2021.
 
-## Demo
+## Demo (The gif takes time to load)
 I'm sorry i don't have a full view demo, check [RCT Instagram](https://www.instagram.com/robotclubtoulon/) for other demo
 ![Demo](misc/demo.gif)
 
